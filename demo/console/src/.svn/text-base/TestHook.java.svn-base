@@ -1,0 +1,21 @@
+import jp.kuro.meteor.hook.Hooker;
+import jp.kuro.meteor.*;
+
+public class TestHook extends Hooker {
+
+    public void execute(Parser xt){
+        Element tag= xt.findElement("tech","mono","mono");
+
+        for(int i=0;i<5;i++){
+            xt.setContent(tag,"konkon" + i);
+            xt.print();
+        }
+
+
+    }
+
+    public void execute(Parser parser, Object object) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+}

@@ -1,0 +1,552 @@
+/**
+ *XML解析パーサ
+ *
+ */
+
+package jp.kuro.meteor.core.xml;
+
+//JAVA標準
+
+import java.util.regex.*;
+import java.util.List;
+
+//パッケージ固有
+import jp.kuro.meteor.*;
+import jp.kuro.meteor.hook.Hooker;
+import jp.kuro.meteor.hook.Looper;
+import jp.kuro.meteor.core.Kernel;
+
+public class ParserImpl extends Kernel implements Parser {
+
+    private static final Pattern pattern_en_1 = Pattern.compile(EN_1);
+    private static final Pattern pattern_and_1 = Pattern.compile(AND_1);
+    private static final Pattern pattern_lt_1 = Pattern.compile(LT_1);
+    private static final Pattern pattern_gt_1 = Pattern.compile(GT_1);
+    private static final Pattern pattern_dq_1 = Pattern.compile(DOUBLE_QUATATION);
+    private static final Pattern pattern_ap_1 = Pattern.compile(AP_1);
+    private static final Pattern  pattern_lt_2 = Pattern.compile(LT_2);
+    private static final Pattern  pattern_gt_2 = Pattern.compile(GT_2);
+    private static final Pattern  pattern_dq_2 = Pattern.compile(QO_2);
+    private static final Pattern  pattern_ap_2 = Pattern.compile(AP_2);
+    private static final Pattern  pattern_and_2 = Pattern.compile(AND_2);
+
+    private static final Pattern pattern_set_mono1 = Pattern.compile(SET_MONO_1);
+
+    /**
+     * デフォルトコンストラクタ
+     */
+    private ParserImpl() {
+    }
+
+    public static ParserImpl getParser() {
+        return new ParserImpl();
+    }
+
+    /**
+     * コピーコンストラクタ
+     *
+     * @param ps HTMLParserオブジェクト
+     */
+    private ParserImpl(ParserImpl ps) {
+        setDocument(ps.getDocument());
+        setHookDocument(ps.getHookDocument());
+        setHook(ps.isHook());
+        setElement(ps.getElement());
+        this.getRootElement().setContentType(ps.getContentType());
+    }
+
+    public static ParserImpl copy(Parser pif) {
+        return new ParserImpl((ParserImpl) pif);
+    }
+
+    /**
+     * ファイルを読み込み、パースする
+     *
+     * @param filePath 入力ファイルの絶対パス
+     * @param encoding 入力ファイルの文字コード
+     */
+    public final void read(String filePath, String encoding) {
+        super.read(filePath, encoding);
+    }
+
+    /**
+     * XMLドキュメントをパースする
+     *
+     * @param document XMLドキュメント
+     */
+    public final void parse(String document) {
+        super.setDocument(document);
+    }
+
+    /**
+     * ルート要素を取得する
+     * @return ルート要素
+     */
+    public final RootElement getRootElement(){
+        return super.getRootElement();
+    }
+
+    protected final String getContentType() {
+        return Kernel.EMPTY;
+    }
+
+    /**
+     * 親パーサを取得する
+     * @return 親パーサ
+     */
+    public Parser getParent() {
+        return super.getParent();
+    }
+
+    /**
+     * 親パーサをセットする
+     * @param pif 親パーサ
+     */
+    public void setParent(Parser pif) {
+        super.setParent(pif);
+    }
+
+    /**
+     * ドキュメントを取得する
+     *
+     * @return ドキュメント
+     */
+    public final String getDocument() {
+        return super.getDocument();
+    }
+
+    /**
+     * 要素名により、要素を検索する
+     *
+     * @param elmName 要素名
+     * @return 要素
+     */
+    public final Element findElement(String elmName) {
+        return (super.findElement(elmName));
+    }
+
+    /**
+     * 要素名と属性により、要素を検索する
+     *
+     * @param elmName  要素名
+     * @param attrName 属性名
+     * @param attrValue 属性値
+     * @return 要素
+     */
+    public final Element findElement(String elmName, String attrName, String attrValue) {
+        return (super.findElement(elmName, attrName, attrValue));
+    }
+
+    public final Element findElement(String attrName, String attrValue) {
+        return super.findElement(attrName, attrValue);
+    }
+
+    /**
+     * 要素名と属性1と属性2により、要素を検索する
+     *
+     * @param elmName  要素名
+     * @param attrName1 属性名1
+     * @param attrValue1 属性値1
+     * @param attrName2 属性名2
+     * @param attrValue2 属性値2
+     * @return 要素
+     */
+    public final Element findElement(String elmName,
+                                     String attrName1,String attrValue1,String attrName2,String attrValue2) {
+        return (super.findElement(elmName, attrName1,attrValue1,attrName2,attrValue2));
+    }
+
+    /**
+     * 属性により、要素を検索する
+     *
+     * @param attrName1  属性名1
+     * @param attrValue1 属性値1
+     * @param attrName2  属性名2
+     * @param attrValue2 属性値2
+     * @return 要素
+     */
+    public final Element findElement(String attrName1,String attrValue1,String attrName2,String attrValue2) {
+        return super.findElement(attrName1,attrValue1,attrName2,attrValue2);
+    }
+
+    /**
+     * 要素名を編集する
+     *
+     * @param elm     要素
+     * @param elmName 要素名
+     */
+    public final void setElementName(Element elm, String elmName) {
+        super.setElementName(elm, elmName);
+    }
+
+    /**
+     * 要素の属性を編集する
+     *
+     * @param elm       要素
+     * @param attrName  属性名
+     * @param attrValue 属性値
+     */
+    public final void setAttribute(Element elm, String attrName, String attrValue) {
+        super.setAttribute(elm, attrName, attrValue);
+    }
+
+//    public final void setAttribute(Element elm, String attrName) {
+//    }
+
+    /**
+     * 要素の属性を編集する
+     *
+     * @param attrName  属性名
+     * @param attrValue 属性値
+     */
+    public void setAttribute(String attrName, String attrValue) {
+        if(this.getRootElement().isHook() || this.getRootElement().isMonoHook()){
+            this.setAttribute(this.getRootElement().getVariableElement(),attrName,attrValue);
+        }
+    }
+
+//    /**
+//     * 要素の属性を編集する(属性値省略の場合)
+//     *
+//     * @param attrName 属性名
+//     */
+//    public void setAttribute(String attrName) {
+//        if(this.getRootElement().isHook() || this.getRootElement().isMonoHook()){
+//            this.setAttribute(this.getRootElement().getVariableElement(),attrName);
+//        }
+//    }
+
+    /**
+     * 要素を属性名で検索し、属性値を得る
+     * @param elm 要素
+     * @param attrName 属性名
+     * @return 属性値
+     */
+    public final String getAttributeValue(Element elm, String attrName) {
+        return (super.getAttributeValue(elm, attrName));
+    }
+
+    /**
+     * 要素の内容を属性名で検索し、属性値を得る
+     *
+     * @param attrName 属性名
+     * @return 属性値
+     */
+    public String getAttributeValue(String attrName) {
+        if(this.getRootElement().isHook() || this.getRootElement().isMonoHook()){
+            return this.getAttributeValue(this.getRootElement().getVariableElement(),attrName);
+        }
+
+        return null;
+    }
+
+    //todo
+    /**
+     * 属性マップを取得する
+     * @param elm 要素
+     * @return 属性マップ
+     */
+    public final AttributeMap getAttributeMap(Element elm){
+       return super.getAttributeMap(elm);
+    }
+
+    /**
+     * 属性マップを取得する
+     * @return 属性マップ
+     */
+    public AttributeMap getAttributeMap() {
+        if(this.getRootElement().isHook() || this.getRootElement().isMonoHook()){
+            return this.getAttributeMap(this.getRootElement().getVariableElement());
+        }
+        return null;
+    }
+
+    /**
+     * 要素の属性を消す
+     * @param elm 要素
+     * @param attrName 属性名
+     */
+    public final void eraseAttribute(Element elm, String attrName) {
+        super.eraseAttribute(elm, attrName);
+    }
+
+    /**
+     * 要素の属性を消す
+     *
+     * @param attrName 属性名
+     */
+    public void eraseAttribute(String attrName) {
+        if(this.getRootElement().isHook() || this.getRootElement().isMonoHook()){
+            this.eraseAttribute(this.getRootElement().getVariableElement(),attrName);
+        }
+    }
+
+    /**
+     * 要素の内容をセットする
+     *
+     * @param elm     要素
+     * @param content 要素の内容
+     */
+    public final void setContent(Element elm, String content) {
+        super.setContent(elm, content);
+    }
+
+    /**
+     * 要素の内容をセットする
+     *
+     * @param elm 要素
+     * @param content 要素の内容
+     * @param entityRef エンティティ参照フラグ
+     */
+    public final void setContent(Element elm, String content, boolean entityRef) {
+        super.setContent(elm, content, entityRef);
+    }
+
+    /**
+     * 要素の内容をセットする
+     *
+     * @param content 要素の内容
+     */
+    public void setContent(String content) {
+        if(this.getRootElement().isMonoHook()){
+            this.setContent(this.getRootElement().getVariableElement(),content);
+        }
+    }
+
+    /**
+     * 要素の内容をセットする
+     *
+     * @param content 要素の内容
+     * @param entityRef エンティティ参照フラグ
+     */
+    public void setContent(String content, boolean entityRef) {
+        if(this.getRootElement().isMonoHook()){
+            this.setContent(this.getRootElement().getVariableElement(),content,entityRef);
+        }
+    }
+
+    /**
+     * 要素の内容を取得する
+     * @param elm 要素
+     * @return 要素の内容
+     */
+    public final String getContent(Element elm) {
+        return (super.getContent(elm));
+    }
+
+    /**
+     * 要素を消す
+     *
+     * @param elm 要素
+     */
+    public final void eraseElement(Element elm) {
+        super.eraseElement(elm);
+    }
+
+    /**
+     * @param elmName 要素名
+     * @param id      識別名
+     * @return 要素
+     */
+    public final Element findCXTag(String elmName, String id) {
+        return super.findCXTag(elmName, id);
+    }
+
+    /**
+     * ID属性でCXタグを検索する
+     *
+     * @param id ID属性値
+     * @return 要素
+     */
+    public final Element findCXTag(String id) {
+        return super.findCXTag(id);
+    }
+
+    /**
+     * XMLを出力する
+     */
+    public final void print() {
+        super.print();
+    }
+
+    /**
+     * フッククラスに処理を委譲する
+     *
+     * @param elm  要素
+     * @param hook Hookerオブジェクト
+     */
+    public final void execute(Element elm, Hooker hook) {
+        //if(!getElement().cx()){
+        //フッククラスのメソッドを呼び出す
+        hook.doAction(elm, this);
+        //}
+    }
+
+    /**
+     * フッククラスに処理を委譲する
+     *
+     * @param elm  要素
+     * @param hook Hookerオブジェクト
+     * @param list Listオブジェクト
+     */
+    public final void execute(Element elm, Looper hook, List list) {
+        //if(!getElement().cx()){
+        //フッククラスのメソッドを呼び出す
+        hook.doAction(elm, this, list);
+        //}
+    }
+
+    /**
+     * 子パーサを取得する
+     * @param elm 要素
+     * @return 子パーサ
+     */
+    public final Parser getChildParser(Element elm){
+        if (elm.empty()) {
+            Parser pif2;
+
+            setMonoInfo(elm);
+
+            pif2 = create(this);
+
+            pif2.setParent(this);
+            pif2.getRootElement().setElement(elm);
+            pif2.getRootElement().setVariableElement(new Element(elm));
+            pif2.getRootElement().setKaigyoCode(this.getRootElement().getKaigyoCode());
+
+            if (elm.mono()) {
+                //要素ありタグの場合
+
+                pif2.getRootElement().setDocument(elm.getDocument());
+                pif2.getRootElement().setMonoHook(true);
+                //pif.replace(elm, pif2.getRootElement().getHookDocument().toString());
+                return pif2;
+            }else{
+
+                pif2.getRootElement().setDocument(elm.getContent());
+                pif2.getRootElement().setHook(true);
+                //pif.replace(elm, pif2.getRootElement().getHookDocument().toString());
+                return pif2;
+            }
+        }
+
+        return null;
+    }
+
+    protected final void setMonoInfo(Element elm) {
+        boolean res;
+        
+        matcher = pattern_set_mono1.matcher(elm.getContent());
+        res = matcher.matches();
+
+        elm.setMono(res);
+
+        if (res) {
+            sbuf.setLength(0);
+            if (elm.cx()) {
+                pattern_cc = sbuf.append(SET_CX_1).append(elm.getName())
+                        .append(SPACE).append(elm.getAttributes()).append(SET_CX_2)
+                        .append(elm.getContent()).append(SET_CX_3).append(elm.getName())
+                        .append(SET_CX_4).toString();
+            } else {
+                if (elm.empty()) {
+                    //フック判定がTRUEの場合
+                    pattern_cc = sbuf.append(TAG_OPEN).append(elm.getName())
+                            .append(elm.getAttributes()).append(TAG_CLOSE)
+                            .append(elm.getContent()).append(TAG_OPEN3)
+                            .append(elm.getName()).append(TAG_CLOSE).toString();
+                } else {
+                    pattern_cc = sbuf.append(TAG_OPEN).append(elm.getName())
+                            .append(elm.getAttributes()).append(TAG_CLOSE3).toString();
+                }
+            }
+            elm.setDocument(pattern_cc);
+        }
+    }
+
+    /**
+     * 子パーサを親パーサに反映する
+     */
+    public final void flush(){
+        if(this.getRootElement().isHook() || this.getRootElement().isMonoHook()){
+            if(this.getRootElement().getElement() != null){
+                this.getParent().replace(this.getRootElement().getElement()
+                        , this.getRootElement().getHookDocument().toString());
+            }
+        }
+    }
+
+    /**
+     * 特殊文字(エンティティ参照)の置換
+     *
+     * @param element 入力文字列
+     * @return 出力文字列
+     */
+    protected final String tranCharXML(String element) {
+        //Pattern pattern = null;
+        //Matcher matcher = null;
+        //特殊文字の置換
+        //「\」->[\\]
+        _matcher = pattern_en_1.matcher(element);
+        element = _matcher.replaceAll(EN_2);
+        //「&」->「&amp;」
+        _matcher = pattern_and_1.matcher(element);
+        element = _matcher.replaceAll(AND_2);
+        //「<」->「&lt;」
+        _matcher = pattern_lt_1.matcher(element);
+        element = _matcher.replaceAll(LT_2);
+        //「>」->「&gt;」
+        _matcher = pattern_gt_1.matcher(element);
+        element = _matcher.replaceAll(GT_2);
+        //「"」->「&quot;」
+        _matcher = pattern_dq_1.matcher(element);
+        element = _matcher.replaceAll(QO_2);
+        //「'」->「&apos;」
+        _matcher = pattern_ap_1.matcher(element);
+        element = _matcher.replaceAll(AP_2);
+        //初期化
+        //matcher.reset();
+        //pattern = null;
+        //matcher = null;
+        return element;
+    }
+
+    protected final String tranCharXMLContent(String element, String elmName) {
+
+        return this.tranCharXML(element);
+    }
+
+    protected final String restoreCharXML(String element) {
+        //Pattern pattern = null;
+        //Matcher matcher = null;
+        //特殊文字の復元
+        //「\」->[\\]
+        _matcher = pattern_en_1.matcher(element);
+        element = _matcher.replaceAll(EN_2);
+        //「<」<-「&lt;」
+        _matcher = pattern_lt_2.matcher(element);
+        element = _matcher.replaceAll(LT_1);
+        //「>」<-「&gt;」
+        _matcher = pattern_gt_2.matcher(element);
+        element = _matcher.replaceAll(GT_1);
+        //「"」->「&quot;」
+        _matcher = pattern_dq_2.matcher(element);
+        element = _matcher.replaceAll(DOUBLE_QUATATION);
+        //「'」->「&apos;」
+        _matcher = pattern_ap_2.matcher(element);
+        element = _matcher.replaceAll(AP_1);
+        //「&」->「&amp;」
+        _matcher = pattern_and_2.matcher(element);
+        element = _matcher.replaceAll(AND_1);
+        //初期化
+        //matcher.reset();
+        //pattern = null;
+        //matcher = null;
+        return element;
+    }
+
+    protected final String restoreCharXMLContent(String element, String elmName) {
+
+        return this.restoreCharXML(element);
+	}
+}

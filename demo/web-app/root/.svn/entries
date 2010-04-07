@@ -1,0 +1,99 @@
+9
+
+dir
+9
+file:///D:/svn-repository/meteor/demo/web-app/root
+file:///D:/svn-repository
+
+
+
+2007-08-19T09:22:47.734375Z
+5
+asip
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+d059b570-db4d-db42-b9a5-b7f19c889284
+
+WEB-INF
+dir
+
+exploded
+dir
+
+index.html
+file
+
+
+
+
+2007-08-06T02:42:48.000000Z
+9d66e405580ae425cb7fefb375bcbf41
+2007-08-06T02:42:18.234375Z
+1
+asip
+
+jakarta-oro-2.0.8.jar
+file
+
+
+
+
+2007-08-06T02:42:48.000000Z
+42e940d5d2d822f4dc04c65053e630ab
+2007-08-06T02:42:18.234375Z
+1
+asip
+has-props
+
+module_root.xml
+file
+
+
+
+
+2007-08-06T02:42:48.000000Z
+560ee7aa86a2aa75d4496cc938db45c4
+2007-08-06T02:42:18.234375Z
+1
+asip
+
+root.iml
+file
+12
+
+
+
+2007-09-29T14:24:19.000000Z
+29ee61951b2ff57fef375a7716393277
+2007-10-03T14:33:15.625000Z
+12
+asip
+
+src
+dir
+
+ur-oro.jar
+file
+
+
+
+
+2007-08-06T02:42:48.000000Z
+c8bea68d5fb3e932b2779966c41269a1
+2007-08-06T02:42:18.234375Z
+1
+asip
+has-props
+

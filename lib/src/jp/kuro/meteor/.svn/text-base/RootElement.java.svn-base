@@ -1,0 +1,97 @@
+package jp.kuro.meteor;
+
+
+/**
+ * ルート要素クラス
+ * @author Yasumasa Ashida
+ * @since 2005/02/19 20:18:51
+ */
+public class RootElement extends Element {
+    private final static String EMPTY = "";
+
+    private String contentType;
+
+    private String kaigyoCode;
+    //エンコーディング
+    private String characterEncoding;
+
+    //フック用文字列
+    protected StringBuilder hookDocument = new StringBuilder();
+    //フック判定フラグ
+    private boolean hook = false;
+    //モノフック判定フラグ
+    private boolean monoHook = false;
+    //フック用タグ
+    private Element Element = null;
+
+    //可変要素
+    private Element variableElement;
+
+    public RootElement() {
+        super(EMPTY);
+    }
+
+    public final String getContentType() {
+        return contentType;
+    }
+
+    public final void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public final String getCharacterEncoding() {
+        return characterEncoding;
+    }
+
+    public final void setCharacterEncoding(String characterEncoding) {
+        this.characterEncoding = characterEncoding;
+    }
+
+    public final String getKaigyoCode() {
+        return kaigyoCode;
+    }
+
+    public void setKaigyoCode(String kaigyoCode) {
+        this.kaigyoCode = kaigyoCode;
+    }
+
+    public final StringBuilder getHookDocument() {
+        return hookDocument;
+    }
+
+    public final void setHookDocument(StringBuilder hookDocument) {
+        this.hookDocument = hookDocument;
+    }
+
+    public final boolean isHook() {
+        return hook;
+    }
+
+    public final void setHook(boolean hook) {
+        this.hook = hook;
+    }
+
+    public final boolean isMonoHook() {
+        return monoHook;
+    }
+
+    public final void setMonoHook(boolean monoHook) {
+        this.monoHook = monoHook;
+    }
+
+    public final Element getElement() {
+        return Element;
+    }
+
+    public final void setElement(Element elm) {
+        this.Element = elm;
+    }
+
+    public Element getVariableElement() {
+        return variableElement;
+    }
+
+    public void setVariableElement(Element variableElement) {
+        this.variableElement = variableElement;
+    }
+}

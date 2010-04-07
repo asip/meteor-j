@@ -1,0 +1,42 @@
+package jp.kuro.meteor.hook;
+
+import jp.kuro.meteor.Element;
+import jp.kuro.meteor.Parser;
+
+/**
+ * フック処理クラス
+ *
+ * @author Yasumasa Ashida
+ */
+public abstract class Hooker {
+    /**
+     * デフォルトコンストラクタ
+     */
+    public Hooker() {
+    }
+
+    /**
+     * フック処理(実体)
+     *
+     * @param elm Tagオブジェクト
+     * @param pif  Parserオブジェクト
+     */
+    public final void doAction(Element elm, Parser pif) {
+        //要素ありタグの場合
+        if (elm.empty()) {
+            Parser pif2;
+
+            pif2 = pif.getChildParser(elm);
+            execute(pif2);
+            pif.replace(elm, pif2.getRootElement().getHookDocument().toString());
+        }
+    }
+
+    /**
+     * フック処理を実装する
+     *
+     * @param pif Parserオブジェクト
+     */
+    public abstract void execute(Parser pif);
+	
+}

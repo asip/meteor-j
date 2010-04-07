@@ -1,0 +1,80 @@
+package jp.kuro.meteor.printer;
+
+import jp.kuro.meteor.Parser;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import java.io.PrintWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.zip.GZIPOutputStream;
+
+/**
+ * HTTPプリンタ(GZIP圧縮)
+ * User: ASIP
+ * Date: 2004/12/05
+ * Time: 13:11:58
+ * To change this template use File | Settings | File Templates.
+ */
+public class GZipHttpPrinter {
+    private static final String EMPTY = "";
+
+    private static final String ACCEPT_ENCODING = "Accept-Encoding";
+    private static final String X_GZIP = "x-gzip";
+    private static final String GZIP = "gzip";
+    private static final String CONTENT_ENCODING = "Content-Encoding";
+
+    HttpServletRequest req;
+    HttpServletResponse res;
+
+    public GZipHttpPrinter(HttpServletRequest req, HttpServletResponse res) {
+        this.req = req;
+        this.res = res;
+    }
+
+    public final void print(Parser pif) throws IOException {
+
+        String acceptEncoding;
+        String transferEncoding;
+
+        acceptEncoding = req.getHeader(ACCEPT_ENCODING);
+
+        if (acceptEncoding == null) {
+            acceptEncoding = EMPTY;
+        }
+
+        acceptEncoding = acceptEncoding.toLowerCase();
+
+        if (acceptEncoding.indexOf(X_GZIP) >= 0) {
+            transferEncoding = X_GZIP;
+        } else {
+            if (acceptEncoding.indexOf(GZIP) >= 0) {
+                transferEncoding = GZIP;
+            } else {
+                transferEncoding = EMPTY;
+            }
+        }
+
+        res.setContentType(pif.getRootElement().getContentType());
+
+        if (!EMPTY.equals(transferEncoding) && pif.getRootElement().getCharacterEncoding() != null) {
+
+            res.setHeader(CONTENT_ENCODING, transferEncoding);
+
+            OutputStream osr = res.getOutputStream();
+            GZIPOutputStream gos = new GZIPOutputStream(osr);
+
+            gos.write(pif.getRootElement().getDocument().getBytes(pif.getRootElement().getCharacterEncoding()));
+
+            gos.flush();
+            gos.close();
+
+        } else {
+            PrintWriter pw = res.getWriter();
+            pw.print(pif.getRootElement().getDocument());
+            pw.flush();
+            pw.close();
+
+        }
+    }
+}

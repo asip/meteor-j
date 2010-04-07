@@ -1,0 +1,175 @@
+package jp.kuro.meteor;
+
+/**
+ * 要素情報保持クラス
+ *
+ * @author Yasumasa Ashida
+ */
+public class Element {
+    private String name = null;
+    private String attrs = null;
+    private String content = null;
+    private String pattern = null;
+    private String document = null;
+    private boolean empty = false;
+    private boolean cx = false;
+    private boolean mono = false;
+
+    /**
+     * タグ名を引数とするコンストラクタ
+     *
+     * @param name 要素名
+     */
+    public Element(String name) {
+        this.name = name;
+    }
+
+
+    public Element(Element elm) {
+        this.name = elm.getName();
+        this.attrs = elm.getAttributes();
+        this.content = elm.getContent();
+        this.pattern = elm.getPattern();
+        this.document = elm.getDocument();
+        this.empty = elm.empty();
+        this.cx = elm.cx();
+        this.mono = elm.mono();
+    }
+
+    /**
+     * タグ全体をセットする
+     *
+     * @param document タグ全体
+     */
+    public final void setDocument(String document) {
+        this.document = document;
+    }
+
+    /**
+     * タグ全体を取得する
+     *
+     * @return タグ名
+     */
+    public final String getDocument() {
+        return document;
+    }
+
+    /**
+     * タグ名をセットする
+     *
+     * @param name タグ名
+     */
+    public final void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * タグ名を取得する
+     *
+     * @return タグ名
+     */
+    public final String getName() {
+        return name;
+    }
+
+    /**
+     * 属性をセットする
+     *
+     * @param attrs 属性
+     */
+    public final void setAttributes(String attrs) {
+        this.attrs = attrs;
+    }
+
+    /**
+     * 属性を取得する
+     *
+     * @return 属性
+     */
+    public final String getAttributes() {
+        return attrs;
+    }
+
+    /**
+     * 要素をセットする
+     *
+     * @param content 要素
+     */
+    public final void setContent(String content) {
+        this.content = content;
+        this.empty = true;
+    }
+
+    /**
+     * 要素を取得する
+     *
+     * @return 要素
+     */
+    public final String getContent() {
+        return content;
+    }
+
+    /**
+     * パターンをセットする
+     *
+     * @param pattern パターン
+     */
+    public final void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
+
+    /**
+     * パターンを取得する
+     *
+     * @return パターン
+     */
+    public final String getPattern() {
+        return pattern;
+    }
+
+    /**
+     * 内容存在フラグを取得する
+     *
+     * @return 内容存在フラグ
+     */
+    public final boolean empty() {
+        return empty;
+    }
+
+    /**
+     * タグ状態をセットする
+     *
+     * @param cx タグ状態
+     */
+    public final void setCx(boolean cx) {
+        this.cx = cx;
+    }
+
+    /**
+     * タグ状態を取得する
+     *
+     * @return タグ状態
+     */
+    public final boolean cx() {
+        return cx;
+    }
+
+    /**
+     * 要素値状態をセットする
+     *
+     * @param mono 要素値状態
+     */
+    public final void setMono(boolean mono) {
+        this.mono = mono;
+    }
+
+    /**
+     * 要素値状態を取得する
+     *
+     * @return 要素値状態
+     */
+    public final boolean mono() {
+        return mono;
+    }
+
+}

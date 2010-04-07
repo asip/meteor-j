@@ -1,0 +1,52 @@
+9
+
+dir
+9
+file:///D:/svn-repository/meteor/jdk15/src/jp/kuro/meteor/printer
+file:///D:/svn-repository
+
+
+
+2007-08-06T02:42:18.234375Z
+1
+asip
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+d059b570-db4d-db42-b9a5-b7f19c889284
+
+GZipHttpPrinter.java
+file
+17
+
+
+
+2008-02-16T21:59:32.468750Z
+e2165eed1096a14b0ce9a9ae76d0ff7e
+2008-02-16T22:20:12.343750Z
+17
+asip
+
+HttpPrinter.java
+file
+17
+
+
+
+2008-02-16T21:58:52.062500Z
+1d19c7fbeba277723991992cc9ae1cb2
+2008-02-16T22:20:12.343750Z
+17
+asip
+

@@ -1,0 +1,31 @@
+<?xml encoding="Shift-JIS" ?>
+<test manbo="manbo">
+    <tech mono="mono">komaneti</tech>
+</test>
+<test manbo="mbo">
+    <tech mono="mono">komaneti</tech>
+</test>
+<test manbo="mbo">
+    <tech mono="mono2">komaneti</tech>
+</test>
+<test manbo="mango" />
+<!-- @quark id="mono" --><!-- /@quark -->
+<!-- @quark id="moti" --><!-- /@quark -->
+<momo >komaneti</momo>
+<kobe momo="mono">komaneti</kobe>
+<teo a="aa" b="bb"/>
+<mink>komaneti</mink>
+
+<potato id="aa" lc="/cc">
+    <potato id="/bb"><test></test></potato>
+</potato>
+
+<potato id="aa" id2="bb" lc="/cc">
+    <potato id="/bb"><test></test></potato>
+</potato>
+
+<hamachi id="aa" id2="bb" lc="/cc">
+    test
+</hamachi>
+
+<hamachi id="aa" id2="bb" />

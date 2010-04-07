@@ -1,0 +1,43 @@
+9
+
+dir
+9
+file:///D:/svn-repository/meteor/demo/web-app/root/exploded
+file:///D:/svn-repository
+
+
+
+2007-08-06T02:42:18.234375Z
+1
+asip
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+d059b570-db4d-db42-b9a5-b7f19c889284
+
+WEB-INF
+dir
+
+index.html
+file
+
+
+
+
+2007-08-06T02:42:45.000000Z
+9d66e405580ae425cb7fefb375bcbf41
+2007-08-06T02:42:18.234375Z
+1
+asip
+

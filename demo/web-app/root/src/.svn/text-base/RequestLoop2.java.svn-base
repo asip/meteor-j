@@ -1,0 +1,43 @@
+//Kuro API
+
+import jp.kuro.meteor.*;
+import jp.kuro.meteor.hook.Hooker;
+
+//標準API
+import java.util.*;
+
+public class RequestLoop2 extends Hooker {
+    HashMap hmap;
+
+    public RequestLoop2(HashMap query) {
+        hmap = query;
+    }
+
+    public void execute(Parser xt) {
+        HashMap query = (HashMap) hmap;
+
+        //タグ検索
+        Element tag = xt.findElement("name", "param1");
+        Element tag2 = xt.findElement("name", "param2");
+
+        String param1;
+        String param2;
+
+        for (int j = 0; j < 3; j++) {
+            //表示ロジック
+            if ((String) query.get("submit") != null) {
+                param1 = (String) ((ArrayList) query.get("param1")).get(j);
+                param2 = (String) ((ArrayList) query.get("param2")).get(j);
+
+                xt.setAttribute(tag, "value", param1);
+                xt.setAttribute(tag2, "value", param2);
+            }
+
+            //出力ロジック
+            xt.print();
+        }
+    }
+
+    public void execute(Parser xt, Object obj) {
+    }
+}

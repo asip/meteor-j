@@ -1,0 +1,33 @@
+//Kuro API
+
+import jp.kuro.meteor.*;
+import jp.kuro.meteor.hook.Looper;
+
+//標準API
+import java.util.*;
+
+public class LoopML extends Looper {
+    public void execute(Parser xt, Object obj) {
+
+        //タグ検索
+        Element tag = xt.findElement("a");
+        Element tag2 = xt.findCXTag("name");
+        Element tag3 = xt.findCXTag("set");
+
+        //表示データの加工
+        Hashtable rec = (Hashtable) obj;
+        String NAME = (String) rec.get("name");
+        String SET = (String) rec.get("set");
+        if (SET.equals("")) {
+            SET = " ";
+        }
+        String URL = (String) rec.get("url");
+        //表示ロジック
+        xt.setContent(tag2, NAME);
+        xt.setAttribute(tag, "href", URL);
+        xt.setContent(tag3, SET);
+        //出力ロジック
+        xt.print();
+
+    }
+}
