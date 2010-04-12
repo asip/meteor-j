@@ -1,4 +1,5 @@
 //標準API
+
 import java.io.*;
 
 //ServletAPI
@@ -46,14 +47,16 @@ public class LoopServletHTML3_2 extends HttpServlet {
 
         Element tag = xt.element("option", "value", "test");
 
-        Parser xt2 = xt.child(tag);
+        Element xt2 = xt.shadow(tag);
 
         for (int j = 0; j < 3; j++) {
-            xt2.attribute( "value", Integer.toString(j));
-            xt2.content( "test" + Integer.toString(j));
-            xt2.print();
+            xt2.attribute("value", Integer.toString(j));
+            xt2.content("test" + Integer.toString(j));
+            xt2.flush();
         }
-        xt2.flush();
+
+        //反映する
+        xt.flush();
 
         HttpPrinter prt = new HttpPrinter(res);
         prt.print(xt);

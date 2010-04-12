@@ -1,4 +1,5 @@
 //標準API
+
 import java.io.*;
 import java.util.HashMap;
 
@@ -35,7 +36,7 @@ public class UploadServlet extends HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
         Parser xt = pf.parser();
-        
+
         anl.setCharacterEncoding("Shift_JIS");
 
         HashMap query = anl.analyze(req).getQuery();
@@ -74,6 +75,9 @@ public class UploadServlet extends HttpServlet {
             }
 
         }
+
+        //反映する
+        xt.flush();
 
         HttpPrinter prt = new HttpPrinter(res);
         prt.print(xt);

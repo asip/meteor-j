@@ -20,56 +20,57 @@
 package jp.kuro.meteor.hook;
 
 import jp.kuro.meteor.Element;
-import jp.kuro.meteor.Parser;
 
 import java.util.List;
 
 /**
  * ループ専用フック処理クラス
+ *
  * @author Yasumasa Ashida
- * @version 0.9.0.0
+ * @version 0.9.3.3
  * @since 2006/04/16 19:37:20
  */
 public abstract class Looper {
 
-   /**
+    /**
      * フック処理(実体-値渡し-)
      *
      * @param elm  Tagオブジェクト
-     * @param pif   Parserオブジェクト
      * @param list Listオブジェクト
      */
-    public final void doAction(Element elm, Parser pif, List list) {
+    public final void doAction(Element elm,List list) {
         //要素ありタグの場合
         if (elm.empty()) {
-            Parser pif2 = pif.child(elm);
+            Element elm2 = elm.child(elm);
 
-            init(pif2);
+            init(elm2);
 
-            for (Object aList : list) {
+            for (Object item : list) {
 
-                if (pif2.rootElement().hook()) {
-                    pif2.rootElement().document(elm.mixedContent());
-                } else if (pif2.rootElement().monoHook()) {
-                    //pif2.rootElement().document(elm.document());
+                if (!elm2.mono()) {
+                    elm2.parser().rootElement().document(elm.mixedContent());
                 }
-                execute(pif2.rootElement().mutableElement(),aList);
-                pif2.print();
+                //else if (elm2.monoHook()) {
+                //pif2.rootElement().document(elm.document());
+                //}
+                execute(elm2, item);
+                elm2.flush();
             }
-            pif2.flush();
 
             //todo
             //System.out.println(pif2.hookDocument());
         }
     }
 
-    protected void init(Parser pif){};
+    protected void init(Element elm) {
+    }
 
     /**
      * フック処理を実装する
      *
+     * @param elm 要素
      * @param item Objectオブジェクト
      */
-    protected abstract void execute(Element elm,Object item);
+    protected abstract void execute(Element elm, Object item);
 
 }

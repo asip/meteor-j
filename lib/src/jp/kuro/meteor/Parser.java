@@ -23,12 +23,14 @@ import jp.kuro.meteor.hook.Hooker;
 import jp.kuro.meteor.hook.Looper;
 
 import java.util.List;
+import java.util.LinkedHashMap;
 
 /**
  * パーサ共通インタ－フェイス
+ *
  * @author Yasumasa Ashida
+ * @version 0.9.3.3
  * @since 2003/01/25 18:31:27
- * @version 0.9.0.0
  */
 public interface Parser {
     public static final int HTML = 0;
@@ -39,8 +41,16 @@ public interface Parser {
     //void read(String filePath,String encoding);
 
     /**
+     * 要素をコピーする
+     * @param elm 要素
+     * @return 要素
+     */
+    Element element(Element elm);
+
+    /**
      * 要素名で要素を検索する。
      * 先頭から検索し、最初にヒットした要素の情報を返します。
+     *
      * @param elmName 要素名
      * @return 要素
      */
@@ -49,8 +59,9 @@ public interface Parser {
     /**
      * 要素名、属性(属性名="属性値")で要素を検索する。
      * 先頭から検索し、最初にヒットした要素の情報を返します。
-     * @param elmName 要素名
-     * @param attrName 属性名
+     *
+     * @param elmName   要素名
+     * @param attrName  属性名
      * @param attrValue 属性値
      * @return 要素
      */
@@ -59,7 +70,8 @@ public interface Parser {
     /**
      * 属性(属性名="属性値")で要素を検索する。
      * 先頭から検索し、最初にヒットした要素の情報を返します。
-     * @param attrName 属性名
+     *
+     * @param attrName  属性名
      * @param attrValue 属性値
      * @return 要素
      */
@@ -68,25 +80,27 @@ public interface Parser {
     /**
      * 要素名、属性1と属性2(属性名="属性値")で要素を検索する。
      * 先頭から検索し、最初にヒットした要素の情報を返します。
-     * @param elmName 要素名
-     * @param attrName1 属性名1
+     *
+     * @param elmName    要素名
+     * @param attrName1  属性名1
      * @param attrValue1 属性値1
-     * @param attrName2 属性名2
+     * @param attrName2  属性名2
      * @param attrValue2 属性値2
      * @return 要素
      */
-    Element element(String elmName, String attrName1,String attrValue1,String attrName2,String attrValue2);
+    Element element(String elmName, String attrName1, String attrValue1, String attrName2, String attrValue2);
 
     /**
      * 属性1と属性2(属性名="属性値")で要素を検索する。
      * 先頭から検索し、最初にヒットした要素の情報を返します。
-     * @param attrName1 属性名1
+     *
+     * @param attrName1  属性名1
      * @param attrValue1 属性値1
-     * @param attrName2 属性名2
+     * @param attrName2  属性名2
      * @param attrValue2 属性値2
      * @return 要素
      */
-    Element element(String attrName1, String attrValue1,String attrName2, String attrValue2);
+    Element element(String attrName1, String attrValue1, String attrName2, String attrValue2);
 
     /**
      * 要素名を変更する
@@ -100,23 +114,26 @@ public interface Parser {
     /**
      * 属性をセットする。
      * 属性名で指定した属性が既にある場合は更新し、ない場合は追加する
-     * @param elm 要素
-     * @param attrName 属性名
+     *
+     * @param elm       要素
+     * @param attrName  属性名
      * @param attrValue 属性値
      */
-    void attribute(Element elm, String attrName, String attrValue);
+    Element attribute(Element elm, String attrName, String attrValue);
 
     /**
      * 属性をセットする。
      * 属性名で指定した属性が既にある場合は更新し、ない場合は追加する
-     * @param attrName 属性名
+     *
+     * @param attrName  属性名
      * @param attrValue 属性値
      */
-    void attribute(String attrName, String attrValue);
+    Element attribute(String attrName, String attrValue);
 
     /**
      * 要素から属性名で属性値を取得する
-     * @param elm 要素
+     *
+     * @param elm      要素
      * @param attrName 属性名
      * @return 属性値
      */
@@ -124,6 +141,7 @@ public interface Parser {
 
     /**
      * 要素から属性名で属性値を取得する
+     *
      * @param attrName 属性名
      * @return 属性値
      */
@@ -131,6 +149,7 @@ public interface Parser {
 
     /**
      * 属性マップを取得する
+     *
      * @param elm 要素
      * @return 属性マップ
      */
@@ -138,53 +157,61 @@ public interface Parser {
 
     /**
      * 属性マップを取得する
+     *
      * @return 属性マップ
      */
     AttributeMap attributeMap();
 
     /**
      * 属性を削除する
-     * @param elm 要素
+     *
+     * @param elm      要素
      * @param attrName 属性名
      */
-    void removeAttribute(Element elm, String attrName);
+    Element removeAttribute(Element elm, String attrName);
 
     /**
      * 属性を削除する
+     *
      * @param attrName 属性名
      */
     void removeAttribute(String attrName);
 
     /**
      * 要素の内容をセットする
-     * @param elm 要素
-     * @param content 要素の内容
+     *
+     * @param elm       要素
+     * @param content   要素の内容
      * @param entityRef エンティティ参照フラグ
      */
-    void content(Element elm, String content, boolean entityRef);
+    Element content(Element elm, String content, boolean entityRef);
 
     /**
      * 要素の内容をセットする
-     * @param content 要素の内容
+     *
+     * @param content   要素の内容
      * @param entityRef エンティティ参照フラグ
      */
-    void content(String content, boolean entityRef);
+    Element content(String content, boolean entityRef);
 
     /**
      * 要素の内容をセットする
-     * @param elm 要素
+     *
+     * @param elm     要素
      * @param content 要素の内容
      */
-    void content(Element elm, String content);
+    Element content(Element elm, String content);
 
     /**
      * 要素の内容をセットする
+     *
      * @param content 要素の内容
      */
-    void content(String content);
+    Element content(String content);
 
     /**
      * 要素の内容を取得する
+     *
      * @param elm 要素
      * @return 要素の内容
      */
@@ -192,59 +219,61 @@ public interface Parser {
 
     /**
      * 要素を削除する
+     *
      * @param elm 要素
      */
-    void removeElement(Element elm);
+    Element removeElement(Element elm);
 
     /**
      * 要素名とID属性でCX(コメント拡張)タグを検索する
+     *
      * @param elmName 要素名
-     * @param id ID属性値
+     * @param id      ID属性値
      * @return 要素
      */
     Element cxTag(String elmName, String id);
 
     /**
      * ID属性でCX(コメント拡張)タグを検索する
+     *
      * @param id ID属性値
      * @return 要素
      */
     Element cxTag(String id);
 
     /**
-     * ドキュメントを出力する
+     * 反映する
      */
-    void print();
+    void flush();
 
     /**
      * 要素に対してHookerサブクラスに記述した処理を行う
-     * @param elm 要素
+     *
+     * @param elm  要素
      * @param hook Hookerサブクラス
      */
     void execute(Element elm, Hooker hook);
 
     /**
      * 要素に対してLooperサブクラスに記述した処理を行う
-     * @param elm 要素
+     *
+     * @param elm  要素
      * @param hook Looperサブクラス
      * @param list ループ処理用データ
      */
     void execute(Element elm, Looper hook, List list);
 
     /**
-     * 子パーサを取得する
+     * 要素をコピーする
+     *
      * @param elm 要素
-     * @return 子パーサ
+     * @return 要素
      */
-    Parser child(Element elm);
-
-    /**
-     * 子パーサを親パーサに反映する
-     */
-    void flush();
+    Element shadow(Element elm);
 
     /**
      * ルート要素を取得する
+     *
      * @return ルート要素
      */
     RootElement rootElement();
@@ -263,14 +292,21 @@ public interface Parser {
 
     /**
      * 要素を置換する
-     * @param elm 要素
+     *
+     * @param elm             要素
      * @param replaceDocument 置換文字列
      */
     void replace(Element elm, String replaceDocument);
 
     /**
      * ドキュメントを取得する
+     *
      * @return ドキュメント
      */
     String document();
+
+
+    int docType();
+
+    LinkedHashMap<Integer, Element> elementCache();
 }

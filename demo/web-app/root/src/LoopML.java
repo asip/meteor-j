@@ -1,4 +1,5 @@
 //Kuro API
+
 import jp.kuro.meteor.*;
 import jp.kuro.meteor.hook.Looper;
 
@@ -11,16 +12,16 @@ public class LoopML extends Looper {
     Element tag2;
     Element tag3;
 
-    public void init(Parser xt){
+    public void init(Element xt) {
         //タグ検索
-        tag = xt.element("a");
+        tag = xt.child("a");
         tag2 = xt.cxTag("name");
         tag3 = xt.cxTag("set");
     }
 
     public void execute(Element elm, Object obj) {
         //表示データの加工
-        HashMap rec = (HashMap)obj;
+        HashMap rec = (HashMap) obj;
         String NAME = (String) rec.get("name");
         String SET = (String) rec.get("set");
         if (SET.equals("")) {

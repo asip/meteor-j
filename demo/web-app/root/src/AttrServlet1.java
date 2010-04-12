@@ -1,4 +1,5 @@
 //標準API
+
 import java.io.*;
 
 //ServletAPI
@@ -35,6 +36,8 @@ public class AttrServlet1 extends HttpServlet {
         xt.attribute(tag, "color", "#FF0000");
         //文字列のサイズを変更します
         xt.attribute(tag, "size", "4");
+        //反映する
+        xt.flush();
         //HTTP出力する
         HttpPrinter prt = new HttpPrinter(res);
         prt.print(xt);

@@ -1,7 +1,6 @@
 import jp.kuro.ur.*;
 
 /**
- *
  * @author Yasumasa Ashida
  * @since 2003/02/04 8:32:45
  */

@@ -25,20 +25,25 @@ import java.util.regex.Pattern;
 
 /**
  * 正規表現パターンキャッシュ
+ *
  * @author Yasumasa Ashida
+ * @author Yasumasa Ashida
+ * @version 0.9.3.3
  * @since 2007/09/30 17:49:21
- * @author Yasumasa Ashida
- * @version 0.9.0.0
  */
 public class PatternCache {
 
-    /** 正規表現キャッシュ（キー：正規表現文字列、値：Pattern オブジェクト） */
+    /**
+     * 正規表現キャッシュ（キー：正規表現文字列、値：Pattern オブジェクト）
+     */
     private static final Map<String, Pattern> regexCache =
-        new ConcurrentHashMap<String, Pattern>();
+            new ConcurrentHashMap<String, Pattern>();
 
-    /** リテラルキャッシュ（キー：リテラル文字列、値：Pattern オブジェクト） */
+    /**
+     * リテラルキャッシュ（キー：リテラル文字列、値：Pattern オブジェクト）
+     */
     private static final Map<String, Pattern> literalCache =
-        new ConcurrentHashMap<String, Pattern>();
+            new ConcurrentHashMap<String, Pattern>();
 
     /**
      * コンストラクタです。生成不可。

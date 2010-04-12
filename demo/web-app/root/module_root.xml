@@ -1,87 +1,90 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="module_root" default="compile.module.root">
-  <dirname property="module.root.basedir" file="${ant.file.module_root}"/>
-  
-  <property name="module.jdk.home.root" value="${project.jdk.home}"/>
-  <property name="module.jdk.classpath.root" value="${project.jdk.classpath}"/>
-  
-  <property name="compiler.args.root" value="${compiler.args}"/>
-  
-  <property name="root.output.dir" value="${module.root.basedir}/exploded/WEB-INF/classes"/>
-  <property name="root.testoutput.dir" value="${module.root.basedir}/WEB-INF/classes"/>
-  
-  <path id="root.module.bootclasspath">
-    <!-- Paths to be included in compilation bootclasspath -->
-  </path>
-  
-  <path id="root.module.classpath">
-    <path refid="${module.jdk.classpath.root}"/>
-    <pathelement location="${module.root.basedir}/WEB-INF/lib/kqa-jdk14.jar"/>
-    <pathelement location="${module.root.basedir}/WEB-INF/lib/comet-jdk14.jar"/>
-  </path>
-  
-  
-  
-  <path id="root.module.sourcepath">
-    <dirset dir="${module.root.basedir}">
-      <include name="src"/>
-    </dirset>
-  </path>
-  
-  
-  <target name="compile.module.root" depends="compile.module.root.production,compile.module.root.tests" description="compile module(s) root"/>
-  
-  <target name="compile.module.root.production" description="compile module(s) root production classes">
-    <mkdir dir="${root.output.dir}"/>
-    <javac destdir="${root.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memoryMaximumSize="${compiler.max.memory}" fork="true" executable="${module.jdk.home.root}/bin/javac">
-      <compilerarg line="${compiler.args.root}"/>
-      <bootclasspath refid="root.module.bootclasspath"/>
-      <classpath refid="root.module.classpath"/>
-      <src refid="root.module.sourcepath"/>
-    </javac>
-    <copy todir="${root.output.dir}">
-      <fileset dir="${module.root.basedir}/src">
-        <patternset refid="compiler.resources"/>
-        <type type="file"/>
-      </fileset>
-    </copy>
-  </target>
-  
-  <target name="compile.module.root.tests" depends="compile.module.root.production" description="compile module(s) root test classes" unless="skip.tests"/>
-  
-  <target name="clean.module.root" description="cleanup module">
-    <delete dir="${root.output.dir}"/>
-    <delete dir="${root.testoutput.dir}"/>
-  </target>
-  
-  <property name="root.dir.exploded" value="${module.root.basedir}/exploded"/>
-  <target name="j2ee.build.root" depends="compile.module.root" description="Build configured J2EE directories and archives for module 'root'">
-    <antcall target="j2ee.build.exploded.root">
-      <param name="j2ee.dir.exploded" value="${root.dir.exploded}"/>
-    </antcall>
-  </target>
-  <target name="j2ee.build.exploded.root" description="Build exploded directory for module 'root'">
-    <copy file="${module.root.basedir}/WEB-INF/jboss-web.xml" tofile="${j2ee.dir.exploded}/WEB-INF/jboss-web.xml"/>
-    <copy file="${module.root.basedir}/WEB-INF/web.xml" tofile="${j2ee.dir.exploded}/WEB-INF/web.xml"/>
-    <copy todir="${j2ee.dir.exploded}/WEB-INF">
-      <fileset dir="${module.root.basedir}/WEB-INF"/>
-    </copy>
-    <copy todir="${j2ee.dir.exploded}/WEB-INF/classes">
-      <fileset dir="${module.root.basedir}/exploded/WEB-INF/classes"/>
-    </copy>
-  </target>
-  <target name="j2ee.build.jar.root" description="Build J2EE archive for module 'root'">
-    <dirname property="jar.dir" file="${j2ee.path.jar}"/>
-    <mkdir dir="${jar.dir}"/>
-    <jar destfile="${j2ee.path.jar}" duplicate="preserve">
-      <manifest>
-        <attribute name="Created-By" value="IntelliJ IDEA"/>
-        <attribute name="Manifest-Version" value="1.0"/>
-      </manifest>
-      <zipfileset dir="${module.root.basedir}/exploded/WEB-INF/classes" prefix="WEB-INF/classes"/>
-      <zipfileset dir="${module.root.basedir}/WEB-INF" prefix="WEB-INF"/>
-      <zipfileset file="${module.root.basedir}/WEB-INF/web.xml" prefix="WEB-INF"/>
-      <zipfileset file="${module.root.basedir}/WEB-INF/jboss-web.xml" prefix="WEB-INF"/>
-    </jar>
-  </target>
+    <dirname property="module.root.basedir" file="${ant.file.module_root}"/>
+
+    <property name="module.jdk.home.root" value="${project.jdk.home}"/>
+    <property name="module.jdk.classpath.root" value="${project.jdk.classpath}"/>
+
+    <property name="compiler.args.root" value="${compiler.args}"/>
+
+    <property name="root.output.dir" value="${module.root.basedir}/exploded/WEB-INF/classes"/>
+    <property name="root.testoutput.dir" value="${module.root.basedir}/WEB-INF/classes"/>
+
+    <path id="root.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="root.module.classpath">
+        <path refid="${module.jdk.classpath.root}"/>
+        <pathelement location="${module.root.basedir}/WEB-INF/lib/kqa-jdk14.jar"/>
+        <pathelement location="${module.root.basedir}/WEB-INF/lib/comet-jdk14.jar"/>
+    </path>
+
+
+    <path id="root.module.sourcepath">
+        <dirset dir="${module.root.basedir}">
+            <include name="src"/>
+        </dirset>
+    </path>
+
+
+    <target name="compile.module.root" depends="compile.module.root.production,compile.module.root.tests"
+            description="compile module(s) root"/>
+
+    <target name="compile.module.root.production" description="compile module(s) root production classes">
+        <mkdir dir="${root.output.dir}"/>
+        <javac destdir="${root.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
+               memoryMaximumSize="${compiler.max.memory}" fork="true" executable="${module.jdk.home.root}/bin/javac">
+            <compilerarg line="${compiler.args.root}"/>
+            <bootclasspath refid="root.module.bootclasspath"/>
+            <classpath refid="root.module.classpath"/>
+            <src refid="root.module.sourcepath"/>
+        </javac>
+        <copy todir="${root.output.dir}">
+            <fileset dir="${module.root.basedir}/src">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile.module.root.tests" depends="compile.module.root.production"
+            description="compile module(s) root test classes" unless="skip.tests"/>
+
+    <target name="clean.module.root" description="cleanup module">
+        <delete dir="${root.output.dir}"/>
+        <delete dir="${root.testoutput.dir}"/>
+    </target>
+
+    <property name="root.dir.exploded" value="${module.root.basedir}/exploded"/>
+    <target name="j2ee.build.root" depends="compile.module.root"
+            description="Build configured J2EE directories and archives for module 'root'">
+        <antcall target="j2ee.build.exploded.root">
+            <param name="j2ee.dir.exploded" value="${root.dir.exploded}"/>
+        </antcall>
+    </target>
+    <target name="j2ee.build.exploded.root" description="Build exploded directory for module 'root'">
+        <copy file="${module.root.basedir}/WEB-INF/jboss-web.xml" tofile="${j2ee.dir.exploded}/WEB-INF/jboss-web.xml"/>
+        <copy file="${module.root.basedir}/WEB-INF/web.xml" tofile="${j2ee.dir.exploded}/WEB-INF/web.xml"/>
+        <copy todir="${j2ee.dir.exploded}/WEB-INF">
+            <fileset dir="${module.root.basedir}/WEB-INF"/>
+        </copy>
+        <copy todir="${j2ee.dir.exploded}/WEB-INF/classes">
+            <fileset dir="${module.root.basedir}/exploded/WEB-INF/classes"/>
+        </copy>
+    </target>
+    <target name="j2ee.build.jar.root" description="Build J2EE archive for module 'root'">
+        <dirname property="jar.dir" file="${j2ee.path.jar}"/>
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${j2ee.path.jar}" duplicate="preserve">
+            <manifest>
+                <attribute name="Created-By" value="IntelliJ IDEA"/>
+                <attribute name="Manifest-Version" value="1.0"/>
+            </manifest>
+            <zipfileset dir="${module.root.basedir}/exploded/WEB-INF/classes" prefix="WEB-INF/classes"/>
+            <zipfileset dir="${module.root.basedir}/WEB-INF" prefix="WEB-INF"/>
+            <zipfileset file="${module.root.basedir}/WEB-INF/web.xml" prefix="WEB-INF"/>
+            <zipfileset file="${module.root.basedir}/WEB-INF/jboss-web.xml" prefix="WEB-INF"/>
+        </jar>
+    </target>
 </project>

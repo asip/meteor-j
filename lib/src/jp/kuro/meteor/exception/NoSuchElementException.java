@@ -23,9 +23,10 @@ import java.util.LinkedHashMap;
 
 /**
  * 要素未捕捉例外クラス
+ *
  * @author Yasumasa Ashida
+ * @version 0.9.3.3
  * @since 2007/07/28 17:33:44
- * @version 0.9.0.0
  */
 public class NoSuchElementException extends RuntimeException {
 
@@ -39,19 +40,19 @@ public class NoSuchElementException extends RuntimeException {
 
     private String message;
 
-    public NoSuchElementException(String elmName){
+    public NoSuchElementException(String elmName) {
         this.elmName = elmName;
         this.type = 1;
     }
 
-    public NoSuchElementException(String elmName,String attrName,String attrValue){
+    public NoSuchElementException(String elmName, String attrName, String attrValue) {
         this.elmName = elmName;
         this.attrName = attrName;
         this.attrValue = attrValue;
         this.type = 2;
     }
 
-    public NoSuchElementException(String elmName,String attrName,String attrValue,String attrName2,String attrValue2){
+    public NoSuchElementException(String elmName, String attrName, String attrValue, String attrName2, String attrValue2) {
         this.elmName = elmName;
         this.attrName = attrName;
         this.attrValue = attrValue;
@@ -60,13 +61,13 @@ public class NoSuchElementException extends RuntimeException {
         this.type = 3;
     }
 
-    public NoSuchElementException(String attrName,String attrValue){
+    public NoSuchElementException(String attrName, String attrValue) {
         this.attrName = attrName;
         this.attrValue = attrValue;
-        this.type  = 4;
+        this.type = 4;
     }
 
-    public NoSuchElementException(String attrName,String attrValue,String attrName2,String attrValue2){
+    public NoSuchElementException(String attrName, String attrValue, String attrName2, String attrValue2) {
         this.attrName = attrName;
         this.attrValue = attrValue;
         this.attrName2 = attrName2;
@@ -75,34 +76,34 @@ public class NoSuchElementException extends RuntimeException {
     }
 
     public String getMessage() {
-        if(type == 1){
+        if (type == 1) {
             this.message = this.elmName + " element not found";
-        }else if(type == 2){
+        } else if (type == 2) {
             this.message = this.elmName + " element(" + this.attrName + "='" + this.attrValue + "') not found";
-        }else if(type == 3){
+        } else if (type == 3) {
             this.message = this.elmName + " element(" + this.attrName + "='" + this.attrValue
-                    + "',"+ this.attrName2 + "='" + this.attrValue2 + "') not found";
-        }else if(type == 4){
-            this.message = "element(" + this.attrName + "='" + this.attrValue+ "') not found";
-        }else if(type == 5){
+                    + "'," + this.attrName2 + "='" + this.attrValue2 + "') not found";
+        } else if (type == 4) {
+            this.message = "element(" + this.attrName + "='" + this.attrValue + "') not found";
+        } else if (type == 5) {
             this.message = "element(" + this.attrName + "='" + this.attrValue
-                    + "',"+ this.attrName2 + "='" + this.attrValue2 + "') not found";
+                    + "'," + this.attrName2 + "='" + this.attrValue2 + "') not found";
         }
 
         return message;
     }
 
-    public String getElementName(){
+    public String getElementName() {
         return this.elmName;
     }
 
-    public LinkedHashMap getAtributes(){
-        LinkedHashMap<String,String> attributes = new LinkedHashMap<String,String>();
-        if(this.type == 2 || this.type == 3 || this.type == 4 || this.type == 5){
-            attributes.put(this.attrName,this.attrValue);
+    public LinkedHashMap getAtributes() {
+        LinkedHashMap<String, String> attributes = new LinkedHashMap<String, String>();
+        if (this.type == 2 || this.type == 3 || this.type == 4 || this.type == 5) {
+            attributes.put(this.attrName, this.attrValue);
         }
-        if(this.type == 3 || this.type == 5){
-            attributes.put(this.attrName2,this.attrValue2);
+        if (this.type == 3 || this.type == 5) {
+            attributes.put(this.attrName2, this.attrValue2);
         }
         return attributes;
     }

@@ -21,11 +21,12 @@ package jp.kuro.meteor;
 
 /**
  * ルート要素クラス
+ *
  * @author Yasumasa Ashida
+ * @version 0.9.3.3
  * @since 2005/02/19 20:18:51
- * @version 0.9.0.0
  */
-public class RootElement extends Element {
+public class RootElement {
     private final static String EMPTY = "";
 
     //コンテントタイプ
@@ -38,26 +39,17 @@ public class RootElement extends Element {
 
     //フック用文字列
     protected StringBuilder hookDocument = new StringBuilder();
-    //フック判定フラグ
-    private boolean hook = false;
-    //モノフック判定フラグ
-    private boolean monoHook = false;
 
-    //親要素
+    //ドキュメント
+    private String document;
+
+    //変更可能要素
     private Element element = null;
 
-    //変更可能親要素
-    private Element mutableElement;
-
-    /**
-     * コンストラクタ
-     */
-    public RootElement() {
-        super(EMPTY);
-    }
 
     /**
      * コンテントタイプを取得する
+     *
      * @return コンテントタイプ
      */
     public final String contentType() {
@@ -66,6 +58,7 @@ public class RootElement extends Element {
 
     /**
      * コンテントタイプをセットする
+     *
      * @param contentType コンテントタイプ
      */
     public final void setContentType(String contentType) {
@@ -74,6 +67,7 @@ public class RootElement extends Element {
 
     /**
      * エンコーディングを取得する
+     *
      * @return エンコーディング
      */
     public final String characterEncoding() {
@@ -82,6 +76,7 @@ public class RootElement extends Element {
 
     /**
      * エンコーディングをセットする
+     *
      * @param characterEncoding エンコーディング
      */
     public final void setCharacterEncoding(String characterEncoding) {
@@ -90,6 +85,7 @@ public class RootElement extends Element {
 
     /**
      * 改行コードを取得する
+     *
      * @return 改行コード
      */
     public final String kaigyoCode() {
@@ -98,7 +94,8 @@ public class RootElement extends Element {
 
     /**
      * 改行コードをセットする
-     * @param kaigyoCode 改行コード 
+     *
+     * @param kaigyoCode 改行コード
      */
     public void setKaigyoCode(String kaigyoCode) {
         this.kaigyoCode = kaigyoCode;
@@ -106,6 +103,7 @@ public class RootElement extends Element {
 
     /**
      * フック文字列を取得する
+     *
      * @return フック文字列
      */
     public final StringBuilder hookDocument() {
@@ -114,73 +112,37 @@ public class RootElement extends Element {
 
     /**
      * フック文字列をセットする
+     *
      * @param hookDocument フック文字列
      */
     public final void setHookDocument(StringBuilder hookDocument) {
         this.hookDocument = hookDocument;
     }
 
-    /**
-     * フック判定フラグを取得する
-     * @return フック判定フラグ
-     */
-    public final boolean hook() {
-        return hook;
+    public String document() {
+        return document;
+    }
+
+    public void document(String document) {
+        this.document = document;
     }
 
     /**
-     * フック判定フラグをセットする
-     * @param hook フック判定フラグ
-     */
-    public final void setHook(boolean hook) {
-        this.hook = hook;
-    }
-
-    /**
-     * モノフック判定フラグを取得する
-     * @return モノフック判定フラグ
-     */
-    public final boolean monoHook() {
-        return monoHook;
-    }
-
-    /**
-     * モノフック判定フラグをセットする
-     * @param monoHook モノフック判定フラグ
-     */
-    public final void setMonoHook(boolean monoHook) {
-        this.monoHook = monoHook;
-    }
-
-    /**
-     * 親要素を取得する
-     * @return 親要素
+     * 要素を取得する
+     *
+     * @return 要素
      */
     public final Element element() {
         return element;
     }
 
     /**
-     * 親要素をセットする
-     * @param elm 親要素
+     * 要素をセットする
+     *
+     * @param elm 要素
      */
     public final void setElement(Element elm) {
         this.element = elm;
     }
 
-    /**
-     * 変更可能親要素をセットする
-     * @return 変更可能親要素
-     */
-    public Element mutableElement() {
-        return mutableElement;
-    }
-
-    /**
-     * 変更可能親要素をセットする
-     * @param mutableElement 変更可能親要素
-     */
-    public void setMutableElement(Element mutableElement) {
-        this.mutableElement = mutableElement;
-    }
 }

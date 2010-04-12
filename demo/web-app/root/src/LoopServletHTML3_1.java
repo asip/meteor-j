@@ -1,4 +1,5 @@
 //標準API
+
 import java.io.*;
 import java.util.*;
 //ServletAPI
@@ -30,9 +31,9 @@ public class LoopServletHTML3_1 extends HttpServlet {
         Parser xt = pf.parser();
 
         //表示用データのセット
-        ArrayList<Hashtable<String,String>> rsVec = new ArrayList<Hashtable<String,String>>();
+        ArrayList<Hashtable<String, String>> rsVec = new ArrayList<Hashtable<String, String>>();
         for (int i = 0; i < 3; i++) {
-            Hashtable<String,String> hash = new Hashtable<String,String>();
+            Hashtable<String, String> hash = new Hashtable<String, String>();
             hash.put("name", "KuroProject");
             hash.put("set", "Kuro Project オフィシャルページ");
             hash.put("url", "http://kuro.s26.xrea.com");
@@ -43,14 +44,14 @@ public class LoopServletHTML3_1 extends HttpServlet {
 
         Element tag = xt.element("tr", "name", "loop");
 
-        Parser xt2 = xt.child(tag);
+        Element xt2 = xt.shadow(tag);
 
         //タグ検索
-        Element tag_ = xt2.element("a");
+        Element tag_ = xt2.child("a");
         Element tag2_ = xt2.cxTag("name");
         Element tag3_ = xt2.cxTag("set");
 
-        for(Hashtable<String,String> rs:rsVec){
+        for (Hashtable<String, String> rs : rsVec) {
             //表示データの加工
             String NAME = rs.get("name");
             String SET = rs.get("set");
@@ -59,13 +60,15 @@ public class LoopServletHTML3_1 extends HttpServlet {
             }
             String URL = rs.get("url");
             //表示ロジック
-            xt2.content(tag2_, NAME);
-            xt2.attribute(tag, "href", URL);
-            xt2.content(tag3_, SET);
+            tag2_.content(NAME);
+            tag_.attribute("href", URL);
+            tag3_.content(SET);
             //出力ロジック
-            xt2.print();
+            xt2.flush();
         }
-        xt2.flush();
+
+        //反映する
+        xt.flush();
 
         //HTTP出力する。
         HttpPrinter prt = new HttpPrinter(res);

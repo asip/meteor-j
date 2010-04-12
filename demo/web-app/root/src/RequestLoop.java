@@ -1,4 +1,5 @@
 //Kuro API
+
 import jp.kuro.meteor.*;
 import jp.kuro.meteor.hook.Hooker;
 
@@ -12,12 +13,12 @@ public class RequestLoop extends Hooker {
         this.hmap = query;
     }
 
-    public void execute(Parser xt) {
+    public void execute(Element xt) {
         HashMap query = hmap;
 
         //タグ検索
-        Element tag = xt.element("name", "param1");
-        Element tag2 = xt.element("name", "param2");
+        Element tag = xt.child("name", "param1");
+        Element tag2 = xt.child("name", "param2");
 
         String param1;
         String param2;
@@ -28,12 +29,12 @@ public class RequestLoop extends Hooker {
                 param1 = (String) ((ArrayList) query.get("param1")).get(j);
                 param2 = (String) ((ArrayList) query.get("param2")).get(j);
 
-                xt.attribute(tag, "value", param1);
-                xt.attribute(tag2, "value", param2);
+                tag.attribute("value", param1);
+                tag.attribute("value", param2);
             }
 
             //出力ロジック
-            xt.print();
+            xt.flush();
         }
     }
 }

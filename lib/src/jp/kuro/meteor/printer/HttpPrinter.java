@@ -27,9 +27,10 @@ import java.io.IOException;
 
 /**
  * HTTPプリンタ
+ *
  * @author Yasumasa Ashida
+ * @version 0.9.3.3
  * @since 2004/12/05 13:11:58
- * @version 0.9.0.0
  */
 public class HttpPrinter {
     HttpServletResponse res;

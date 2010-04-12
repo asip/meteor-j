@@ -1,4 +1,5 @@
 //標準API
+
 import java.io.*;
 import java.util.*;
 //ServletAPI
@@ -32,7 +33,7 @@ public class LoopServletHTML extends HttpServlet {
         //表示用データのセット
         ArrayList<HashMap> rsVec = new ArrayList<HashMap>();
         for (int i = 0; i < 3; i++) {
-            HashMap<String,String> hash = new HashMap<String,String>();
+            HashMap<String, String> hash = new HashMap<String, String>();
             hash.put("name", "KuroProject");
             hash.put("set", "Kuro Project オフィシャルページ");
             hash.put("url", "http://kuro.s26.xrea.com");
@@ -43,6 +44,8 @@ public class LoopServletHTML extends HttpServlet {
 
         Element tag = xt.element("tr", "name", "loop");
         xt.execute(tag, new LoopML(), rsVec);
+        //反映する
+        xt.flush();
         //HTTP出力する。
         HttpPrinter prt = new HttpPrinter(res);
         prt.print(xt);

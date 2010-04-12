@@ -40,30 +40,39 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 //import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.LinkedHashMap;
 
 /**
  * パーサコア
- * @author Yasumasa Ashida
- * @version 0.9.0.0
  *
+ * @author Yasumasa Ashida
+ * @version 0.9.3.3
  */
-public abstract class Kernel implements Parser{
+public abstract class Kernel implements Parser {
 
 
     //ルート要素
     protected RootElement root = null;
+    //要素キャッシュ
+    protected LinkedHashMap<Integer, Element> elementCache = new LinkedHashMap<Integer, Element>();
+    //ドキュメントタイプ
+    protected int docType;
+
+
+    //カウンタ
+    protected int counter;
 
     //正規表現用オブジェクト
     protected Pattern pattern = null;
+    protected Pattern pattern_2 = null;
+    protected Pattern pattern_1b = null;
     protected Matcher matcher = null;
     protected Matcher matcher＿ = null;
 
     protected Matcher matcher1 = null;
     protected Matcher matcher2 = null;
 
-    //要素キャッシュ
-    //private LinkedHashMap elementCache = new LinkedHashMap();
-    
+
     //文字列バッファ
     protected AsyncStringBuffer sbuf = new AsyncStringBuffer();
 
@@ -79,14 +88,16 @@ public abstract class Kernel implements Parser{
     protected static final String ATTR_EQ = "=\"";
     //element
     //protected static final String TAG_SEARCH_1_1 = "([^<>]*)>(((?!(<\\/";
-    protected static final String TAG_SEARCH_1_1 = "(\\s[^<>]*)>(((?!(";
-    //protected static final String TAG_SEARCH_1_2 = "))[\\w\\W])*)<\\/";
+    protected static final String TAG_SEARCH_1_1 = "(\\s?[^<>]*)>(((?!(";
+    //protected static final String TAG_SEARCH_1_2 = "))[\\w\\W])*)<\\/"; 
     protected static final String TAG_SEARCH_1_2 = "[^<>]*>))[\\w\\W])*)<\\/";
-    protected static final String TAG_SEARCH_1_3 = "(\\s[^<>]*)\\/>";
+    //protected static final String TAG_SEARCH_1_2 = "[^<>]*>)).)*)<\\/";
+    protected static final String TAG_SEARCH_1_3 = "(\\s?[^<>]*)\\/>";
     //protected static final String TAG_SEARCH_1_4 = "([^<>\\/]*)>";
     protected static final String TAG_SEARCH_1_4 = "(\\s[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
     protected static final String TAG_SEARCH_1_4_2 = "(\\s[^<>]*)>";
     //protected static final String TAG_SEARCH_2_1 = "\\s([^<>]*";
+
     protected static final String TAG_SEARCH_2_1 = "(\\s[^<>]*";
     protected static final String TAG_SEARCH_2_1_2 = "(\\s[^<>]*(";
     //protected static final String TAG_SEARCH_2_2 = "\"[^<>]*)>(((?!(<\\/";
@@ -100,6 +111,7 @@ public abstract class Kernel implements Parser{
     //protected static final String TAG_SEARCH_2_4_2 = "\"[^<>\\/]*)>";
     protected static final String TAG_SEARCH_2_4_2 = "([^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>)))";
     protected static final String TAG_SEARCH_2_4_2_2 = "\")([^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>)))";
+    protected static final String TAG_SEARCH_2_4_2_3 = "\"";
     protected static final String TAG_SEARCH_2_4_3 = "\"[^<>]*)>";
     protected static final String TAG_SEARCH_2_4_3_2 = "\")[^<>]*)>";
     protected static final String TAG_SEARCH_2_4_4 = "\"[^<>]*>";
@@ -117,6 +129,7 @@ public abstract class Kernel implements Parser{
 
     protected static final String TAG_SEARCH_4_1 = "([^<>\\/]*)>(";
     protected static final String TAG_SEARCH_4_2 = "[\\w\\W]*?<";
+    //protected static final String TAG_SEARCH_4_2 = ".*?<";
     //protected static final String TAG_SEARCH_4_3 = "[^<>\\/]*>";
     protected static final String TAG_SEARCH_4_3 = "(\\s[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
     protected static final String TAG_SEARCH_4_4 = "<\\/";
@@ -125,6 +138,44 @@ public abstract class Kernel implements Parser{
     //protected static final String TAG_SEARCH_4_7 = "\"[^<>\\/]*)>(";
     protected static final String TAG_SEARCH_4_7 = "\"([^<>\\/]*>|(?!([^<>]*\\/>))[^<>]*>))(";
     protected static final String TAG_SEARCH_4_7_2 = "\")([^<>\\/]*>|(?!([^<>]*\\/>))[^<>]*>))(";
+
+    protected static final String TAG_SEARCH_NC_1_1 = "\\s?[^<>]*>((?!(";
+    //protected static final String TAG_SEARCH_NC_1_2 = "[^<>]*>)).)*<\\/";
+    protected static final String TAG_SEARCH_NC_1_2 = "[^<>]*>))[\\w\\W])*<\\/";
+    protected static final String TAG_SEARCH_NC_1_3 = "\\s?[^<>]*\\/>";
+    protected static final String TAG_SEARCH_NC_1_4 = "(?:\\s[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
+    protected static final String TAG_SEARCH_NC_1_4_2 = "\\s[^<>]*>";
+    
+    protected static final String TAG_SEARCH_NC_2_1 = "\\s[^<>]*";
+    protected static final String TAG_SEARCH_NC_2_1_2 = "\\s[^<>]*(?:";
+    protected static final String TAG_SEARCH_NC_2_2 = "\"[^<>]*>((?!(";
+    protected static final String TAG_SEARCH_NC_2_2_2 = "\")[^<>]*>((?!(";
+    protected static final String TAG_SEARCH_NC_2_3 = "\"[^<>]*)";
+    protected static final String TAG_SEARCH_NC_2_3_2 = "\"[^<>]*\\/>";
+    protected static final String TAG_SEARCH_NC_2_3_2_2 = "\")[^<>]*\\/>";
+    protected static final String TAG_SEARCH_NC_2_4 = "(?:[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
+    protected static final String TAG_SEARCH_NC_2_4_2 = "(?:[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
+    protected static final String TAG_SEARCH_NC_2_4_2_2 = "\")(?:[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
+    protected static final String TAG_SEARCH_NC_2_4_2_3 = "\"";
+    protected static final String TAG_SEARCH_NC_2_4_3 = "\"[^<>]*>";
+    protected static final String TAG_SEARCH_NC_2_4_3_2 = "\")[^<>]*>";
+    protected static final String TAG_SEARCH_NC_2_4_4 = "\"[^<>]*>";
+    protected static final String TAG_SEARCH_NC_2_6 = "\"[^<>]*";
+    protected static final String TAG_SEARCH_NC_2_7 = "\"|";
+    protected static final String TAG_SEARCH_NC_3_1 = "<[^<>\"]*\\s[^<>]*";
+    protected static final String TAG_SEARCH_NC_3_1_2 = "<([^<>\"]*)\\s(?:[^<>]*";
+    protected static final String TAG_SEARCH_NC_3_1_2_2 = "<([^<>\"]*)\\s(?:[^<>]*(";
+    protected static final String TAG_SEARCH_NC_3_2 = "\"[^<>]*\\/>";
+    protected static final String TAG_SEARCH_NC_3_2_2 = "\"[^<>]*)\\/>";
+    protected static final String TAG_SEARCH_NC_3_2_2_2 = "\")[^<>]*)\\/>";
+    //protected static final String TAG_SEARCH_NC_4_1 = "(?:\\s[^<>\\/]*)>("
+    //protected static final String TAG_SEARCH_NC_4_2 = ".*?<"
+    //protected static final String TAG_SEARCH_NC_4_3 = "(?:\\s[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))"
+    //protected static final String TAG_SEARCH_NC_4_4 = "<\\/"
+    //protected static final String TAG_SEARCH_NC_4_5 = ".*?<\/"
+    //protected static final String TAG_SEARCH_NC_4_6 = ".*?<\/"
+    //protected static final String TAG_SEARCH_NC_4_7 = "\"(?:[^<>\\/]*>|(?!([^<>]*\\/>))[^<>]*>))("
+    //protected static final String TAG_SEARCH_NC_4_7_2 = "\")(?:[^<>\\/]*>|(?!([^<>]*\\/>))[^<>]*>))("
 
     //attribute
     protected static final String SET_ATTR_1 = "=\"[^\"]*\"";
@@ -176,7 +227,6 @@ public abstract class Kernel implements Parser{
     protected static final Pattern pattern_get_attrs_map = Pattern.compile(GET_ATTRS_MAP);
 
     //todo
-    //2005.10.17 ADD START
     protected static final String BRAC_OPEN_1 = "\\(";
     protected static final String BRAC_OPEN_2 = "\\\\\\(";
     protected static final String BRAC_CLOSE_1 = "\\)";
@@ -197,29 +247,23 @@ public abstract class Kernel implements Parser{
     protected static final String QMARK_2 = "\\\\\\?";
     protected static final String ASTERISK_1 = "\\*";
     protected static final String ASTERISK_2 = "\\\\\\*";
-    //2005.10.17 ADD END
-
-    //private static final Pattern pattern_en = Pattern.compile(EN_1);
-    //private static final Pattern pattern_dol = Pattern.compile(DOL_1);
-    //private static final Pattern pattern_plus = Pattern.compile(PLUS_1);
-    //private static final Pattern pattern_brac_open = Pattern.compile(BRAC_OPEN_1);
-    //private static final Pattern pattern_brac_close = Pattern.compile(BRAC_CLOSE_1);
-    //private static final Pattern pattern_sbrac_open = Pattern.compile(SBRAC_OPEN_1);
-    //private static final Pattern pattern_sbrac_close = Pattern.compile(SBRAC_CLOSE_1);
-    //private static final Pattern pattern_cbrac_open = Pattern.compile(CBRAC_OPEN_1);
-    //private static final Pattern pattern_cbrac_close = Pattern.compile(CBRAC_CLOSE_1);
-    //private static final Pattern pattern_comma = Pattern.compile(COMMA_1);
-    //private static final Pattern pattern_vline = Pattern.compile(VLINE_1);
-    //private static final Pattern pattern_qmark = Pattern.compile(QMARK_1);
-    //private static final Pattern pattern_asterisk = Pattern.compile(ASTERISK_1);
 
     private static final Pattern pattern_clean1 = Pattern.compile(CLEAN_1);
     private static final Pattern pattern_clean2 = Pattern.compile(CLEAN_2);
 
+    private static final int ZERO = 0;
+    private static final int ONE = 1;
+    private static final int TWO = 2;
+    private static final int THREE = 3;
+    private static final int FOUR = 4;
+    private static final int FIVE = 5;
+    private static final int SIX = 6;
+    private static final int SEVEN = 7;
+
     protected String result = null;
     protected String pattern_cc = null;
-    
 
+    protected boolean res;
     protected boolean res1;
     protected boolean res2;
 
@@ -242,6 +286,9 @@ public abstract class Kernel implements Parser{
     protected String _attrName2;
     protected String _attrValue2;
 
+    protected String _attributes;
+    protected String _content;
+
     protected Element elm_;
 
     public Kernel() {
@@ -256,51 +303,6 @@ public abstract class Kernel implements Parser{
         return root.document();
     }
 
-    //protected final void setElement(Element elm) {
-    //    this.root.setElement(elm);
-    //}
-
-    //protected final Element getElement() {
-    //    return root.element();
-    //}
-
-    //protected Parser parent() {
-    //    return parent;
-    //}
-
-    //protected void setParent(Parser parent) {
-    //    this.parent = parent;
-    //}
-
-    //protected final void setHook(boolean hook) {
-    //    this.root.setHook(hook);
-    //}
-
-    //protected final boolean isHook() {
-    //    return this.root.hook();
-    //}
-
-    /*
-    protected final void setMonoHook() {
-        this.root.setMonoHook(true);
-    }
-    */
-
-    //protected final void setMonoHook(boolean hook) {
-    //    this.root.setMonoHook(hook);
-    //}
-
-    //protected final boolean isMonoHook() {
-    //    return this.root.monoHook();
-    //}
-
-    //protected final void setHookDocument(String hookDocument) {
-    //    this.root.setHookDocument((new StringBuilder(hookScale)).append(hookDocument));
-    //}
-
-    //protected final String getHookDocument() {
-    //    return root.hookDocument().toString();
-    //}
 
     protected void size(int size) {
         root.hookDocument().setLength(size);
@@ -310,13 +312,37 @@ public abstract class Kernel implements Parser{
         this.root.setCharacterEncoding(enc);
     }
 
+    /**
+     * 文字エンコーディングを取得する
+     *
+     * @return 文字エンコーディング
+     */
     protected final String getCharacterEncoding() {
         return this.root.characterEncoding();
     }
 
+    /**
+     * ルート要素を取得する
+     *
+     * @return ルート要素
+     */
     public RootElement rootElement() {
         return root;
     }
+
+    /**
+     * 要素キャッシュを取得する
+     *
+     * @return 要素キャッシュ
+     */
+    public final LinkedHashMap<Integer, Element> elementCache() {
+        return elementCache;
+    }
+
+    public final int docType() {
+        return docType;
+    }
+
 
     /**
      * ファイルを読み込み、パースする
@@ -325,14 +351,14 @@ public abstract class Kernel implements Parser{
      * @param encoding 入力ファイルの文字コード
      */
     protected void read(String filePath, String encoding) {
-        
+
         try {
             setCharacterEncoding(encoding);
             //ファイルのオープン
             FileInputStream fis = new FileInputStream(filePath);
 
             FileChannel channel = fis.getChannel();
-            ByteBuffer bbuf = ByteBuffer.allocate((int)channel.size());
+            ByteBuffer bbuf = ByteBuffer.allocate((int) channel.size());
             //読込及び格納
             channel.read(bbuf);
             bbuf.clear();
@@ -342,7 +368,7 @@ public abstract class Kernel implements Parser{
             //ファイルのクローズ
             fis.close();
 
-            this.document(new String(bytes,encoding));
+            this.document(new String(bytes, encoding));
 
         } catch (FileNotFoundException e) {
             //FileNotFoundException時の処理
@@ -357,6 +383,16 @@ public abstract class Kernel implements Parser{
 
         //System.out.println(this.document());
     }
+
+    /**
+     * 要素をコピーする
+     * @param elm 要素
+     * @return 要素
+     */
+    public Element element(Element elm){
+        return shadow(elm);    
+    }
+
 
     /**
      * 要素名により、要素を検索する
@@ -388,42 +424,46 @@ public abstract class Kernel implements Parser{
         res2 = matcher2.find();
 
         //if (matcher.find()) {
-        //    elm = elementWithoutContent(elmName);
+        //    elm = elementWithout(elmName);
         //} else {
-        //    elm = elementWithContent(elmName);
+        //    elm = elementWith(elmName);
         //}
 
-        if(res1 && res2){
-            if(matcher1.end() < matcher2.end()){
+        if (res1 && res2) {
+            if (matcher1.end() < matcher2.end()) {
                 matcher = matcher1;
                 pattern_cc = pattern_cc_1;
-                elementWithoutContent(elmName);
-                
-            }else if(matcher1.end() > matcher2.end()){
+                elementWithout(elmName);
+
+            } else if (matcher1.end() > matcher2.end()) {
                 matcher = matcher2;
                 pattern_cc = pattern_cc_2;
-                elementWithContent(elmName);
+                elementWith(elmName);
             }
-        }else if(res1 && !res2){
+        } else if (res1 && !res2) {
             matcher = matcher1;
             pattern_cc = pattern_cc_1;
-            elementWithoutContent(elmName);
-        }else if(!res1 && res2){
+            elementWithout(elmName);
+        } else if (!res1 && res2) {
             matcher = matcher2;
             pattern_cc = pattern_cc_2;
-            elementWithContent(elmName);
-        }else{
+            elementWith(elmName);
+        } else {
             elm_ = null;
             throw new NoSuchElementException(elmName);
         }
 
         //初期化
         //matcher.reset();
+        if (elm_ != null) {
+            elm_.objectId(++counter);
+            elementCache.put(elm_.objectId(), elm_);
+        }
 
         return elm_;
     }
 
-    protected Element elementWithContent(String elmName) {
+    protected Element elementWith(String elmName) {
 
         elm_ = new Element(elmName);
         //属性
@@ -435,14 +475,14 @@ public abstract class Kernel implements Parser{
 
         //要素ありタグ検索用パターン
         elm_.pattern(pattern_cc);
-        
+
         //パーサ
         elm_.parser(this);
 
         return elm_;
     }
 
-    protected Element elementWithoutContent(String elmName) {
+    protected Element elementWithout(String elmName) {
 
         elm_ = new Element(elmName);
         //属性
@@ -460,8 +500,8 @@ public abstract class Kernel implements Parser{
     /**
      * 要素名と属性により、要素を検索する
      *
-     * @param elmName  要素の名前
-     * @param attrName 属性名
+     * @param elmName   要素の名前
+     * @param attrName  属性名
      * @param attrValue 属性値
      * @return 要素
      */
@@ -474,168 +514,196 @@ public abstract class Kernel implements Parser{
         //属性値にサポートしていない文字が含まれる場合
         _attrValue = escapeRegex(attrValue);
 
-        //要素ありタグ検索用パターン
+        //空要素検索用パターン
         sbuf.setLength(0);
-        pattern_cc = sbuf.append(TAG_OPEN).append(_elmName)
+        pattern_cc_1 = sbuf.append(TAG_OPEN).append(_elmName).append(TAG_SEARCH_2_1)
+                .append(_attrName).append(ATTR_EQ).append(_attrValue).append(TAG_SEARCH_2_3_2)
+                .toString();
+
+        pattern = PatternCache.get(pattern_cc_1);
+        //空要素検索
+        matcher1 = pattern.matcher(this.document());
+        res1 = matcher1.find();
+
+        //内容あり要素検索パターン
+        sbuf.setLength(0);
+        pattern_cc_2 = sbuf.append(TAG_OPEN).append(_elmName).append(TAG_SEARCH_2_1)
+                .append(_attrName).append(ATTR_EQ).append(_attrValue)
+                .append(TAG_SEARCH_2_2).append(_elmName).append(TAG_SEARCH_1_2)
+                .append(_elmName).append(TAG_CLOSE).toString();
+
+
+        pattern = PatternCache.get(pattern_cc_2);
+        //内容あり要素検索
+        matcher2 = pattern.matcher(this.document());
+        res2 = matcher2.find();
+
+        //System.out.println(elmName + ":" + attrName + ":" + attrValue);
+        //System.out.println(res2);
+
+        if (!res2) {
+            res2 = elementWith_3_2();
+            matcher2 = matcher;
+            pattern_cc_2 = pattern_cc;
+        }
+
+        //System.out.println("2:" + res2);
+
+        if (res1 && res2) {
+            if (matcher1.start(0) < matcher2.start(0)) {
+                matcher = matcher1;
+                pattern_cc = pattern_cc_1;
+                elementWithout_3(elmName);
+            } else if (matcher1.start(0) > matcher2.start(0)) {
+                matcher = matcher2;
+                pattern_cc = pattern_cc_2;
+                elementWith_3_1(elmName);
+            }
+        } else if (res1 && !res2) {
+            matcher = matcher1;
+            pattern_cc = pattern_cc_1;
+            elementWithout_3(elmName);
+        } else if (!res1 && res2) {
+            matcher = matcher2;
+            pattern_cc = pattern_cc_2;
+            elementWith_3_1(elmName);
+        } else if (!res1 && !res2) {
+            elm_ = null;
+            throw new NoSuchElementException(elmName, attrName, attrValue);
+        }
+
+        if (elm_ != null) {
+            elm_.objectId(++counter);
+            elementCache.put(elm_.objectId(), elm_);
+        }
+
+        return elm_;
+    }
+
+    protected Element elementWith_3_1(String elmName) {
+        if (matcher.groupCount() == FOUR) {
+            //要素
+            elm_ = new Element(elmName);
+            //属性
+            elm_.attributes(matcher.group(1));
+            //内容
+            elm_.mixedContent(matcher.group(2));
+            //全体
+            elm_.document(matcher.group(0));
+            //内容あり要素検索用パターン
+            sbuf.setLength(0);
+            pattern_cc = sbuf.append(TAG_OPEN).append(_elmName).append(TAG_SEARCH_NC_2_1)
+                    .append(_attrName).append(ATTR_EQ).append(_attrValue)
+                    .append(TAG_SEARCH_NC_2_2).append(_elmName).append(TAG_SEARCH_NC_1_2)
+                    .append(_elmName).append(TAG_CLOSE).toString();
+
+            elm_.pattern(pattern_cc);
+
+            elm_.parser(this);
+
+        } else if (matcher.groupCount() == SIX) {
+            //要素
+            elm_ = new Element(elmName);
+            //属性
+            elm_.attributes(matcher.group(1)); //.chop
+            //内容
+            elm_.mixedContent(matcher.group(3));
+            //全体
+            elm_.document(matcher.group(0));
+            //内容あり要素検索用パターン
+            elm_.pattern(pattern_cc);
+
+            elm_.parser(this);
+        }
+        return elm_;
+
+    }
+
+
+    protected boolean elementWith_3_2() {
+
+        sbuf.setLength(0);
+        pattern_cc_1 = sbuf.append(TAG_OPEN).append(_elmName)
                 .append(TAG_SEARCH_2_1).append(_attrName).append(ATTR_EQ)
                 .append(_attrValue).append(TAG_SEARCH_2_4_2).toString();
-        pattern = PatternCache.get(pattern_cc);
+
+        sbuf.setLength(0);
+        pattern_cc_1b = sbuf.append(TAG_OPEN).append(_elmName)
+                .append(TAG_SEARCH_1_4).toString();
+
+        sbuf.setLength(0);
+        pattern_cc_1_1 = sbuf.append(TAG_OPEN).append(_elmName)
+                .append(TAG_SEARCH_2_1).append(_attrName).append(ATTR_EQ)
+                .append(_attrValue).append(TAG_SEARCH_4_7).toString();
+
+        sbuf.setLength(0);
+        pattern_cc_1_2 = sbuf.append(TAG_SEARCH_4_2).append(_elmName)
+                .append(TAG_SEARCH_4_3).toString();
+
+        sbuf.setLength(0);
+        pattern_cc_2 = sbuf.append(TAG_SEARCH_4_4).append(_elmName).append(TAG_CLOSE).toString();
+
+        sbuf.setLength(0);
+        pattern_cc_2_1 = sbuf.append(TAG_SEARCH_4_5).append(_elmName).append(TAG_CLOSE).toString();
+
+        sbuf.setLength(0);
+        pattern_cc_2_2 = sbuf.append(TAG_SEARCH_4_6).append(_elmName).append(TAG_CLOSE).toString();
+
+        pattern = PatternCache.get(pattern_cc_1);
         //要素ありタグ検索
         matcher = pattern.matcher(this.document());
 
-        if (matcher.find()) {
-            elementWithContent(elmName, attrName, attrValue);
-        } else {
-            elementWithoutContent(elmName, attrName, attrValue);
-        }
-
-        //初期化
-        //matcher.reset();
-
-        return elm_;
-    }
-
-    protected Element elementWithContent(String elmName, String attrName, String attrValue) {
-
         sbuf.setLength(0);
-        pattern_cc = sbuf.append(TAG_OPEN).append(_elmName)
-                .append(TAG_SEARCH_2_1).append(_attrName).append(ATTR_EQ)
-                .append(_attrValue).append(TAG_SEARCH_2_2).append(_elmName)
-                .append(TAG_SEARCH_1_2).append(_elmName).append(TAG_CLOSE).toString();
+
+        pattern_2 = PatternCache.get(pattern_cc_2);
+        pattern_1b = PatternCache.get(pattern_cc_1b);
+
+
+        int cnt = 0;
+
+        cnt = create_element_pattern(cnt);
+
+        pattern_cc = sbuf.toString();
 
         //todo
-        //System.out.println(pattern_cc);
-
-        pattern = PatternCache.get(pattern_cc);
-        //要素ありタグ検索
-        matcher = pattern.matcher(this.document());
-
-        if (matcher.find()) {
-
-            elm_ = new Element(elmName);
-            //属性
-            sbuf.setLength(0);
-            elm_.attributes(matcher.group(1));
-            //要素
-            elm_.mixedContent(matcher.group(2));
-            //要素ありタグ検索用パターン
-            elm_.pattern(pattern_cc);
-            //パーサ
-            elm_.parser(this);
-
-        } else {
-
-            //todo
-
-            sbuf.setLength(0);
-            pattern_cc_1 = sbuf.append(TAG_OPEN).append(_elmName)
-                    .append(TAG_SEARCH_2_1).append(_attrName).append(ATTR_EQ)
-                    .append(_attrValue).append(TAG_SEARCH_2_4_2).toString();
-
-            sbuf.setLength(0);
-            pattern_cc_1b = sbuf.append(TAG_OPEN).append(_elmName)
-                    .append(TAG_SEARCH_1_4).toString();
-
-            sbuf.setLength(0);
-            pattern_cc_1_1 = sbuf.append(TAG_OPEN).append(_elmName)
-                    .append(TAG_SEARCH_2_1).append(_attrName).append(ATTR_EQ)
-                    .append(_attrValue).append(TAG_SEARCH_4_7).toString();
-
-            sbuf.setLength(0);
-            pattern_cc_1_2 = sbuf.append(TAG_SEARCH_4_2).append(_elmName)
-                    .append(TAG_SEARCH_4_3).toString();
-
-            sbuf.setLength(0);
-            pattern_cc_2 = sbuf.append(TAG_SEARCH_4_4).append(_elmName).append(TAG_CLOSE).toString();
-
-            sbuf.setLength(0);
-            pattern_cc_2_1 = sbuf.append(TAG_SEARCH_4_5).append(_elmName).append(TAG_CLOSE).toString();
-
-            sbuf.setLength(0);
-            pattern_cc_2_2 = sbuf.append(TAG_SEARCH_4_6).append(_elmName).append(TAG_CLOSE).toString();
-
-            pattern = PatternCache.get(pattern_cc_1);
-            //要素ありタグ検索
-            matcher = pattern.matcher(this.document());
-
-            sbuf.setLength(0);
-
-            int cnt = 0;
-
-            cnt = create_element_pattern(cnt);
-
-            pattern_cc = sbuf.toString();
-
-            //todo
-            //System.out.println("[" + pattern_cc + "]");
-            //System.out.println("TestPRE");
+        //System.out.println("[" + pattern_cc + "]");
+        //System.out.println("TestPRE");
 
 
-            if (cnt != 0) {
-                //return null;
-                elm_ = null;
-                throw new NoSuchElementException(elmName,attrName,attrValue);
-            }
-
-            pattern = PatternCache.get(pattern_cc);
-            matcher = pattern.matcher(this.document());
-
-            if (matcher.find()) {
-                elm_ = new Element(elmName);
-                //属性
-
-                //System.out.println(matcher.group(0));
-
-                sbuf.setLength(0);
-                elm_.attributes(matcher.group(1).substring(0,matcher.group(1).length()-1));
-                //要素
-                elm_.mixedContent(matcher.group(4));
-                //要素ありタグ検索用パターン
-                elm_.pattern(pattern_cc);
-                //パーサ
-                elm_.parser(this);
-
-                //todo
-                //System.out.println("[" + elm.attributes() + "]");
-                //System.out.println("[" + elm.mixedContent() + "]");
-            }else{
-                elm_ = null;
-                throw new NoSuchElementException(elmName,attrName,attrValue);
-            }
-
+        if (pattern_cc.length() == ZERO || cnt != 0) {
+            //return null;
+            elm_ = null;
+            //throw new NoSuchElementException(elmName,attrName,attrValue);
+            return false;
         }
 
-        return elm_;
+        pattern = PatternCache.get(pattern_cc);
+        matcher = pattern.matcher(this.document());
+
+        res = matcher.find();
+
+        return res;
     }
 
-    protected Element elementWithoutContent(String elmName, String attrName, String attrValue) {
+    protected Element elementWithout_3(String elmName) {
 
-        return _elementWithoutContent(elmName, attrName, attrValue, TAG_SEARCH_2_3_2);
+        return _elementWithout_3_1(elmName, TAG_SEARCH_NC_2_3_2);
     }
 
-    protected final Element _elementWithoutContent(String elmName, String attrName, String attrValue, String closer) {
-
+    protected final Element _elementWithout_3_1(String elmName, String closer) {
+        //要素
+        elm_ = new Element(elmName);
+        //属性
+        elm_.attributes(matcher.group(1));
         //空要素タグ検索用パターン
         sbuf.setLength(0);
-        pattern_cc = sbuf.append(TAG_OPEN).append(_elmName)
-                .append(TAG_SEARCH_2_1).append(_attrName).append(ATTR_EQ)
-                .append(_attrValue).append(closer) //.append(TAG_CLOSE2)
-                .toString();
-        pattern = PatternCache.get(pattern_cc);
-        //空要素タグ検索
-        matcher = pattern.matcher(this.document());
-        if (matcher.find()) {
-            elm_ = new Element(elmName);
-            //属性
-            sbuf.setLength(0);
-            elm_.attributes(matcher.group(1));
-            //空要素タグ検索用パターン
-            elm_.pattern(pattern_cc);
-            //パーサ
-            elm_.parser(this);
-        }else{
-            throw new NoSuchElementException(elmName,attrName,attrValue);
-        }
+        pattern_cc = sbuf.append(TAG_OPEN).append(_elmName).append(TAG_SEARCH_NC_2_1)
+                .append(_attrName).append(ATTR_EQ).append(_attrValue).
+                append(closer).toString();
+        elm_.pattern(pattern_cc);
+        //パーサ
+        elm_.parser(this);
+
 
         return elm_;
     }
@@ -643,7 +711,7 @@ public abstract class Kernel implements Parser{
     /**
      * 属性(属性名="属性値")により、要素を検索する
      *
-     * @param attrName 属性名
+     * @param attrName  属性名
      * @param attrValue 属性値
      * @return 要素
      */
@@ -657,7 +725,7 @@ public abstract class Kernel implements Parser{
 
         sbuf.setLength(0);
         pattern_cc = sbuf.append(TAG_SEARCH_3_1).append(_attrName).append(ATTR_EQ)
-                .append(_attrValue).append(TAG_SEARCH_2_4).toString();
+                .append(_attrValue).append(TAG_SEARCH_2_4_2_3).toString();
         pattern = PatternCache.get(pattern_cc);
 
         matcher = pattern.matcher(this.document());
@@ -665,15 +733,20 @@ public abstract class Kernel implements Parser{
         if (matcher.find()) {
             element(matcher.group(1), attrName, attrValue);
         } else {
-            elementWithoutContent(attrName, attrValue);
+            elm_ = null;
+            throw new NoSuchElementException(attrName, attrValue);
         }
 
         //初期化
+        if (elm_ != null) {
+            elm_.objectId(++counter);
+            elementCache.put(elm_.objectId(), elm_);
+        }
 
         return elm_;
     }
 
-
+    /*
     protected Element elementWithoutContent(String attrName, String attrValue) {
 
         sbuf.setLength(0);
@@ -692,18 +765,20 @@ public abstract class Kernel implements Parser{
 
         return elm_;
     }
+    */
 
     /**
      * 要素名と属性1と属性2により、要素を検索する
-     * @param elmName  要素の名前
-     * @param attrName1 属性名1
+     *
+     * @param elmName    要素の名前
+     * @param attrName1  属性名1
      * @param attrValue1 属性値2
-     * @param attrName2 属性名2
+     * @param attrName2  属性名2
      * @param attrValue2 属性値2
      * @return 要素
      */
     public Element element(String elmName,
-                                  String attrName1, String attrValue1,String attrName2, String attrValue2) {
+                           String attrName1, String attrValue1, String attrName2, String attrValue2) {
 
         //要素名にサポートしていない文字が含まれる場合
         _elmName = escapeRegex(elmName);
@@ -715,192 +790,211 @@ public abstract class Kernel implements Parser{
         _attrValue1 = escapeRegex(attrValue1);
         //属性値にサポートしていない文字が含まれる場合
         _attrValue2 = escapeRegex(attrValue2);
-        //要素ありタグ検索用パターン
+
+        //空要素検索用パターン
         sbuf.setLength(0);
-        pattern_cc = sbuf.append(TAG_OPEN).append(_elmName)
-                .append(TAG_SEARCH_2_1_2).append(_attrName1).append(ATTR_EQ)
-                .append(_attrValue1).append(TAG_SEARCH_2_6).append(_attrName2).append(ATTR_EQ)
-                .append(_attrValue2).append(TAG_SEARCH_2_7).append(_attrName2).append(ATTR_EQ)
-                .append(_attrValue2).append(TAG_SEARCH_2_6).append(_attrName1).append(ATTR_EQ)
-                .append(_attrValue1).append(TAG_SEARCH_2_4_2_2).toString();
+        pattern_cc_1 = sbuf.append(TAG_OPEN).append(_elmName).append(TAG_SEARCH_2_1_2)
+                .append(_attrName1).append(ATTR_EQ).append(_attrValue1).append(TAG_SEARCH_2_6)
+                .append(_attrName2).append(ATTR_EQ).append(_attrValue2).append(TAG_SEARCH_2_7)
+                .append(_attrName2).append(ATTR_EQ).append(_attrValue2).append(TAG_SEARCH_2_6)
+                .append(_attrName1).append(ATTR_EQ).append(_attrValue1).append(TAG_SEARCH_2_3_2_2)
+                .toString();
 
-        //System.out.println("3[" + pattern_cc + "]");
+        pattern = PatternCache.get(pattern_cc_1);
+        //空要素検索
+        matcher1 = pattern.matcher(root.document());
+        res1 = matcher1.find();
 
-        pattern = PatternCache.get(pattern_cc);
-        //要素ありタグ検索
-        matcher = pattern.matcher(this.document());
+        //内容あり要素検索パターン
+        sbuf.setLength(0);
+        pattern_cc_2 = sbuf.append(TAG_OPEN).append(_elmName).append(TAG_SEARCH_2_1_2)
+                .append(_attrName1).append(ATTR_EQ).append(_attrValue1).append(TAG_SEARCH_2_6)
+                .append(_attrName2).append(ATTR_EQ).append(_attrValue2).append(TAG_SEARCH_2_7)
+                .append(_attrName2).append(ATTR_EQ).append(_attrValue2).append(TAG_SEARCH_2_6)
+                .append(_attrName1).append(ATTR_EQ).append(_attrValue1).append(TAG_SEARCH_2_2_2)
+                .append(_elmName).append(TAG_SEARCH_1_2).append(_elmName).append(TAG_CLOSE)
+                .toString();
 
-        if (matcher.find()) {
-            elementWithContent(elmName, attrName1, attrValue1,attrName2,attrValue2);
-        } else {
-            elementWithoutContent(elmName, attrName1, attrValue1,attrName2,attrValue2);
+        pattern = PatternCache.get(pattern_cc_2);
+        //内容あり要素検索
+        matcher2 = pattern.matcher(root.document());
+        res2 = matcher2.find();
+
+        if (!res2) {
+            res2 = elementWith_5_2();
+            matcher2 = matcher;
+            pattern_cc_2 = pattern_cc;
         }
 
-        //初期化
-        //matcher.reset();
+        if (res1 && res2) {
+            if (matcher1.start(0) < matcher2.start(0)) {
+                matcher = matcher1;
+                pattern_cc = pattern_cc_1;
+                elementWithout_5(elmName);
+            } else if (matcher1.start(0) > matcher2.start(0)) {
+                matcher = matcher2;
+                pattern_cc = pattern_cc_2;
+                elementWith_5_1(elmName);
+            }
+        } else if (res1 && !res2) {
+            matcher = matcher1;
+            pattern_cc = pattern_cc_1;
+            elementWithout_5(elmName);
+        } else if (!res1 && res2) {
+            matcher = matcher2;
+            pattern_cc = pattern_cc_2;
+            elementWith_5_1(elmName);
+        } else if (!res1 && !res2) {
+            elm_ = null;
+            throw new NoSuchElementException(elmName, attrName1, attrValue1, attrName2, attrValue2);
+        }
+
+        if (elm_ != null) {
+            elm_.objectId(++counter);
+            elementCache.put(elm_.objectId(), elm_);
+        }
 
         return elm_;
     }
 
-
-    protected Element elementWithContent(String elmName,
-                                             String attrName1, String attrValue1,String attrName2,String attrValue2 ) {
-        //System.out.println("入ってます");
-
-        sbuf.setLength(0);
-        pattern_cc = sbuf.append(TAG_OPEN).append(_elmName)
-                .append(TAG_SEARCH_2_1_2).append(attrName1).append(ATTR_EQ)
-                .append(_attrValue1).append(TAG_SEARCH_2_6).append(_attrName2).append(ATTR_EQ)
-                .append(_attrValue2).append(TAG_SEARCH_2_7).append(_attrName2).append(ATTR_EQ)
-                .append(_attrValue2).append(TAG_SEARCH_2_6).append(_attrName1).append(ATTR_EQ)
-                .append(_attrValue1).append(TAG_SEARCH_2_2_2).append(_elmName)
-                .append(TAG_SEARCH_1_2).append(_elmName).append(TAG_CLOSE).toString();
-
-        //System.out.println("4[" + pattern_cc + "]");
-
-        pattern = PatternCache.get(pattern_cc);
-        //要素ありタグ検索
-        matcher = pattern.matcher(this.document());
-
-        if (matcher.find()) {
-
+    protected Element elementWith_5_1(String elmName) {
+        if (matcher.groupCount() == FOUR) {
+            //要素
             elm_ = new Element(elmName);
             //属性
-            sbuf.setLength(0);
             elm_.attributes(matcher.group(1));
-            //要素
+            //内容
             elm_.mixedContent(matcher.group(2));
-            //要素ありタグ検索用パターン
+            //全体
+            elm_.document(matcher.group(0));
+            //内容あり要素検索用パターン
+            sbuf.setLength(0);
+            pattern_cc = sbuf.append(TAG_OPEN).append(_elmName).append(TAG_SEARCH_NC_2_1_2)
+                    .append(_attrName1).append(ATTR_EQ).append(_attrValue1).append(TAG_SEARCH_NC_2_6)
+                    .append(_attrName2).append(ATTR_EQ).append(_attrValue2).append(TAG_SEARCH_NC_2_7)
+                    .append(_attrName2).append(ATTR_EQ).append(_attrValue2).append(TAG_SEARCH_NC_2_6)
+                    .append(_attrName1).append(ATTR_EQ).append(_attrValue1).append(TAG_SEARCH_NC_2_2_2)
+                    .append(_elmName).append(TAG_SEARCH_NC_1_2).append(_elmName).append(TAG_CLOSE).toString();
+
             elm_.pattern(pattern_cc);
-            //パーサ
+
             elm_.parser(this);
 
-        } else {
+        } else if (matcher.groupCount() == SIX) {
+            //要素
+            elm_ = new Element(elmName);
+            //属性
+            elm_.attributes(matcher.group(1)); //.chop
+            //内容
+            elm_.mixedContent(matcher.group(3));
+            //全体
+            elm_.document(matcher.group(0));
+            //内容あり要素検索用パターン
+            elm_.pattern(pattern_cc);
 
-            //todo
+            elm_.parser(this);
+        }
+        return elm_;
 
-            sbuf.setLength(0);
-            pattern_cc_1 = sbuf.append(TAG_OPEN).append(_elmName)
+    }
+
+
+    protected boolean elementWith_5_2() {
+
+        sbuf.setLength(0);
+        pattern_cc_1 = sbuf.append(TAG_OPEN).append(_elmName)
                 .append(TAG_SEARCH_2_1_2).append(_attrName1).append(ATTR_EQ)
                 .append(_attrValue1).append(TAG_SEARCH_2_6).append(_attrName2).append(ATTR_EQ)
                 .append(_attrValue2).append(TAG_SEARCH_2_7).append(_attrName2).append(ATTR_EQ)
                 .append(_attrValue2).append(TAG_SEARCH_2_6).append(_attrName1).append(ATTR_EQ)
                 .append(_attrValue1).append(TAG_SEARCH_2_4_2_2).toString();
 
-            //System.out.println("5[" + pattern_cc_1 +"]");
+        //System.out.println("5[" + pattern_cc_1 +"]");
 
-            sbuf.setLength(0);
-            pattern_cc_1b = sbuf.append(TAG_OPEN).append(_elmName)
-                    .append(TAG_SEARCH_1_4).toString();
+        sbuf.setLength(0);
+        pattern_cc_1b = sbuf.append(TAG_OPEN).append(_elmName)
+                .append(TAG_SEARCH_1_4).toString();
 
-            sbuf.setLength(0);
-            pattern_cc_1_1 = sbuf.append(TAG_OPEN).append(_elmName)
-                    .append(TAG_SEARCH_2_1_2).append(_attrName1).append(ATTR_EQ)
-                    .append(_attrValue1).append(TAG_SEARCH_2_6).append(_attrName2).append(ATTR_EQ)
-                    .append(_attrValue2).append(TAG_SEARCH_2_7).append(_attrName2).append(ATTR_EQ)
-                    .append(_attrValue2).append(TAG_SEARCH_2_6).append(_attrName1).append(ATTR_EQ)
-                    .append(_attrValue1).append(TAG_SEARCH_4_7_2).toString();
+        sbuf.setLength(0);
+        pattern_cc_1_1 = sbuf.append(TAG_OPEN).append(_elmName)
+                .append(TAG_SEARCH_2_1_2).append(_attrName1).append(ATTR_EQ)
+                .append(_attrValue1).append(TAG_SEARCH_2_6).append(_attrName2).append(ATTR_EQ)
+                .append(_attrValue2).append(TAG_SEARCH_2_7).append(_attrName2).append(ATTR_EQ)
+                .append(_attrValue2).append(TAG_SEARCH_2_6).append(_attrName1).append(ATTR_EQ)
+                .append(_attrValue1).append(TAG_SEARCH_4_7_2).toString();
 
-            //System.out.println("5[" + pattern_cc_1_1 +"]");
+        //System.out.println("5[" + pattern_cc_1_1 +"]");
 
-            sbuf.setLength(0);
+        sbuf.setLength(0);
+        pattern_cc_1_2 = sbuf.append(TAG_SEARCH_4_2).append(_elmName)
+                .append(TAG_SEARCH_4_3).toString();
 
-            pattern_cc_1_2 = sbuf.append(TAG_SEARCH_4_2).append(_elmName)
-                    .append(TAG_SEARCH_4_3).toString();
+        sbuf.setLength(0);
+        pattern_cc_2 = sbuf.append(TAG_SEARCH_4_4).append(_elmName).append(TAG_CLOSE).toString();
 
-            sbuf.setLength(0);
-            pattern_cc_2 = sbuf.append(TAG_SEARCH_4_4).append(_elmName).append(TAG_CLOSE).toString();
+        sbuf.setLength(0);
+        pattern_cc_2_1 = sbuf.append(TAG_SEARCH_4_5).append(_elmName).append(TAG_CLOSE).toString();
 
-            sbuf.setLength(0);
-            pattern_cc_2_1 = sbuf.append(TAG_SEARCH_4_5).append(_elmName).append(TAG_CLOSE).toString();
+        sbuf.setLength(0);
+        pattern_cc_2_2 = sbuf.append(TAG_SEARCH_4_6).append(_elmName).append(TAG_CLOSE).toString();
 
-            sbuf.setLength(0);
-            pattern_cc_2_2 = sbuf.append(TAG_SEARCH_4_6).append(_elmName).append(TAG_CLOSE).toString();
+        pattern = PatternCache.get(pattern_cc_1);
+        //要素ありタグ検索
+        matcher = pattern.matcher(this.document());
 
-            pattern = PatternCache.get(pattern_cc_1);
-            //要素ありタグ検索
-            matcher = pattern.matcher(this.document());
+        sbuf.setLength(0);
 
-            sbuf.setLength(0);
-
-            int cnt = 0;
-
-            cnt = create_element_pattern(cnt);
-
-            pattern_cc = sbuf.toString();
-
-            System.out.println("2[" + pattern_cc + "]");
-            //System.out.println("TestPRE");
+        pattern_2 = PatternCache.get(pattern_cc_2);
+        pattern_1b = PatternCache.get(pattern_cc_1b);
 
 
-            if (cnt != 0) {
-                //return null;
-                throw new NoSuchElementException(elmName,attrName1,attrValue1,attrName2,attrValue2);
-            }
+        int cnt = 0;
 
-            pattern = PatternCache.get(pattern_cc);
-            matcher = pattern.matcher(this.document());
+        cnt = create_element_pattern(cnt);
 
-            if (matcher.find()) {
-                elm_ = new Element(elmName);
-                //属性
-                sbuf.setLength(0);
-                elm_.attributes(matcher.group(1).substring(0,matcher.group(1).length()));
-                //要素
-                elm_.mixedContent(matcher.group(4));
-                //要素ありタグ検索用パターン
-                elm_.pattern(pattern_cc);
-                //パーサ
-                elm_.parser(this);
+        pattern_cc = sbuf.toString();
 
-                //System.out.println("[" + elm.attributes() + "]");
-                //System.out.println("[" + elm.mixedContent() + "]");
-            }else{
-                elm_ = null;
-                throw new NoSuchElementException(elmName,attrName1,attrValue1,attrName2,attrValue2);
-            }
+        //todo
+        //System.out.println("[" + pattern_cc + "]");
+        //System.out.println("TestPRE");
 
+
+        if (pattern_cc.length() == ZERO || cnt != 0) {
+            //return null;
+            elm_ = null;
+            //throw new NoSuchElementException(elmName,attrName,attrValue);
+            return false;
         }
 
-        return elm_;
+        pattern = PatternCache.get(pattern_cc);
+        matcher = pattern.matcher(this.document());
+
+        res = matcher.find();
+
+        return res;
     }
 
-    protected Element elementWithoutContent(String elmName,
-                                                String attrName1, String attrValue1,String attrName2, String attrValue2) {
+    protected Element elementWithout_5(String elmName) {
 
-        return _elementWithoutContent(elmName, attrName1, attrValue1,attrName2,attrValue2,TAG_SEARCH_2_3_2_2);
+        return _elementWithout_5_1(elmName, TAG_SEARCH_2_3_2);
     }
 
-    protected final Element _elementWithoutContent(String elmName,
-                                                String attrName1, String attrValue1,String attrName2,String attrValue2,
-                                                String closer) {
-        //System.out.println("入ってません");
-
+    protected final Element _elementWithout_5_1(String elmName, String closer) {
+        //要素
+        elm_ = new Element(elmName);
+        //属性
+        elm_.attributes(matcher.group(1));
         //空要素タグ検索用パターン
         sbuf.setLength(0);
-        pattern_cc = sbuf.append(TAG_OPEN).append(_elmName)
-                .append(TAG_SEARCH_2_1_2).append(_attrName1).append(ATTR_EQ)
-                .append(_attrValue1).append(TAG_SEARCH_2_6).append(_attrName2).append(ATTR_EQ)
-                .append(_attrValue2).append(TAG_SEARCH_2_7).append(_attrName2).append(ATTR_EQ)
-                .append(_attrValue2).append(TAG_SEARCH_2_6).append(_attrName1).append(ATTR_EQ)
-                .append(_attrValue1).append(closer) //.append(TAG_CLOSE2)
-                .toString();
-        pattern = PatternCache.get(pattern_cc);
-        //空要素タグ検索
-        matcher = pattern.matcher(this.document());
-        if (matcher.find()) {
-            elm_ = new Element(elmName);
-            //属性
-            sbuf.setLength(0);
-            elm_.attributes(matcher.group(1));
-            //空要素タグ検索用パターン
-            elm_.pattern(pattern_cc);
-            //パーサ
-            elm_.parser(this);
-        }else{
-            elm_ = null;
-            throw new NoSuchElementException(elmName,attrName1,attrValue1,attrName2,attrValue2);
-        }
+        pattern_cc = sbuf.append(TAG_OPEN).append(_elmName).append(TAG_SEARCH_NC_2_1_2)
+                .append(_attrName1).append(ATTR_EQ).append(_attrValue1).append(TAG_SEARCH_NC_2_6)
+                .append(_attrName2).append(ATTR_EQ).append(_attrValue2).append(TAG_SEARCH_NC_2_7)
+                .append(_attrName2).append(ATTR_EQ).append(_attrValue2).append(TAG_SEARCH_NC_2_6)
+                .append(_attrName1).append(ATTR_EQ).append(_attrValue1).append(closer).toString();
+        elm_.pattern(pattern_cc);
+        //パーサ
+        elm_.parser(this);
+
 
         return elm_;
     }
@@ -908,14 +1002,14 @@ public abstract class Kernel implements Parser{
     /**
      * 属性1と属性2(属性名="属性値")により、要素を検索する
      *
-     * @param attrName1 属性名1
+     * @param attrName1  属性名1
      * @param attrValue1 属性値1
-     * @param attrName2 属性名2
+     * @param attrName2  属性名2
      * @param attrValue2 属性値2
      * @return 要素
      */
     public Element element(String attrName1, String attrValue1,
-                                  String attrName2, String attrValue2) {
+                           String attrName2, String attrValue2) {
 
         //属性名にサポートしていない文字が含まれる場合
         _attrName1 = escapeRegex(attrName1);
@@ -931,45 +1025,28 @@ public abstract class Kernel implements Parser{
                 .append(_attrValue1).append(TAG_SEARCH_2_6).append(_attrName2).append(ATTR_EQ)
                 .append(_attrValue2).append(TAG_SEARCH_2_7).append(_attrName2).append(ATTR_EQ)
                 .append(_attrValue2).append(TAG_SEARCH_2_6).append(_attrName1).append(ATTR_EQ)
-                .append(_attrValue1).append(TAG_SEARCH_2_4_2_2).toString();
+                .append(_attrValue1).append(TAG_SEARCH_2_4_2_3).toString();
         pattern = PatternCache.get(pattern_cc);
 
         matcher = pattern.matcher(this.document());
 
         if (matcher.find()) {
-            element(matcher.group(1), attrName1, attrValue1,attrName2, attrValue2);
+            element(matcher.group(1), attrName1, attrValue1, attrName2, attrValue2);
         } else {
-            elementWithoutContent(attrName1, attrValue1,attrName2, attrValue2);
+            elm_ = null;
+            throw new NoSuchElementException(attrName1, attrValue1, attrValue1, attrValue2);
         }
 
         //初期化
-
-        return elm_;
-    }
-
-    protected Element elementWithoutContent(String attrName1,String attrValue1,
-                                                String attrName2,String attrValue2) {
-
-        sbuf.setLength(0);
-        pattern_cc = sbuf.append(TAG_SEARCH_3_1_2_2).append(_attrName1).append(ATTR_EQ)
-                .append(_attrValue1).append(TAG_SEARCH_2_6).append(_attrName2).append(ATTR_EQ)
-                .append(_attrValue2).append(TAG_SEARCH_2_7).append(_attrName2).append(ATTR_EQ)
-                .append(_attrValue2).append(TAG_SEARCH_2_6).append(_attrName1).append(ATTR_EQ)
-                .append(_attrValue1).append(TAG_SEARCH_3_2_2_2).toString();
-        pattern = PatternCache.get(pattern_cc);
-
-        matcher = pattern.matcher(this.document());
-
-        if (matcher.find()) {
-            element(matcher.group(1), attrName1,attrValue1,attrName2,attrValue2);
-        }else{
-            throw new NoSuchElementException(attrName1,attrValue1,attrName2,attrValue2);
+        if (elm_ != null) {
+            elm_.objectId(++counter);
+            elementCache.put(elm_.objectId(), elm_);
         }
 
         return elm_;
     }
 
-    private int create_element_pattern(int cnt){
+    private int create_element_pattern(int cnt) {
         boolean res;
 
         position = 0;
@@ -981,9 +1058,7 @@ public abstract class Kernel implements Parser{
                 if (cnt > 0) {
 
                     position2 = matcher.end();
-
-                    pattern = PatternCache.get(pattern_cc_2);
-                    matcher = pattern.matcher(this.document());
+                    matcher = pattern_2.matcher(this.document());
 
                     res = matcher.find(position);
 
@@ -1024,7 +1099,7 @@ public abstract class Kernel implements Parser{
                     cnt += 1;
                 }
             } else {
-                if(cnt == 0) break;
+                if (cnt == 0) break;
 
                 pattern = PatternCache.get(pattern_cc_2);
                 matcher = pattern.matcher(this.document());
@@ -1042,71 +1117,17 @@ public abstract class Kernel implements Parser{
                     }
 
                     position = matcher.end();
-                }else{
+                } else {
                     break;
                 }
             }
-
-            pattern = PatternCache.get(pattern_cc_1b);
-            matcher = pattern.matcher(this.document());
+            matcher = pattern_1b.matcher(this.document());
 
         }
 
         return cnt;
-        
+
     }
-
-
-    /**
-     * 要素名を編集する
-     *
-     * @param elm     要素
-     * @param elmName 要素名
-     */
-    /*protected void setElementName(Element elm, String elmName) {
-
-        result = elm.name();
-
-        elm.name(elmName);
-        //タグ検索用パターン
-        pattern = PatternCache.get(elm.pattern());
-        //タグ検索
-        matcher = pattern.matcher(this.document());
-        if (elm.empty()) {
-            //要素ありタグの場合
-            sbuf.setLength(0);
-            this.document(matcher.replaceFirst(sbuf.append(TAG_OPEN)
-                    .append(elm.name()).append(elm.attributes()).append(TAG_CLOSE)
-                    .append(elm.mixedContent()).append(TAG_OPEN3).append(elm.name())
-                    .append(TAG_CLOSE).toString()));
-        } else {
-            //空要素タグの場合
-            sbuf.setLength(0);
-            this.document(matcher.replaceFirst(sbuf.append(TAG_OPEN)
-                    .append(elm.name()).append(elm.attributes()).append(TAG_CLOSE2)
-                    .toString()));
-        }
-
-        //パターンの更新
-        if (!result.equals(elmName)) {
-            sbuf.setLength(0);
-            pattern_cc = sbuf.append(TAG_OPEN).append(result).toString();
-            pattern = PatternCache.get(pattern_cc);
-            matcher = pattern.matcher(elm.pattern());
-            sbuf.setLength(0);
-            elm.pattern(matcher.replaceAll(sbuf.append(TAG_OPEN).append(elmName).toString()));
-
-            if (elm.empty()) {
-                sbuf.setLength(0);
-                pattern_cc = sbuf.append(TAG_OPEN4).append(result).toString();
-                pattern = PatternCache.get(pattern_cc);
-                matcher = pattern.matcher(elm.pattern());
-                sbuf.setLength(0);
-                elm.pattern(matcher.replaceAll(sbuf.append(TAG_OPEN4).append(elmName).toString()));
-            }
-        }
-
-    }*/
 
     /**
      * 要素の属性を編集する
@@ -1115,40 +1136,49 @@ public abstract class Kernel implements Parser{
      * @param attrName  属性名
      * @param attrValue 属性値
      */
-    public void attribute(Element elm, String attrName, String attrValue) {
+    public Element attribute(Element elm, String attrName, String attrValue) {
 
         if (!elm.cx()) {
+            attrValue = escape(attrValue);
 
-            attrValue = editAttributes_(elm,attrName,attrValue);
+            //属性群の更新
+            editAttributes_(elm, attrName, attrValue);
 
-
-            editDocument_(elm);
+            //editDocument_(elm);
 
             //パターンの更新
-            editPattern_(elm,attrName,attrValue);
-
+            //editPattern_(elm,attrName,attrValue);
         }
+        return elm;
     }
 
-    protected String editAttributes_(Element elm,String attrName, String attrValue){
+    protected void editAttributes_(Element elm, String attrName, String attrValue) {
         attrValue = escape(attrValue);
         //属性検索用パターン
-        sbuf.setLength(0);
-        pattern = PatternCache.get(sbuf.append(attrName).append(SET_ATTR_1)
-                .toString());
+        //sbuf.setLength(0);
+        //pattern = PatternCache.get(sbuf.append(attrName).append(SET_ATTR_1)
+        //        .toString());
 
         //System.out.println(elm.attributes());
         //属性検索
-        matcher = pattern.matcher(elm.attributes());
+        //matcher = pattern.matcher(elm.attributes());
 
         sbuf.setLength(0);
         //検索対象属性の存在判定
-        if (matcher.find()) {
+        //if (matcher.find()) {
+        if (elm.attributes().indexOf(sbuf.append(SPACE).append(attrName)
+                .append(ATTR_EQ).toString()) >= 0) {
             //todo
             //System.out.println(matcher.group(0));
 
             //attrValue = escapeRegex(attrValue);
+            sbuf.setLength(0);
+            pattern = PatternCache.get(sbuf.append(attrName).append(SET_ATTR_1)
+                    .toString());
+            matcher = pattern.matcher(elm.attributes());
+
             //属性の置換
+            sbuf.setLength(0);
             elm.attributes(matcher.replaceFirst(sbuf.append(attrName)
                     .append(ATTR_EQ).append(attrValue).append(DOUBLE_QUATATION)
                     .toString()));
@@ -1174,43 +1204,71 @@ public abstract class Kernel implements Parser{
         }
         //elm.attributes(result);
 
-        return attrValue;
+        //return attrValue;
     }
 
-    protected void editDocument_(Element elm){
-        editDocument_(elm,TAG_CLOSE3);
+    protected void editDocument_(Element elm) {
+        editDocument_(elm, TAG_CLOSE3);
     }
 
-    protected final void editDocument_(Element elm,String closer){
+    protected final void editDocument_(Element elm, String closer) {
         //result = escapeRegex(elm.attributes());
+        if (!elm.cx()) {
+            _attributes = elm.attributes();
 
-        //System.out.println("res:" + result);
+            //System.out.println("res:" + result);
 
-        if (elm.empty()) {
-            //要素ありタグの場合
+            if (elm.empty()) {
+                //要素ありタグの場合
 
-            //タグ検索用パターン
-            pattern = PatternCache.get(elm.pattern());
-            //タグ検索
-            matcher = pattern.matcher(this.document());
-            sbuf.setLength(0);
-            this.document(matcher.replaceFirst(sbuf.append(TAG_OPEN)
-                    .append(elm.name()).append(elm.attributes()).append(TAG_CLOSE)
-                    .append(elm.mixedContent()).append(TAG_OPEN3).append(elm.name())
-                    .append(TAG_CLOSE).toString()));
+                ////タグ検索用パターン
+                //pattern = PatternCache.get(elm.pattern());
+                ////タグ検索
+                //matcher = pattern.matcher(this.document());
+                //sbuf.setLength(0);
+                //this.document(matcher.replaceFirst(sbuf.append(TAG_OPEN)
+                //        .append(elm.name()).append(elm.attributes()).append(TAG_CLOSE)
+                //        .append(elm.mixedContent()).append(TAG_OPEN3).append(elm.name())
+                //        .append(TAG_CLOSE).toString()));
+                _content = elm.mixedContent();
+
+                sbuf.setLength(0);
+                elm.document(sbuf.append(TAG_OPEN).append(elm.name()).append(elm.attributes())
+                        .append(TAG_CLOSE).append(_content).append(TAG_OPEN3).append(elm.name())
+                        .append(TAG_CLOSE).toString());
+
+            } else {
+                //空要素タグの場合
+                ////タグ検索用パターン
+                //pattern = PatternCache.get(elm.pattern());
+                ////タグ検索
+                //matcher = pattern.matcher(this.document());
+                //sbuf.setLength(0);
+                //this.document(matcher.replaceFirst(sbuf.append(TAG_OPEN)
+                //        .append(elm.name()).append(elm.attributes()).append(closer)
+                //        .toString()));
+                sbuf.setLength(0);
+                elm.document(sbuf.append(TAG_OPEN).append(elm.name()).append(elm.attributes())
+                        .append(closer).toString());
+            }
         } else {
-            //空要素タグの場合
-            //タグ検索用パターン
-            pattern = PatternCache.get(elm.pattern());
-            //タグ検索
-            matcher = pattern.matcher(this.document());
+            _attributes = elm.attributes();
+            _content = elm.mixedContent();
+
             sbuf.setLength(0);
-            this.document(matcher.replaceFirst(sbuf.append(TAG_OPEN)
-                    .append(elm.name()).append(elm.attributes()).append(closer)
-                    .toString()));
+            elm.document(sbuf.append(SET_CX_1).append(elm.name()).append(SPACE)
+                    .append(_attributes).append(SET_CX_2).append(_content)
+                    .append(SET_CX_3).append(elm.name()).append(SET_CX_4).toString());
+
         }
+
+        //タグ置換
+        pattern = PatternCache.get(elm.pattern());
+        matcher = pattern.matcher(root.document());
+        root.document(matcher.replaceFirst(elm.document()));
     }
 
+    /*
     protected final void editPattern_(Element elm,String attrName,String attrValue){
 
         sbuf.setLength(0);
@@ -1221,6 +1279,7 @@ public abstract class Kernel implements Parser{
         elm.pattern(matcher.replaceFirst(sbuf.append(attrName).append(ATTR_EQ).append(attrValue)
                 .append(DOUBLE_QUATATION).toString()));
     }
+    */
 
     /**
      * 要素を属性名で検索し、属性値を得る
@@ -1231,15 +1290,15 @@ public abstract class Kernel implements Parser{
      */
     public String attribute(Element elm, String attrName) {
 
-         return getAttributeValue_(elm,attrName);
+        return getAttributeValue_(elm, attrName);
     }
 
-    protected String getAttributeValue_(Element elm, String attrName){
+    protected String getAttributeValue_(Element elm, String attrName) {
 
         //属性検索用パターン
         sbuf.setLength(0);
         pattern = PatternCache.get(sbuf.append(attrName).append(GET_ATTR_1)
-                      .toString());
+                .toString());
         matcher = pattern.matcher(elm.attributes());
 
         if (matcher.find()) {
@@ -1252,17 +1311,18 @@ public abstract class Kernel implements Parser{
 
     /**
      * 属性マップを取得する
+     *
      * @param elm 要素
      * @return 属性マップ
      */
-    public AttributeMap attributeMap(Element elm){
+    public AttributeMap attributeMap(Element elm) {
 
         AttributeMap attrs = new AttributeMap();
-        
+
         matcher = pattern_get_attrs_map.matcher(elm.attributes());
 
-        while(matcher.find()){
-            attrs.put(matcher.group(1), unescape(matcher.group(2)));
+        while (matcher.find()) {
+            attrs.store(matcher.group(1), unescape(matcher.group(2)));
         }
         attrs.setRecordable(true);
 
@@ -1272,41 +1332,17 @@ public abstract class Kernel implements Parser{
     /**
      * 要素の内容をセットする
      *
-     * @param elm 要素
-     * @param content 要素の内容
+     * @param elm       要素
+     * @param content   要素の内容
      * @param entityRef エンティティ参照フラグ
      */
-    public void content(Element elm, String content, boolean entityRef) {
+    public Element content(Element elm, String content, boolean entityRef) {
 
-        if (!elm.cx()) {
+        //if (!elm.cx()) {
 
-            //要素ありタグの場合
-            if (elm.empty()) {
-                elm.mixedContent(content);
+        //要素ありタグの場合
+        if (elm.empty()) {
 
-                if (entityRef) {
-                    content = escapeContent(content, elm.name());
-                    //content = escapeRegex(content);
-                } else {
-                    //content = escapeRegex(content);
-                }
-
-                //タグ検索パターン
-                pattern = PatternCache.get(elm.pattern());
-                //タグ置換
-                matcher = pattern.matcher(this.document());
-                sbuf.setLength(0);
-                this.document(matcher.replaceFirst(sbuf.append(TAG_OPEN)
-                        .append(elm.name()).append(elm.attributes()).append(TAG_CLOSE)
-                        .append(content).append(TAG_OPEN3).append(elm.name())
-                        .append(TAG_CLOSE).toString()));
-            }
-            //初期化
-            //matcher.reset();
-            //matcher = null;
-            //pattern = null;
-        } else {
-            elm.mixedContent(content);
 
             if (entityRef) {
                 content = escapeContent(content, elm.name());
@@ -1315,17 +1351,43 @@ public abstract class Kernel implements Parser{
                 //content = escapeRegex(content);
             }
 
-            pattern = PatternCache.get(elm.pattern());
-            matcher = pattern.matcher(this.document());
-            //タグ置換
-            sbuf.setLength(0);
-            pattern_cc = sbuf.append(SET_CX_1).append(elm.name())
-                    .append(SPACE).append(elm.attributes()).append(SET_CX_2)
-                    .append(content).append(SET_CX_3).append(elm.name())
-                    .append(SET_CX_4).toString();
-            this.document(matcher.replaceFirst(pattern_cc));
-
+            elm.mixedContent(content);
+            ////タグ検索パターン
+            //pattern = PatternCache.get(elm.pattern());
+            ////タグ置換
+            //matcher = pattern.matcher(this.document());
+            //sbuf.setLength(0);
+            //this.document(matcher.replaceFirst(sbuf.append(TAG_OPEN)
+            //        .append(elm.name()).append(elm.attributes()).append(TAG_CLOSE)
+            //        .append(content).append(TAG_OPEN3).append(elm.name())
+            //        .append(TAG_CLOSE).toString()));
         }
+        //初期化
+        //matcher.reset();
+        //matcher = null;
+        //pattern = null;
+        //} else {
+        //elm.mixedContent(content);
+        //
+        //if (entityRef) {
+        //    content = escapeContent(content, elm.name());
+        //    //content = escapeRegex(content);
+        //} else {
+        //    //content = escapeRegex(content);
+        //}
+        //
+        //pattern = PatternCache.get(elm.pattern());
+        //matcher = pattern.matcher(this.document());
+        ////タグ置換
+        //sbuf.setLength(0);
+        //pattern_cc = sbuf.append(SET_CX_1).append(elm.name())
+        //        .append(SPACE).append(elm.attributes()).append(SET_CX_2)
+        //        .append(content).append(SET_CX_3).append(elm.name())
+        //        .append(SET_CX_4).toString();
+        //this.document(matcher.replaceFirst(pattern_cc));
+        //
+        //}
+        return elm;
     }
 
     /**
@@ -1334,8 +1396,9 @@ public abstract class Kernel implements Parser{
      * @param elm     要素
      * @param content 要素の内容
      */
-    public void content(Element elm, String content) {
-        content(elm, content, true);
+    public Element content(Element elm, String content) {
+        elm.mixedContent(escapeContent(content, elm.name()));
+        return elm;
     }
 
     /**
@@ -1352,6 +1415,8 @@ public abstract class Kernel implements Parser{
             if (elm.empty()) {
                 result = unescapeContent(elm.mixedContent(), elm.name());
             }
+        } else {
+            result = unescapeContent(elm.mixedContent(), elm.name());
         }
 
         return result;
@@ -1359,71 +1424,78 @@ public abstract class Kernel implements Parser{
 
     /**
      * 要素の属性を消す
-     * @param elm 要素
+     *
+     * @param elm      要素
      * @param attrName 属性名
      */
-    public void removeAttribute(Element elm, String attrName) {
+    public Element removeAttribute(Element elm, String attrName) {
 
         if (!elm.cx()) {
-            result = elm.attributes();
+            //result = elm.attributes();
 
-            //属性検索用パターン
-            sbuf.setLength(0);
-            pattern = PatternCache.get(sbuf.append(attrName).append(ERASE_ATTR_1)
-                    .toString());
-            //属性検索
-            matcher = pattern.matcher(elm.attributes());
+            elm.documentSync(true);
+            removeAttributes_(elm, attrName);
 
             //検索対象属性の存在判定
-            if (matcher.find()) {
-                //属性の置換
-                result = matcher.replaceFirst(EMPTY);
+            //if (matcher.find()) {
+            //    //属性の置換
+            //    result = matcher.replaceFirst(EMPTY);
+            //
+            //    elm.attributes(result);
+            //} else {
+            //    //属性検索用パターン
+            //    sbuf.setLength(0);
+            //    pattern = PatternCache.get(sbuf.append(attrName).append(SET_ATTR_1)
+            //            .toString());
+            //    //属性検索
+            //    matcher = pattern.matcher(elm.attributes());
+            //    //検索対象属性の存在判定
+            //    if (matcher.find()) {
+            //        //属性の置換
+            //        result = matcher.replaceFirst(EMPTY);
+            //
+            //        elm.attributes(result);
+            //    }
+            //}
+            ////タグ検索用パターン
+            //pattern = PatternCache.get(elm.pattern());
+            ////タグ検索
+            //matcher = pattern.matcher(this.document());
+            //if (elm.empty()) {
+            //    //要素ありタグの場合
+            //    sbuf.setLength(0);
+            //    //element = escapeRegex(elm.mixedContent());
+            //    this.document(matcher.replaceFirst(sbuf.append(TAG_OPEN)
+            //            .append(elm.name()).append(result).append(TAG_CLOSE)
+            //            .append(elm.mixedContent()).append(TAG_OPEN3)
+            //            .append(elm.name()).append(TAG_CLOSE).toString()));
+            //} else {
+            //    //空要素タグの場合
+            //    sbuf.setLength(0);
+            //    this.document(matcher.replaceFirst(sbuf.append(TAG_OPEN)
+            //            .append(elm.name()).append(result).append(TAG_CLOSE2)
+            //            .toString()));
+            //}
 
-                elm.attributes(result);
-            } else {
-                //属性検索用パターン
-                sbuf.setLength(0);
-                pattern = PatternCache.get(sbuf.append(attrName).append(SET_ATTR_1)
-                        .toString());
-                //属性検索
-                matcher = pattern.matcher(elm.attributes());
-                //検索対象属性の存在判定
-                if (matcher.find()) {
-                    //属性の置換
-                    result = matcher.replaceFirst(EMPTY);
-
-                    elm.attributes(result);
-                }
-            }
-            //タグ検索用パターン
-            pattern = PatternCache.get(elm.pattern());
-            //タグ検索
-            matcher = pattern.matcher(this.document());
-            if (elm.empty()) {
-                //要素ありタグの場合
-                sbuf.setLength(0);
-                //element = escapeRegex(elm.mixedContent());
-                this.document(matcher.replaceFirst(sbuf.append(TAG_OPEN)
-                        .append(elm.name()).append(result).append(TAG_CLOSE)
-                        .append(elm.mixedContent()).append(TAG_OPEN3)
-                        .append(elm.name()).append(TAG_CLOSE).toString()));
-            } else {
-                //空要素タグの場合
-                sbuf.setLength(0);
-                this.document(matcher.replaceFirst(sbuf.append(TAG_OPEN)
-                        .append(elm.name()).append(result).append(TAG_CLOSE2)
-                        .toString()));
-            }
-
-            //パターンの更新
-            sbuf.setLength(0);
-            pattern_cc = sbuf.append(attrName).append(SET_ATTR_1).toString();
-            pattern = PatternCache.get(pattern_cc);
-            matcher = pattern.matcher(elm.pattern());
-            sbuf.setLength(0);
-            elm.pattern(matcher.replaceFirst(EMPTY));
-
+            ////パターンの更新
+            //sbuf.setLength(0);
+            //pattern_cc = sbuf.append(attrName).append(SET_ATTR_1).toString();
+            //pattern = PatternCache.get(pattern_cc);
+            //matcher = pattern.matcher(elm.pattern());
+            //sbuf.setLength(0);
+            //elm.pattern(matcher.replaceFirst(EMPTY));
         }
+        return elm;
+    }
+
+    private void removeAttributes_(Element elm, String attrName) {
+        //属性検索用パターン
+        sbuf.setLength(0);
+        pattern = PatternCache.get(sbuf.append(attrName).append(ERASE_ATTR_1)
+                .toString());
+        //属性検索
+        matcher = pattern.matcher(elm.attributes());
+        elm.attributes(matcher.replaceFirst(EMPTY));
     }
 
     /**
@@ -1431,18 +1503,19 @@ public abstract class Kernel implements Parser{
      *
      * @param elm 要素
      */
-    public void removeElement(Element elm) {
+    public Element removeElement(Element elm) {
 
-        if (!elm.cx()) {
-            replace(elm, EMPTY);
-        } else {
-            replace(elm, EMPTY);
-        }
+        //if (!elm.cx()) {
+        replace(elm, EMPTY);
+        //} else {
+        //    replace(elm, EMPTY);
+        //}
+        elm.usable(false);
+        return null;
 
     }
 
     public Element cxTag(String elmName, String id) {
-        Element elm = null;
 
         //CXタグ検索用パターン
         sbuf.setLength(0);
@@ -1453,14 +1526,21 @@ public abstract class Kernel implements Parser{
         //CXタグ検索
         matcher = pattern.matcher(this.document());
         if (matcher.find()) {
-            elm = new Element(elmName);
-            elm.cx(true);
-            elm.attributes(matcher.group(1));
-            elm.mixedContent(matcher.group(2));
-            elm.pattern(pattern_cc);
+            elm_ = new Element(elmName);
+            elm_.cx(true);
+            elm_.attributes(matcher.group(1));
+            elm_.mixedContent(matcher.group(2));
+            elm_.document(matcher.group(0));
+            elm_.pattern(pattern_cc);
+            elm_.parser(this);
         }
 
-        return elm;
+        if (elm_ != null) {
+            elm_.objectId(++counter);
+            elementCache.put(elm_.objectId(), elm_);
+        }
+
+        return elm_;
     }
 
     /**
@@ -1470,7 +1550,7 @@ public abstract class Kernel implements Parser{
      * @return 要素
      */
     public Element cxTag(String id) {
-        Element elm = null;
+
 
         sbuf.setLength(0);
         pattern_cc = sbuf.append(SEARCH_CX_6).append(id)
@@ -1479,10 +1559,17 @@ public abstract class Kernel implements Parser{
         matcher = pattern.matcher(this.document());
 
         if (matcher.find()) {
-            elm = cxTag(matcher.group(1), id);
+            elm_ = cxTag(matcher.group(1), id);
+        }else{
+            elm_ = null;    
         }
 
-        return elm;
+        if (elm_ != null) {
+            elm_.objectId(++counter);
+            elementCache.put(elm_.objectId(), elm_);
+        }
+
+        return elm_;
     }
 
     /**
@@ -1506,57 +1593,87 @@ public abstract class Kernel implements Parser{
         //matcher.reset();
     }
 
-    /**
-     * XMLをコンソールに出力する
-     */
-    public void print() {
-        if (root.hook()) {
-            //フック判定がTRUEの場合
-            if (root.element().cx()) {
-                //hookdocument().append(SET_QUARK_3).append(tag.attributes())
-                // .append(SET_QUARK_4).append(document()).append(SET_QUARK_5);
-                //this.root.setHookDocument(this.root.hookDocument().append(SET_CX_1).append(element().name())
-                //        .append(SPACE).append(element().attributes()).append(SET_CX_2)
-                //        .append(document()).append(SET_CX_3).append(element().name())
-                //        .append(SET_CX_4));
-                this.root.setHookDocument(this.root.hookDocument().append(SET_CX_1)
-                        .append(this.root.mutableElement().name())
-                        .append(SPACE).append(this.root.mutableElement().attributes()).append(SET_CX_2)
-                        .append(document()).append(SET_CX_3)
-                        .append(this.root.mutableElement().name())
-                        .append(SET_CX_4));
-            } else {
-                //this.root.setHookDocument(this.root.hookDocument().append(TAG_OPEN).append(element().name())
-                //        .append(element().attributes()).append(TAG_CLOSE).append(document())
-                //        .append(TAG_OPEN3).append(element().name()).append(TAG_CLOSE));
-                this.root.setHookDocument(this.root.hookDocument().append(TAG_OPEN)
-                        .append(this.root.mutableElement().name())
-                        .append(root.mutableElement().attributes()).append(TAG_CLOSE).append(document())
-                        .append(TAG_OPEN3).append(root.mutableElement().name()).append(TAG_CLOSE));
-            }
-            this.root.setMutableElement(new Element(this.root.element()));
-        } else {
-            if (root.monoHook()) {
-                this.root.setHookDocument(this.root.hookDocument().append(document()));
-            } else {
-
-                //expire();
-
-                //フック判定がFALSEの場合
-                clean();
+    private void reflect() {
+        Element item;
+        for (Integer id : elementCache.keySet().toArray(new Integer[elementCache.size()])) {
+            item = elementCache.get(id);
+            //System.out.println("id:" + id);
+            if (item.usable()) {
+                //System.out.println(item.name());
+                if (item.copy() != null) {
+                    //System.out.println("loop:" + item.name());
+                    //System.out.println("pattern:[" + item.pattern() + "]");
+                    //System.out.println("doc:[" + item.copy().parser().rootElement().hookDocument().toString() +"]");
+                    //item.document = item.copy.parser.root_element.hook_document
+                    pattern = PatternCache.get(item.pattern());
+                    matcher = pattern.matcher(root.document());
+                    root.document(matcher.replaceFirst(
+                            item.copy().parser().rootElement().hookDocument().toString()));
+                    //@root.document.sub!(@pattern,item.document)
+                    //item.copy.parser.element_cache.clear
+                    item.copy(null);
+                } else {
+                    editDocument_(item);
+                    //edit_pattern_(item)
+                }
+                item.usable(false);
             }
         }
+
     }
 
     /**
-     * 子パーサを親パーサに反映する
+     * XMLをコンソールに出力する
      */
-    public void flush(){
-        if(this.rootElement().hook() || this.rootElement().monoHook()){
-            if(this.rootElement().element() != null){
-                this.rootElement().element().parser().replace(this.rootElement().element()
-                        , this.rootElement().hookDocument().toString());
+    public void flush() {
+        if (root.element() != null) {
+            if (root.element().origin().mono()) {
+                //フック判定がTRUEの場合
+                if (root.element().cx()) {
+                    //hookdocument().append(SET_QUARK_3).append(tag.attributes())
+                    // .append(SET_QUARK_4).append(document()).append(SET_QUARK_5);
+                    //this.root.setHookDocument(this.root.hookDocument().append(SET_CX_1).append(element().name())
+                    //        .append(SPACE).append(element().attributes()).append(SET_CX_2)
+                    //        .append(document()).append(SET_CX_3).append(element().name())
+                    //        .append(SET_CX_4));
+                    this.root.setHookDocument(this.root.hookDocument().append(SET_CX_1)
+                            .append(this.root.element().name())
+                            .append(SPACE).append(this.root.element().attributes()).append(SET_CX_2)
+                            .append(root.element().mixedContent()).append(SET_CX_3)
+                            .append(this.root.element().name())
+                            .append(SET_CX_4));
+                } else {
+                    //this.root.setHookDocument(this.root.hookDocument().append(TAG_OPEN).append(element().name())
+                    //        .append(element().attributes()).append(TAG_CLOSE).append(document())
+                    //        .append(TAG_OPEN3).append(element().name()).append(TAG_CLOSE));
+                    this.root.setHookDocument(this.root.hookDocument().append(TAG_OPEN)
+                            .append(this.root.element().name())
+                            .append(root.element().attributes()).append(TAG_CLOSE)
+                            .append(root.element().mixedContent()).append(TAG_OPEN3).append(root.element().name()).append(TAG_CLOSE));
+                }
+                this.root.setElement(Element.new_(this.root.element().origin(), this));
+            } else {
+                reflect();
+
+                if (root.element().origin().cx()) {
+                    root.setHookDocument(this.root.hookDocument().append(SET_CX_1)
+                            .append(root.element().name()).append(SPACE).append(_attributes)
+                            .append(SET_CX_2).append(root.document()).append(SET_CX_3)
+                            .append(root.element().name()).append(SET_CX_4));
+                } else {
+                    root.setHookDocument(this.root.hookDocument().append(TAG_OPEN)
+                            .append(root.element().name()).append(_attributes).append(TAG_CLOSE)
+                            .append(root.document()).append(TAG_OPEN3).append(root.element().name())
+                            .append(TAG_CLOSE));
+                }
+                root.setElement(Element.new_(root.element().origin(), this));
+
             }
+        } else {
+            reflect();
+            elementCache.clear();
+            //フック判定がFALSEの場合
+            clean();
         }
     }
 
@@ -1569,7 +1686,7 @@ public abstract class Kernel implements Parser{
     public void execute(Element elm, Hooker hook) {
         //if(!element().cx()){
         //フッククラスのメソッドを呼び出す
-        hook.doAction(elm, this);
+        hook.doAction(elm);
         //}
     }
 
@@ -1583,16 +1700,17 @@ public abstract class Kernel implements Parser{
     public void execute(Element elm, Looper hook, List list) {
         //if(!element().cx()){
         //フッククラスのメソッドを呼び出す
-        hook.doAction(elm, this, list);
+        hook.doAction(elm,list);
         //}
     }
 
     /**
-     * 子パーサを取得する
+     * 要素をコピーする
+     *
      * @param elm 要素
-     * @return 子パーサ
+     * @return 要素
      */
-    public Parser child(Element elm){
+    public Element shadow(Element elm) {
         if (elm.empty()) {
             Parser pif2;
 
@@ -1600,23 +1718,22 @@ public abstract class Kernel implements Parser{
 
             pif2 = create(this);
 
-            elm.parent(true);
-            pif2.rootElement().setElement(elm);
-            pif2.rootElement().setMutableElement(new Element(elm));
-            pif2.rootElement().setKaigyoCode(this.rootElement().kaigyoCode());
-
             if (elm.mono()) {
                 //要素ありタグの場合
 
                 pif2.rootElement().document(elm.document());
-                pif2.rootElement().setMonoHook(true);
-                return pif2;
-            }else{
+                //pif2.rootElement().setMonoHook(true);
+                //return pif2;
+            } else {
 
                 pif2.rootElement().document(elm.mixedContent());
-                pif2.rootElement().setHook(true);
-                return pif2;
+                //pif2.rootElement().setHook(true);
+                //return pif2;
             }
+
+            elm_ = Element.new_(elm, pif2);
+
+            return elm_;
         }
 
         return null;
@@ -1720,34 +1837,33 @@ public abstract class Kernel implements Parser{
     protected abstract String unescape(String element);
 
     /**
-     * 
      * @param element 入力文字列
      * @param elmName 要素名
      * @return 出力文字列
      */
     protected abstract String unescapeContent(String element, String elmName);
-    
 
-    protected final boolean isMatch(Pattern pattern,String str){
+
+    protected final boolean isMatch(Pattern pattern, String str) {
         matcher＿ = pattern.matcher(str);
         return matcher＿.matches();
     }
 
 
-    protected final boolean isMatch(String[] pattern,String str){
+    protected final boolean isMatch(String[] pattern, String str) {
         str = str.toLowerCase();
-        for(String item : pattern){
-            if(item.equals(str)){
+        for (String item : pattern) {
+            if (item.equals(str)) {
                 return true;
             }
         }
         return false;
     }
 
-    protected final boolean isMatch(String pattern,String str){
-        if(pattern.equals(str.toLowerCase())){
+    protected final boolean isMatch(String pattern, String str) {
+        if (pattern.equals(str.toLowerCase())) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }

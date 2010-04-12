@@ -1,4 +1,5 @@
 //標準API
+
 import java.io.*;
 import java.util.*;
 //ServletAPI
@@ -34,7 +35,6 @@ public class RequestLoopServlet extends HttpServlet {
         //htオブジェクトのコピーを取得する
         Parser xt = pf.parser();
 
-
         //リクエストのエンコーディングを指定する
         anl.setCharacterEncoding("Shift_JIS");
         //リクエストパラメータがマルチの場合の返却タイプを指定
@@ -45,6 +45,10 @@ public class RequestLoopServlet extends HttpServlet {
         //赤字部分の動的ループのロジックを呼び出す。
         Element tag = xt.element("tr", "name", "loop");
         xt.execute(tag, (new RequestLoop(query)));
+
+        //反映する
+        xt.flush();
+
         //HTTP出力する。
         HttpPrinter prt = new HttpPrinter(res);
         prt.print(xt);

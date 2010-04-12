@@ -1,4 +1,5 @@
 //標準API
+
 import java.io.*;
 
 //ServletAPI
@@ -31,6 +32,8 @@ public class HelloServlet extends HttpServlet {
         //"Hello,World"を"こんにちは、世界！"に変更する
         Element tag = xt.cxTag("hello");
         xt.content(tag, "こんにちは、世界！");
+        //反映する
+        xt.flush();
         //HTTP出力する
         HttpPrinter prt = new HttpPrinter(res);
         prt.print(xt);

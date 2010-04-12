@@ -1,4 +1,5 @@
 //標準API
+
 import java.io.*;
 
 //ServletAPI
@@ -47,6 +48,9 @@ public class LoopServletHTML2 extends HttpServlet {
         Element tag = xt.element("option", "value", "test");
 
         xt.execute(tag, new LoopML2());
+
+        //反映する
+        xt.flush();
 
         HttpPrinter prt = new HttpPrinter(res);
         prt.print(xt);

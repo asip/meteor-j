@@ -1,4 +1,5 @@
 //標準API
+
 import java.io.*;
 
 //ServletAPI
@@ -31,6 +32,8 @@ public class AttrServlet2 extends HttpServlet {
         //fontタグのcolor属性を消します。
         Element tag = xt.element("font", "id", "hello");
         xt.removeAttribute(tag, "color");
+        //反映する
+        xt.flush();
         //HTTP出力する
         HttpPrinter prt = new HttpPrinter(res);
         prt.print(xt);

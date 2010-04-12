@@ -1,11 +1,8 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-
-<!DOCTYPE web-app
-    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
-    "http://java.sun.com/dtd/web-app_2_3.dtd">
-
-<web-app>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+version="2.4">
     <servlet>
         <servlet-name>HelloServlet</servlet-name>
         <servlet-class>HelloServlet</servlet-class>
@@ -15,62 +12,62 @@
         <servlet-name>AttrServlet1</servlet-name>
         <servlet-class>AttrServlet1</servlet-class>
     </servlet>
-    
+
     <servlet>
         <servlet-name>AttrServlet2</servlet-name>
         <servlet-class>AttrServlet2</servlet-class>
     </servlet>
-    
+
     <servlet>
         <servlet-name>ElementServlet1</servlet-name>
         <servlet-class>ElementServlet1</servlet-class>
     </servlet>
-    
+
     <servlet>
         <servlet-name>ElementServlet2</servlet-name>
         <servlet-class>ElementServlet2</servlet-class>
     </servlet>
-    
+
     <servlet>
         <servlet-name>LoopServletHTML</servlet-name>
         <servlet-class>LoopServletHTML</servlet-class>
     </servlet>
-    
+
     <servlet>
         <servlet-name>LoopServletHTML2</servlet-name>
         <servlet-class>LoopServletHTML2</servlet-class>
     </servlet>
-    
+
     <servlet>
         <servlet-name>LoopServletHTML3_1</servlet-name>
         <servlet-class>LoopServletHTML3_1</servlet-class>
     </servlet>
-    
+
     <servlet>
         <servlet-name>LoopServletHTML3_2</servlet-name>
         <servlet-class>LoopServletHTML3_2</servlet-class>
     </servlet>
-    
+
     <servlet>
         <servlet-name>RequestServlet</servlet-name>
         <servlet-class>RequestServlet</servlet-class>
     </servlet>
-    
+
     <servlet>
         <servlet-name>RequestLoopServlet</servlet-name>
         <servlet-class>RequestLoopServlet</servlet-class>
     </servlet>
-    
+
     <servlet>
         <servlet-name>UploadServlet</servlet-name>
         <servlet-class>UploadServlet</servlet-class>
     </servlet>
-    
+
     <servlet>
         <servlet-name>ValidateServlet</servlet-name>
         <servlet-class>ValidateServlet</servlet-class>
     </servlet>
-    
+
     <servlet-mapping>
         <servlet-name>ValidateServlet</servlet-name>
         <url-pattern>/servlet/ValidateServlet</url-pattern>
@@ -86,7 +83,7 @@
         <url-pattern>/servlet/AttrServlet1</url-pattern>
     </servlet-mapping>
 
-     <servlet-mapping>
+    <servlet-mapping>
         <servlet-name>AttrServlet2</servlet-name>
         <url-pattern>/servlet/AttrServlet2</url-pattern>
     </servlet-mapping>

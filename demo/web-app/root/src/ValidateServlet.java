@@ -1,4 +1,5 @@
 //標準API
+
 import java.io.*;
 import java.util.HashMap;
 
@@ -66,6 +67,9 @@ public class ValidateServlet extends HttpServlet {
             xt.content(tag2, (String) query.get("textfield2"));
 
         }
+
+        //反映する
+        xt.flush();
 
         HttpPrinter prt = new HttpPrinter(res);
         prt.print(xt);

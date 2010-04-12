@@ -32,8 +32,9 @@ import jp.kuro.meteor.core.Kernel;
 
 /**
  * XML解析パーサ
+ *
  * @author Yasumasa Ashida
- * @version 0.9.0.0
+ * @version 0.9.3.3
  */
 public class ParserImpl extends Kernel implements Parser {
 
@@ -43,11 +44,11 @@ public class ParserImpl extends Kernel implements Parser {
     private static final Pattern pattern_gt_1 = Pattern.compile(GT_1);
     private static final Pattern pattern_dq_1 = Pattern.compile(DOUBLE_QUATATION);
     private static final Pattern pattern_ap_1 = Pattern.compile(AP_1);
-    private static final Pattern  pattern_lt_2 = Pattern.compile(LT_2);
-    private static final Pattern  pattern_gt_2 = Pattern.compile(GT_2);
-    private static final Pattern  pattern_dq_2 = Pattern.compile(QO_2);
-    private static final Pattern  pattern_ap_2 = Pattern.compile(AP_2);
-    private static final Pattern  pattern_and_2 = Pattern.compile(AND_2);
+    private static final Pattern pattern_lt_2 = Pattern.compile(LT_2);
+    private static final Pattern pattern_gt_2 = Pattern.compile(GT_2);
+    private static final Pattern pattern_dq_2 = Pattern.compile(QO_2);
+    private static final Pattern pattern_ap_2 = Pattern.compile(AP_2);
+    private static final Pattern pattern_and_2 = Pattern.compile(AND_2);
 
     private static final Pattern pattern_set_mono1 = Pattern.compile(SET_MONO_1);
 
@@ -56,6 +57,7 @@ public class ParserImpl extends Kernel implements Parser {
      */
     public ParserImpl() {
         super();
+        this.docType = Parser.XML;
     }
 
     /**
@@ -66,9 +68,6 @@ public class ParserImpl extends Kernel implements Parser {
     public ParserImpl(Parser ps) {
         document(ps.document());
         root.setHookDocument(ps.rootElement().hookDocument());
-        root.setHook(ps.rootElement().hook());
-        root.setElement(ps.rootElement().element());
-        root.setContentType(ps.rootElement().contentType());
     }
 
     /**
@@ -92,14 +91,16 @@ public class ParserImpl extends Kernel implements Parser {
 
     /**
      * ルート要素を取得する
+     *
      * @return ルート要素
      */
-    public final RootElement rootElement(){
+    public final RootElement rootElement() {
         return super.rootElement();
     }
 
     /**
      * フック時のスケールをセットする
+     *
      * @param size フック時のスケール
      */
     public final void size(int size) {
@@ -128,8 +129,8 @@ public class ParserImpl extends Kernel implements Parser {
     /**
      * 要素名と属性により、要素を検索する
      *
-     * @param elmName  要素名
-     * @param attrName 属性名
+     * @param elmName   要素名
+     * @param attrName  属性名
      * @param attrValue 属性値
      * @return 要素
      */
@@ -144,16 +145,16 @@ public class ParserImpl extends Kernel implements Parser {
     /**
      * 要素名と属性1と属性2により、要素を検索する
      *
-     * @param elmName  要素名
-     * @param attrName1 属性名1
+     * @param elmName    要素名
+     * @param attrName1  属性名1
      * @param attrValue1 属性値1
-     * @param attrName2 属性名2
+     * @param attrName2  属性名2
      * @param attrValue2 属性値2
      * @return 要素
      */
     public final Element element(String elmName,
-                                     String attrName1,String attrValue1,String attrName2,String attrValue2) {
-        return (super.element(elmName, attrName1,attrValue1,attrName2,attrValue2));
+                                 String attrName1, String attrValue1, String attrName2, String attrValue2) {
+        return (super.element(elmName, attrName1, attrValue1, attrName2, attrValue2));
     }
 
     /**
@@ -165,8 +166,8 @@ public class ParserImpl extends Kernel implements Parser {
      * @param attrValue2 属性値2
      * @return 要素
      */
-    public final Element element(String attrName1,String attrValue1,String attrName2,String attrValue2) {
-        return super.element(attrName1,attrValue1,attrName2,attrValue2);
+    public final Element element(String attrName1, String attrValue1, String attrName2, String attrValue2) {
+        return super.element(attrName1, attrValue1, attrName2, attrValue2);
     }
 
     /**
@@ -188,8 +189,8 @@ public class ParserImpl extends Kernel implements Parser {
      * @param attrName  属性名
      * @param attrValue 属性値
      */
-    public final void attribute(Element elm, String attrName, String attrValue) {
-        super.attribute(elm, attrName, attrValue);
+    public final Element attribute(Element elm, String attrName, String attrValue) {
+        return super.attribute(elm, attrName, attrValue);
     }
 
 //    public final void attribute(Element elm, String attrName) {
@@ -201,10 +202,12 @@ public class ParserImpl extends Kernel implements Parser {
      * @param attrName  属性名
      * @param attrValue 属性値
      */
-    public void attribute(String attrName, String attrValue) {
-        if(this.rootElement().hook() || this.rootElement().monoHook()){
-            this.attribute(this.rootElement().mutableElement(),attrName,attrValue);
+    public Element attribute(String attrName, String attrValue) {
+        if (this.rootElement().element() != null) {
+            return this.attribute(this.rootElement().element(), attrName, attrValue);
         }
+
+        return null;
     }
 
 //    /**
@@ -220,7 +223,8 @@ public class ParserImpl extends Kernel implements Parser {
 
     /**
      * 要素を属性名で検索し、属性値を得る
-     * @param elm 要素
+     *
+     * @param elm      要素
      * @param attrName 属性名
      * @return 属性値
      */
@@ -235,8 +239,8 @@ public class ParserImpl extends Kernel implements Parser {
      * @return 属性値
      */
     public String attribute(String attrName) {
-        if(this.rootElement().hook() || this.rootElement().monoHook()){
-            return this.attribute(this.rootElement().mutableElement(),attrName);
+        if (this.rootElement().element() != null) {
+            return this.attribute(this.rootElement().element(), attrName);
         }
 
         return null;
@@ -245,31 +249,34 @@ public class ParserImpl extends Kernel implements Parser {
     //todo
     /**
      * 属性マップを取得する
+     *
      * @param elm 要素
      * @return 属性マップ
      */
-    public final AttributeMap attributeMap(Element elm){
-       return super.attributeMap(elm);
+    public final AttributeMap attributeMap(Element elm) {
+        return super.attributeMap(elm);
     }
 
     /**
      * 属性マップを取得する
+     *
      * @return 属性マップ
      */
     public AttributeMap attributeMap() {
-        if(this.rootElement().hook() || this.rootElement().monoHook()){
-            return this.attributeMap(this.rootElement().mutableElement());
+        if (this.rootElement().element() != null) {
+            return this.attributeMap(this.rootElement().element());
         }
         return null;
     }
 
     /**
      * 要素の属性を消す
-     * @param elm 要素
+     *
+     * @param elm      要素
      * @param attrName 属性名
      */
-    public final void removeAttribute(Element elm, String attrName) {
-        super.removeAttribute(elm, attrName);
+    public final Element removeAttribute(Element elm, String attrName) {
+        return super.removeAttribute(elm, attrName);
     }
 
     /**
@@ -278,8 +285,8 @@ public class ParserImpl extends Kernel implements Parser {
      * @param attrName 属性名
      */
     public void removeAttribute(String attrName) {
-        if(this.rootElement().hook() || this.rootElement().monoHook()){
-            this.removeAttribute(this.rootElement().mutableElement(),attrName);
+        if (this.rootElement().element() != null) {
+            this.removeAttribute(this.rootElement().element(), attrName);
         }
     }
 
@@ -289,19 +296,19 @@ public class ParserImpl extends Kernel implements Parser {
      * @param elm     要素
      * @param content 要素の内容
      */
-    public final void content(Element elm, String content) {
-        super.content(elm, content);
+    public final Element content(Element elm, String content) {
+        return super.content(elm, content);
     }
 
     /**
      * 要素の内容をセットする
      *
-     * @param elm 要素
-     * @param content 要素の内容
+     * @param elm       要素
+     * @param content   要素の内容
      * @param entityRef エンティティ参照フラグ
      */
-    public final void content(Element elm, String content, boolean entityRef) {
-        super.content(elm, content, entityRef);
+    public final Element content(Element elm, String content, boolean entityRef) {
+        return super.content(elm, content, entityRef);
     }
 
     /**
@@ -309,26 +316,29 @@ public class ParserImpl extends Kernel implements Parser {
      *
      * @param content 要素の内容
      */
-    public void content(String content) {
-        if(this.rootElement().monoHook()){
-            this.content(this.rootElement().mutableElement(),content);
+    public Element content(String content) {
+        if (this.rootElement().element() != null) {
+            return this.content(this.rootElement().element(), content);
         }
+        return null;
     }
 
     /**
      * 要素の内容をセットする
      *
-     * @param content 要素の内容
+     * @param content   要素の内容
      * @param entityRef エンティティ参照フラグ
      */
-    public void content(String content, boolean entityRef) {
-        if(this.rootElement().monoHook()){
-            this.content(this.rootElement().mutableElement(),content,entityRef);
+    public Element content(String content, boolean entityRef) {
+        if (this.rootElement().element() != null) {
+            return this.content(this.rootElement().element(), content, entityRef);
         }
+        return null;
     }
 
     /**
      * 要素の内容を取得する
+     *
      * @param elm 要素
      * @return 要素の内容
      */
@@ -341,8 +351,8 @@ public class ParserImpl extends Kernel implements Parser {
      *
      * @param elm 要素
      */
-    public final void removeElement(Element elm) {
-        super.removeElement(elm);
+    public final Element removeElement(Element elm) {
+        return super.removeElement(elm);
     }
 
     /**
@@ -365,10 +375,10 @@ public class ParserImpl extends Kernel implements Parser {
     }
 
     /**
-     * XMLを出力する
+     * 反映する
      */
-    public final void print() {
-        super.print();
+    public final void flush() {
+        super.flush();
     }
 
     /**
@@ -393,24 +403,23 @@ public class ParserImpl extends Kernel implements Parser {
     }
 
     /**
-     * 子パーサを取得する
+     * 要素をコピーする
      *
      * @param elm 要素
-     * @return 子パーサ
+     * @return 要素
      */
-    public Parser child(Element elm) {
-        return super.child(elm);
+    public Element shadow(Element elm) {
+        return super.shadow(elm);
     }
 
     protected final void setMonoInfo(Element elm) {
         boolean res;
-        
+
         matcher = pattern_set_mono1.matcher(elm.mixedContent());
         res = matcher.matches();
 
-        elm.mono(res);
-
         if (res) {
+            elm.mono(true);
             sbuf.setLength(0);
             if (elm.cx()) {
                 pattern_cc = sbuf.append(SET_CX_1).append(elm.name())
@@ -431,13 +440,6 @@ public class ParserImpl extends Kernel implements Parser {
             }
             elm.document(pattern_cc);
         }
-    }
-
-    /**
-     * 子パーサを親パーサに反映する
-     */
-    public final void flush(){
-        super.flush();
     }
 
     /**
@@ -512,5 +514,5 @@ public class ParserImpl extends Kernel implements Parser {
     protected final String unescapeContent(String element, String elmName) {
 
         return this.unescape(element);
-	}
+    }
 }

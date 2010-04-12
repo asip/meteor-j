@@ -1,4 +1,5 @@
 //標準API
+
 import java.io.*;
 import java.util.HashMap;
 
@@ -47,6 +48,9 @@ public class RequestServlet extends HttpServlet {
             xt.attribute(tag, "value", (String) query.get("textfield"));
             xt.content(tag2, (String) query.get("textfield2"));
         }
+
+        //反映する
+        xt.flush();
 
         HttpPrinter prt = new HttpPrinter(res);
         prt.print(xt);

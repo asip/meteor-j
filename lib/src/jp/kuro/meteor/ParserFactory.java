@@ -23,9 +23,10 @@ import jp.kuro.meteor.core.html.ParserImpl;
 
 /**
  * パーサファクトリクラス
+ *
  * @author Yasumasa Ashida
+ * @version 0.9.3.3
  * @since 2005/02/24 16:29:25
- * @version 0.9.0.0
  */
 public final class ParserFactory {
     private Parser pif = null;
@@ -33,8 +34,9 @@ public final class ParserFactory {
     /**
      * パーサファクトリを生成する。マークアップタイプがParserIF.HTMLならHTML用パーサファクトリ、<br>
      * Parser.XHTMLならXHTML用パーサファクトリ、Parser.XMLならXML用パーサファクトリを生成。
-     * @param type マークアップタイプ
-     * @param path ファイルパス
+     *
+     * @param type     マークアップタイプ
+     * @param path     ファイルパス
      * @param encoding 文字エンコーディング
      * @return パーサファクトリ
      */
@@ -66,7 +68,8 @@ public final class ParserFactory {
     /**
      * パーサファクトリを生成する。マークアップタイプがParserIF.HTMLならHTML用パーサファクトリ、<br>
      * Parser.XHTMLならXHTML用パーサファクトリ、Parser.XMLならXML用パーサファクトリを生成。
-     * @param type マークアップタイプ
+     *
+     * @param type     マークアップタイプ
      * @param document ドキュメント
      * @return パーサファクトリ
      */
@@ -97,7 +100,8 @@ public final class ParserFactory {
 
     /**
      * パーサをセットする
-     * @param pif  パーサ
+     *
+     * @param pif パーサ
      */
     public final void setParser(Parser pif) {
         this.pif = pif;
@@ -106,6 +110,7 @@ public final class ParserFactory {
 
     /**
      * パーサを取得する
+     *
      * @return パーサ
      */
     public final Parser parser() {
