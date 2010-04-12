@@ -352,24 +352,12 @@ public class ParserImpl extends Kernel implements Parser {
     public final Element element(String elmName, String attrName, String attrValue) {
 
         //要素名にサポートしていない文字が含まれる場合
-        //matcher = pattern_none.matcher(elmName);
-        //if (matcher.find()) {
-        //    return null;
-        //}
         _elmName = escapeRegex(elmName);
 
         //属性名にサポートしていない文字が含まれる場合
-        //matcher = pattern_none.matcher(attrName);
-        //if (matcher.find()) {
-        //    return null;
-        //}
         _attrName = escapeRegex(attrName);
 
         //属性値にサポートしていない文字が含まれる場合
-        //matcher = pattern_none.matcher(attrValue);
-        //if (matcher.find()) {
-        //    return null;
-        //}
         _attrValue = escapeRegex(attrValue);
 
         //空要素の場合(<->内容あり要素の場合)
@@ -592,8 +580,6 @@ public class ParserImpl extends Kernel implements Parser {
             super.editAttributes_(elm, attrName, attrValue);
         }
 
-        //return attrValue;
-
     }
 
     protected void _editAttributes(Element elm, String attrName, String attrValue, Pattern match, Pattern replace) {
@@ -620,53 +606,33 @@ public class ParserImpl extends Kernel implements Parser {
                 sbuf.setLength(0);
                 elm.attributes(sbuf.append(elm.attributes()).append(SPACE).append(attrName)
                         .toString());
-                //attrValue = escapeRegex(attrValue);
-                //attrValue = escapeRegex(attrValue);
             }
         } else if (isMatch(FALSE, attrValue)) {
 
-            //pattern = match;
-
-            //matcher = pattern.matcher(elm.attributes());
-
-            //attrName属性が存在するなら削除
-            //if(matcher.find()){
-            //    attrValue = escapeRegex(attrValue);
-            //
-            //    //属性の置換
-            //    sbuf.setLength(0);
-            //
             pattern = replace;
 
             matcher = pattern.matcher(elm.attributes());
 
             elm.attributes(matcher.replaceAll(EMPTY));
-
-            //attrValue = escapeRegex(attrValue);
-            //}else{
-            //    result = elm.attributes();
-            //}
         }
-        //elm.attributes(result);
-
     }
 
     protected final void editDocument_(Element elm) {
         editDocument_(elm, TAG_CLOSE);
     }
 
-    /**
-     * 要素の属性を編集する
-     *
-     * @param attrName  属性名
-     * @param attrValue 属性値
-     */
-    public Element attribute(String attrName, String attrValue) {
-        if (this.rootElement().element() != null) {
-            return this.attribute(this.rootElement().element(), attrName, attrValue);
-        }
-        return null;
-    }
+    ///**
+    // * 要素の属性を編集する
+    // *
+    // * @param attrName  属性名
+    // * @param attrValue 属性値
+    // */
+    //public Element attribute(String attrName, String attrValue) {
+    //    if (this.rootElement().element() != null) {
+    //        return this.attribute(this.rootElement().element(), attrName, attrValue);
+    //    }
+    //    return null;
+    //}
 
     /**
      * 要素の内容を属性名で検索し、属性値を得る

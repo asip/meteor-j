@@ -29,8 +29,8 @@ public class RequestLoop2 extends Hooker {
                 param1 = (String) ((ArrayList) query.get("param1")).get(j);
                 param2 = (String) ((ArrayList) query.get("param2")).get(j);
 
-                tag.attribute("value", param1);
-                tag2.attribute("value", param2);
+                tag.clone().attribute("value", param1);
+                tag2.clone().attribute("value", param2);
             }
 
             //出力ロジック

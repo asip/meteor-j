@@ -47,7 +47,7 @@ public class LoopServletHTML3_2 extends HttpServlet {
 
         Element tag = xt.element("option", "value", "test");
 
-        Element xt2 = xt.shadow(tag);
+        Element xt2 = xt.element(tag);
 
         for (int j = 0; j < 3; j++) {
             xt2.attribute("value", Integer.toString(j));

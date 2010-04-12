@@ -388,11 +388,7 @@ public class ParserImpl extends Kernel implements Parser {
                 sbuf.setLength(0);
                 elm.attributes(sbuf.append(elm.attributes()).append(SPACE).append(replaceUpdate)
                         .toString());
-                //attrValue = escapeRegex(attrValue);
-                //attrValue = escapeRegex(attrValue);
             } else {
-
-                //attrValue = escapeRegex(attrValue);
 
                 //属性の置換
                 //sbuf.setLength(0);
@@ -401,61 +397,30 @@ public class ParserImpl extends Kernel implements Parser {
                 matcher = pattern.matcher(elm.attributes());
 
                 elm.attributes(matcher.replaceAll(replaceUpdate));
-                //attrValue = escapeRegex(attrValue);
 
             }
         } else if (isMatch(FALSE, attrValue)) {
 
-            //pattern = match;
-            //
-            //matcher = pattern.matcher(elm.attributes());
-
-            //attrName属性が存在するなら削除
-            //if(matcher.find()){
-            //    attrValue = escapeRegex(attrValue);
-            //
-            //    //属性の置換
-            //    sbuf.setLength(0);
-
             pattern = replaceRegex;
             matcher = pattern.matcher(elm.attributes());
             elm.attributes(matcher.replaceAll(EMPTY));
-
-            //    //attrValue = escapeRegex(attrValue);
-            //}else{
-            //    result = elm.attributes();
-            //}
         }
-        //elm.attributes(result);
-
-        //return attrValue;
 
     }
 
-    /**
-     * 要素の属性を編集する
-     *
-     * @param attrName  属性名
-     * @param attrValue 属性値
-     */
-    public Element attribute(String attrName, String attrValue) {
-        if (this.rootElement().element() != null) {
-            return this.attribute(this.rootElement().element(), attrName, attrValue);
-        }
-
-        return null;
-    }
-
-//    /**
-//     * 要素の属性を編集する(属性値省略の場合)
-//     *
-//     * @param attrName 属性名
-//     */
-//    public void attribute(String attrName) {
-//        if(this.rootElement().hook() || this.rootElement().monoHook()){
-//            this.attribute(this.rootElement().mutableElement(),attrName);
-//        }
-//    }
+    ///**
+    // * 要素の属性を編集する
+    // *
+    // * @param attrName  属性名
+    // * @param attrValue 属性値
+    // */
+    //public Element attribute(String attrName, String attrValue) {
+    //    if (this.rootElement().element() != null) {
+    //        return this.attribute(this.rootElement().element(), attrName, attrValue);
+    //    }
+    //
+    //    return null;
+    //}
 
     /**
      * 属性値を取得する

@@ -44,7 +44,7 @@ public class LoopServletHTML3_1 extends HttpServlet {
 
         Element tag = xt.element("tr", "name", "loop");
 
-        Element xt2 = xt.shadow(tag);
+        Element xt2 = xt.element(tag);
 
         //タグ検索
         Element tag_ = xt2.child("a");
@@ -60,9 +60,9 @@ public class LoopServletHTML3_1 extends HttpServlet {
             }
             String URL = rs.get("url");
             //表示ロジック
-            tag2_.content(NAME);
-            tag_.attribute("href", URL);
-            tag3_.content(SET);
+            tag2_.clone().content(NAME);
+            tag_.clone().attribute("href", URL);
+            tag3_.clone().content(SET);
             //出力ロジック
             xt2.flush();
         }

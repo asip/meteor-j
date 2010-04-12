@@ -423,12 +423,6 @@ public abstract class Kernel implements Parser {
         matcher2 = pattern.matcher(this.document());
         res2 = matcher2.find();
 
-        //if (matcher.find()) {
-        //    elm = elementWithout(elmName);
-        //} else {
-        //    elm = elementWith(elmName);
-        //}
-
         if (res1 && res2) {
             if (matcher1.end() < matcher2.end()) {
                 matcher = matcher1;
@@ -745,27 +739,6 @@ public abstract class Kernel implements Parser {
 
         return elm_;
     }
-
-    /*
-    protected Element elementWithoutContent(String attrName, String attrValue) {
-
-        sbuf.setLength(0);
-        pattern_cc = sbuf.append(TAG_SEARCH_3_1).append(_attrName).append(ATTR_EQ)
-                .append(_attrValue).append(TAG_SEARCH_3_2).toString();
-        pattern = PatternCache.get(pattern_cc);
-
-        matcher = pattern.matcher(this.document());
-
-        if (matcher.find()) {
-            element(matcher.group(1), attrName, attrValue);
-        }else{
-            elm_ = null;
-            throw new NoSuchElementException(attrName,attrValue);
-        }
-
-        return elm_;
-    }
-    */
 
     /**
      * 要素名と属性1と属性2により、要素を検索する
@@ -1143,11 +1116,6 @@ public abstract class Kernel implements Parser {
 
             //属性群の更新
             editAttributes_(elm, attrName, attrValue);
-
-            //editDocument_(elm);
-
-            //パターンの更新
-            //editPattern_(elm,attrName,attrValue);
         }
         return elm;
     }
@@ -1199,12 +1167,7 @@ public abstract class Kernel implements Parser {
             elm.attributes(sbuf.append(elm.attributes()).append(SPACE).append(attrName)
                     .append(ATTR_EQ).append(attrValue).append(DOUBLE_QUATATION)
                     .toString());
-            //attrValue = escapeRegex(attrValue);
-            //attrValue = escapeRegex(attrValue);
         }
-        //elm.attributes(result);
-
-        //return attrValue;
     }
 
     protected void editDocument_(Element elm) {
@@ -1220,16 +1183,6 @@ public abstract class Kernel implements Parser {
 
             if (elm.empty()) {
                 //要素ありタグの場合
-
-                ////タグ検索用パターン
-                //pattern = PatternCache.get(elm.pattern());
-                ////タグ検索
-                //matcher = pattern.matcher(this.document());
-                //sbuf.setLength(0);
-                //this.document(matcher.replaceFirst(sbuf.append(TAG_OPEN)
-                //        .append(elm.name()).append(elm.attributes()).append(TAG_CLOSE)
-                //        .append(elm.mixedContent()).append(TAG_OPEN3).append(elm.name())
-                //        .append(TAG_CLOSE).toString()));
                 _content = elm.mixedContent();
 
                 sbuf.setLength(0);
@@ -1239,14 +1192,6 @@ public abstract class Kernel implements Parser {
 
             } else {
                 //空要素タグの場合
-                ////タグ検索用パターン
-                //pattern = PatternCache.get(elm.pattern());
-                ////タグ検索
-                //matcher = pattern.matcher(this.document());
-                //sbuf.setLength(0);
-                //this.document(matcher.replaceFirst(sbuf.append(TAG_OPEN)
-                //        .append(elm.name()).append(elm.attributes()).append(closer)
-                //        .toString()));
                 sbuf.setLength(0);
                 elm.document(sbuf.append(TAG_OPEN).append(elm.name()).append(elm.attributes())
                         .append(closer).toString());
@@ -1352,41 +1297,8 @@ public abstract class Kernel implements Parser {
             }
 
             elm.mixedContent(content);
-            ////タグ検索パターン
-            //pattern = PatternCache.get(elm.pattern());
-            ////タグ置換
-            //matcher = pattern.matcher(this.document());
-            //sbuf.setLength(0);
-            //this.document(matcher.replaceFirst(sbuf.append(TAG_OPEN)
-            //        .append(elm.name()).append(elm.attributes()).append(TAG_CLOSE)
-            //        .append(content).append(TAG_OPEN3).append(elm.name())
-            //        .append(TAG_CLOSE).toString()));
         }
-        //初期化
-        //matcher.reset();
-        //matcher = null;
-        //pattern = null;
-        //} else {
-        //elm.mixedContent(content);
-        //
-        //if (entityRef) {
-        //    content = escapeContent(content, elm.name());
-        //    //content = escapeRegex(content);
-        //} else {
-        //    //content = escapeRegex(content);
-        //}
-        //
-        //pattern = PatternCache.get(elm.pattern());
-        //matcher = pattern.matcher(this.document());
-        ////タグ置換
-        //sbuf.setLength(0);
-        //pattern_cc = sbuf.append(SET_CX_1).append(elm.name())
-        //        .append(SPACE).append(elm.attributes()).append(SET_CX_2)
-        //        .append(content).append(SET_CX_3).append(elm.name())
-        //        .append(SET_CX_4).toString();
-        //this.document(matcher.replaceFirst(pattern_cc));
-        //
-        //}
+        
         return elm;
     }
 
@@ -1436,54 +1348,6 @@ public abstract class Kernel implements Parser {
             elm.documentSync(true);
             removeAttributes_(elm, attrName);
 
-            //検索対象属性の存在判定
-            //if (matcher.find()) {
-            //    //属性の置換
-            //    result = matcher.replaceFirst(EMPTY);
-            //
-            //    elm.attributes(result);
-            //} else {
-            //    //属性検索用パターン
-            //    sbuf.setLength(0);
-            //    pattern = PatternCache.get(sbuf.append(attrName).append(SET_ATTR_1)
-            //            .toString());
-            //    //属性検索
-            //    matcher = pattern.matcher(elm.attributes());
-            //    //検索対象属性の存在判定
-            //    if (matcher.find()) {
-            //        //属性の置換
-            //        result = matcher.replaceFirst(EMPTY);
-            //
-            //        elm.attributes(result);
-            //    }
-            //}
-            ////タグ検索用パターン
-            //pattern = PatternCache.get(elm.pattern());
-            ////タグ検索
-            //matcher = pattern.matcher(this.document());
-            //if (elm.empty()) {
-            //    //要素ありタグの場合
-            //    sbuf.setLength(0);
-            //    //element = escapeRegex(elm.mixedContent());
-            //    this.document(matcher.replaceFirst(sbuf.append(TAG_OPEN)
-            //            .append(elm.name()).append(result).append(TAG_CLOSE)
-            //            .append(elm.mixedContent()).append(TAG_OPEN3)
-            //            .append(elm.name()).append(TAG_CLOSE).toString()));
-            //} else {
-            //    //空要素タグの場合
-            //    sbuf.setLength(0);
-            //    this.document(matcher.replaceFirst(sbuf.append(TAG_OPEN)
-            //            .append(elm.name()).append(result).append(TAG_CLOSE2)
-            //            .toString()));
-            //}
-
-            ////パターンの更新
-            //sbuf.setLength(0);
-            //pattern_cc = sbuf.append(attrName).append(SET_ATTR_1).toString();
-            //pattern = PatternCache.get(pattern_cc);
-            //matcher = pattern.matcher(elm.pattern());
-            //sbuf.setLength(0);
-            //elm.pattern(matcher.replaceFirst(EMPTY));
         }
         return elm;
     }
@@ -1657,12 +1521,12 @@ public abstract class Kernel implements Parser {
 
                 if (root.element().origin().cx()) {
                     root.setHookDocument(this.root.hookDocument().append(SET_CX_1)
-                            .append(root.element().name()).append(SPACE).append(_attributes)
+                            .append(root.element().name()).append(SPACE).append(this.root.element().attributes())
                             .append(SET_CX_2).append(root.document()).append(SET_CX_3)
                             .append(root.element().name()).append(SET_CX_4));
                 } else {
                     root.setHookDocument(this.root.hookDocument().append(TAG_OPEN)
-                            .append(root.element().name()).append(_attributes).append(TAG_CLOSE)
+                            .append(root.element().name()).append(this.root.element().attributes()).append(TAG_CLOSE)
                             .append(root.document()).append(TAG_OPEN3).append(root.element().name())
                             .append(TAG_CLOSE));
                 }
@@ -1710,7 +1574,7 @@ public abstract class Kernel implements Parser {
      * @param elm 要素
      * @return 要素
      */
-    public Element shadow(Element elm) {
+    protected Element shadow(Element elm) {
         if (elm.empty()) {
             Parser pif2;
 

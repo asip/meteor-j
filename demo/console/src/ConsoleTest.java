@@ -47,6 +47,7 @@ public class ConsoleTest {
             elm2 = xt.element(tag_);
 
             for (int i = 0; i < 10; i++) {
+                elm2.attribute("mono","" + i);
                 elm2.content("konkon" + i);
                 elm2.flush();
             }

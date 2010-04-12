@@ -122,15 +122,6 @@ public interface Parser {
     Element attribute(Element elm, String attrName, String attrValue);
 
     /**
-     * 属性をセットする。
-     * 属性名で指定した属性が既にある場合は更新し、ない場合は追加する
-     *
-     * @param attrName  属性名
-     * @param attrValue 属性値
-     */
-    Element attribute(String attrName, String attrValue);
-
-    /**
      * 要素から属性名で属性値を取得する
      *
      * @param elm      要素
@@ -264,31 +255,11 @@ public interface Parser {
     void execute(Element elm, Looper hook, List list);
 
     /**
-     * 要素をコピーする
-     *
-     * @param elm 要素
-     * @return 要素
-     */
-    Element shadow(Element elm);
-
-    /**
      * ルート要素を取得する
      *
      * @return ルート要素
      */
     RootElement rootElement();
-
-    /**
-     * 親パーサを取得する
-     * @return 親パーサ
-     */
-    //Parser parent();
-
-    /**
-     * 親パーサをセットする
-     * @param pif 親パーサ
-     */
-    //void parent(Parser pif);
 
     /**
      * 要素を置換する

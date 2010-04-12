@@ -29,9 +29,9 @@ public class LoopML extends Looper {
         }
         String URL = (String) rec.get("url");
         //表示ロジック
-        tag2.content(NAME);
-        tag.attribute("href", URL);
-        tag3.content(SET);
+        tag2.clone().content(NAME);
+        tag.clone().attribute("href", URL);
+        tag3.clone().content(SET);
 
     }
 }

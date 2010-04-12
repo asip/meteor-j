@@ -193,33 +193,19 @@ public class ParserImpl extends Kernel implements Parser {
         return super.attribute(elm, attrName, attrValue);
     }
 
-//    public final void attribute(Element elm, String attrName) {
-//    }
-
-    /**
-     * 要素の属性を編集する
-     *
-     * @param attrName  属性名
-     * @param attrValue 属性値
-     */
-    public Element attribute(String attrName, String attrValue) {
-        if (this.rootElement().element() != null) {
-            return this.attribute(this.rootElement().element(), attrName, attrValue);
-        }
-
-        return null;
-    }
-
-//    /**
-//     * 要素の属性を編集する(属性値省略の場合)
-//     *
-//     * @param attrName 属性名
-//     */
-//    public void attribute(String attrName) {
-//        if(this.rootElement().hook() || this.rootElement().monoHook()){
-//            this.attribute(this.rootElement().mutableElement(),attrName);
-//        }
-//    }
+    ///**
+    // * 要素の属性を編集する
+    // *
+    // * @param attrName  属性名
+    // * @param attrValue 属性値
+    // */
+    //public Element attribute(String attrName, String attrValue) {
+    //    if (this.rootElement().element() != null) {
+    //        return this.attribute(this.rootElement().element(), attrName, attrValue);
+    //    }
+    //
+    //    return null;
+    //}
 
     /**
      * 要素を属性名で検索し、属性値を得る
