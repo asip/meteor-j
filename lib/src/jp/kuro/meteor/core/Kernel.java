@@ -46,7 +46,7 @@ import java.util.LinkedHashMap;
  * パーサコア
  *
  * @author Yasumasa Ashida
- * @version 0.9.3.3
+ * @version 0.9.3.4
  */
 public abstract class Kernel implements Parser {
 
