@@ -25,7 +25,7 @@ import jp.kuro.meteor.core.html.ParserImpl;
  * パーサファクトリクラス
  *
  * @author Yasumasa Ashida
- * @version 0.9.3.4
+ * @version 0.9.3.5
  * @since 2005/02/24 16:29:25
  */
 public final class ParserFactory {

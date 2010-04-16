@@ -29,7 +29,7 @@ import java.util.LinkedHashMap;
  * パーサ共通インタ－フェイス
  *
  * @author Yasumasa Ashida
- * @version 0.9.3.4
+ * @version 0.9.3.5
  * @since 2003/01/25 18:31:27
  */
 public interface Parser {
@@ -147,11 +147,12 @@ public interface Parser {
     AttributeMap attributeMap(Element elm);
 
     /**
-     * 属性マップを取得する
-     *
-     * @return 属性マップ
+     * 属性マップをセットする
+     * @param elm 要素
+     * @param attrMap 属性マップ
+     * @return 要素
      */
-    AttributeMap attributeMap();
+    Element attributeMap(Element elm,AttributeMap attrMap);
 
     /**
      * 属性を削除する
@@ -260,14 +261,6 @@ public interface Parser {
      * @return ルート要素
      */
     RootElement rootElement();
-
-    /**
-     * 要素を置換する
-     *
-     * @param elm             要素
-     * @param replaceDocument 置換文字列
-     */
-    void replace(Element elm, String replaceDocument);
 
     /**
      * ドキュメントを取得する

@@ -20,12 +20,16 @@
 package jp.kuro.meteor;
 
 import jp.kuro.meteor.core.util.AsyncStringBuffer;
+import jp.kuro.meteor.hook.Looper;
+import jp.kuro.meteor.hook.Hooker;
+
+import java.util.List;
 
 /**
  * 要素情報保持クラス
  *
  * @author Yasumasa Ashida
- * @version 0.9.3.4
+ * @version 0.9.3.5
  */
 public class Element {
     //要素名
@@ -55,6 +59,8 @@ public class Element {
     //private AttributeMap arguments;
     //有効・無効フラグ
     private boolean usable;
+    //削除フラグ
+    private boolean removed;
     //原本ポインタ
     private Element origin;
     //複製ポインタ
@@ -130,6 +136,106 @@ public class Element {
         elm.copy = this;
     }
 
+    /**
+     * コピーを作成する
+     *
+     * @param elm 要素
+     * @param ps  パーサ
+     * @return 要素
+     */
+    public static Element new_(Element elm, Parser ps) {
+        Element _obj = ps.rootElement().element();
+        if (_obj != null) {
+            _obj.attributes(elm.attributes());
+            _obj.mixedContent(elm.mixedContent());
+            //_obj.pattern(elm.pattern());
+            _obj.document(elm.document());
+            //_obj.arguments = new AttributeMap(elm.arguments());
+            return _obj;
+        } else {
+            _obj = new Element(elm, ps);
+            ps.rootElement().setElement(_obj);
+            return _obj;
+        }
+    }
+
+    /**
+     * 複製する
+     *
+     * @return 要素
+     */
+    public final Element clone() {
+        Element obj_ = this.parser.elementCache().get(this.objectId());
+        if (obj_ != null) {
+            obj_.attributes = this.attributes;
+            obj_.mixedContent = this.mixedContent;
+            //obj.pattern = this.pattern
+            obj_.document(this.document());
+            //obj.arguments = new AttributeMap(this.arguments)
+            obj_.usable = true;
+            return obj_;
+        } else {
+            obj_ = new Element(this);
+            this.parser.elementCache().put(this.objectId(), obj_);
+            return obj_;
+        }
+    }
+
+    /**
+     * タグ名をセットする
+     *
+     * @param name タグ名
+     */
+    public final void name(String name) {
+        this.name = name;
+    }
+
+    /**
+     * タグ名を取得する
+     *
+     * @return タグ名
+     */
+    public final String name() {
+        return name;
+    }
+
+    /**
+     * 属性をセットする
+     *
+     * @param attributes 属性
+     */
+    public final void attributes(String attributes) {
+        this.attributes = attributes;
+    }
+
+    /**
+     * 属性を取得する
+     *
+     * @return 属性
+     */
+    public final String attributes() {
+        return attributes;
+    }
+
+    /**
+     * 要素をセットする
+     *
+     * @param mixedContent 要素
+     */
+    public final void mixedContent(String mixedContent) {
+        this.mixedContent = mixedContent;
+        this.empty = true;
+    }
+
+
+    /**
+     * 要素を取得する
+     *
+     * @return 要素
+     */
+    public final String mixedContent() {
+        return mixedContent;
+    }
 
     /**
      * タグ全体をセットする
@@ -189,62 +295,6 @@ public class Element {
             }
         }
         return doc;
-    }
-
-    /**
-     * タグ名をセットする
-     *
-     * @param name タグ名
-     */
-    public final void name(String name) {
-        this.name = name;
-    }
-
-    /**
-     * タグ名を取得する
-     *
-     * @return タグ名
-     */
-    public final String name() {
-        return name;
-    }
-
-    /**
-     * 属性をセットする
-     *
-     * @param attributes 属性
-     */
-    public final void attributes(String attributes) {
-        this.attributes = attributes;
-    }
-
-    /**
-     * 属性を取得する
-     *
-     * @return 属性
-     */
-    public final String attributes() {
-        return attributes;
-    }
-
-    /**
-     * 要素をセットする
-     *
-     * @param mixedContent 要素
-     */
-    public final void mixedContent(String mixedContent) {
-        this.mixedContent = mixedContent;
-        this.empty = true;
-    }
-
-
-    /**
-     * 要素を取得する
-     *
-     * @return 要素
-     */
-    public final String mixedContent() {
-        return mixedContent;
     }
 
     /**
@@ -347,6 +397,112 @@ public class Element {
     }
 
     /**
+     * タイプ属性値を取得する
+     *
+     * @return タイプ属性値
+     */
+    public final String typeValue() {
+        return typeValue;
+    }
+
+    /**
+     * タイプ属性値をセットする
+     *
+     * @param typeValue タイプ属性値
+     */
+    public final void typeValue(String typeValue) {
+        this.typeValue = typeValue;
+    }
+
+    /**
+     * 有効・無効フラグを取得する
+     *
+     * @return 有効・無効フラグ
+     */
+    public final boolean usable() {
+        return usable;
+    }
+
+    /**
+     * 有効・無効フラグをセットする
+     *
+     * @param usable 有効・無効フラグ
+     */
+    public final void usable(boolean usable) {
+        this.usable = usable;
+    }
+
+    /**
+     * 削除フラグを取得する
+     * @return 削除フラグ
+     */
+    public boolean removed() {
+        return removed;
+    }
+
+    /**
+     * 削除フラグをセットする
+     * @param removed 削除フラグ
+     */
+    public void removed(boolean removed) {
+        this.removed = removed;
+    }
+
+    /**
+     * 原本ポインタを取得する
+     *
+     * @return 原本ポインタ
+     */
+    public final Element origin() {
+        return origin;
+    }
+
+    /**
+     * 原本ポインタをセットする
+     *
+     * @param origin 原本ポインタ
+     */
+    public final void origin(Element origin) {
+        this.origin = origin;
+    }
+
+    /**
+     * 複製ポインタを取得する
+     *
+     * @return 複製ポインタ
+     */
+    public final Element copy() {
+        return copy;
+    }
+
+    /**
+     * 複製ポインタをセットする
+     *
+     * @param copy 複製ポインタ
+     */
+    public final void copy(Element copy) {
+        this.copy = copy;
+    }
+
+    /**
+     * オブジェクトIDを取得する
+     *
+     * @return オブジェクトID
+     */
+    public Integer objectId() {
+        return ObjectId;
+    }
+
+    /**
+     * オブジェクトIDをセットする
+     *
+     * @param objectId オブジェクトID
+     */
+    public void objectId(Integer objectId) {
+        ObjectId = objectId;
+    }
+
+    /**
      * 要素をコピーする
      * @param elm 要素
      * @return 要素
@@ -416,6 +572,27 @@ public class Element {
     }
 
     /**
+     * コメント拡張タグを取得する
+     *
+     * @param elmName 要素名
+     * @param id      ID
+     * @return 要素
+     */
+    public Element cxTag(String elmName, String id) {
+        return parser.cxTag(elmName, id);
+    }
+
+    /**
+     * コメント拡張タグを取得する
+     *
+     * @param id ID
+     * @return 要素
+     */
+    public Element cxTag(String id) {
+        return parser.cxTag(id);
+    }
+
+    /**
      * 属性を編集する
      *
      * @param attrName  属性名
@@ -435,6 +612,22 @@ public class Element {
         return this.parser.attribute(this, attrName);
     }
 
+    /**
+     * 属性マップを取得する
+     * @return 属性マップ
+     */
+    public AttributeMap attributeMap() {
+        return parser.attributeMap(this);
+    }
+
+    /**
+     * 属性マップをセットする
+     * @param attrMap 属性マップ
+     * @return 要素
+     */
+    public Element AttributeMap(AttributeMap attrMap){
+        return this.parser.attributeMap(this,attrMap);
+    }
 
     /**
      * 内容を編集する
@@ -467,140 +660,21 @@ public class Element {
     }
 
     /**
-     * タイプ属性値を取得する
-     *
-     * @return タイプ属性値
+     * 属性を削除する
+     * @param attrName 属性名
+     * @return 属性
      */
-    public final String typeValue() {
-        return typeValue;
+    public Element removeAttribute(String attrName) {
+        return parser.removeAttribute(this, attrName);
     }
 
     /**
-     * タイプ属性値をセットする
-     *
-     * @param typeValue タイプ属性値
+     * 削除する
+     * @return null
      */
-    public final void typeValue(String typeValue) {
-        this.typeValue = typeValue;
+    public Element remove() {
+        return parser.removeElement(this);
     }
-
-    /**
-     * 有効・無効フラグを取得する
-     *
-     * @return 有効・無効フラグ
-     */
-    public final boolean usable() {
-        return usable;
-    }
-
-    /**
-     * 有効・無効フラグをセットする
-     *
-     * @param usable 有効・無効フラグ
-     */
-    public final void usable(boolean usable) {
-        this.usable = usable;
-    }
-
-    /**
-     * 原本ポインタを取得する
-     *
-     * @return 原本ポインタ
-     */
-    public final Element origin() {
-        return origin;
-    }
-
-    /**
-     * 原本ポインタをセットする
-     *
-     * @param origin 原本ポインタ
-     */
-    public final void origin(Element origin) {
-        this.origin = origin;
-    }
-
-    /**
-     * 複製ポインタを取得する
-     *
-     * @return 複製ポインタ
-     */
-    public final Element copy() {
-        return copy;
-    }
-
-    /**
-     * 複製ポインタをセットする
-     *
-     * @param copy 複製ポインタ
-     */
-    public final void copy(Element copy) {
-        this.copy = copy;
-    }
-
-    /**
-     * オブジェクトIDを取得する
-     *
-     * @return オブジェクトID
-     */
-    public Integer objectId() {
-        return ObjectId;
-    }
-
-    /**
-     * オブジェクトIDをセットする
-     *
-     * @param objectId オブジェクトID
-     */
-    public void objectId(Integer objectId) {
-        ObjectId = objectId;
-    }
-
-    /**
-     * コピーを作成する
-     *
-     * @param elm 要素
-     * @param ps  パーサ
-     * @return 要素
-     */
-    public static Element new_(Element elm, Parser ps) {
-        Element _obj = ps.rootElement().element();
-        if (_obj != null) {
-            _obj.attributes(elm.attributes());
-            _obj.mixedContent(elm.mixedContent());
-            //_obj.pattern(elm.pattern());
-            _obj.document(elm.document());
-            //_obj.arguments = new AttributeMap(elm.arguments());
-            return _obj;
-        } else {
-            _obj = new Element(elm, ps);
-            ps.rootElement().setElement(_obj);
-            return _obj;
-        }
-    }
-
-    /**
-     * 複製する
-     *
-     * @return 要素
-     */
-    public final Element clone() {
-        Element obj_ = this.parser.elementCache().get(this.objectId());
-        if (obj_ != null) {
-            obj_.attributes = this.attributes;
-            obj_.mixedContent = this.mixedContent;
-            //obj.pattern = this.pattern
-            obj_.document(this.document());
-            //obj.arguments = new AttributeMap(this.arguments)
-            obj_.usable = true;
-            return obj_;
-        } else {
-            obj_ = new Element(this);
-            this.parser.elementCache().put(this.objectId(), obj_);
-            return obj_;
-        }
-    }
-
 
     /**
      * 反映する
@@ -610,24 +684,20 @@ public class Element {
     }
 
     /**
-     * コメント拡張タグを取得する
-     *
-     * @param elmName 要素名
-     * @param id      ID
-     * @return 要素
+     * Hookerクラスの処理を実行する
+     * @param hook Hookerオブジェクト
      */
-    public Element cxTag(String elmName, String id) {
-        return parser.cxTag(elmName, id);
+    public void execute(Hooker hook) {
+        parser.execute(this, hook);
     }
 
     /**
-     * コメント拡張タグを取得する
-     *
-     * @param id ID
-     * @return 要素
+     * Looperクラスの処理を実行する
+     * @param hook Looperオブジェクト
+     * @param list Listオブジェクト
      */
-    public Element cxTag(String id) {
-        return parser.cxTag(id);
+    public void execute( Looper hook, List list) {
+        parser.execute(this, hook, list);
     }
-    
+
 }

@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 /*
  * HTMLパーサ
  * @author Yasumasa Ashida
- * @version 0.9.3.4
+ * @version 0.9.3.5
  */
 public class ParserImpl extends Kernel implements Parser {
 
@@ -880,16 +880,6 @@ public class ParserImpl extends Kernel implements Parser {
      */
     public void execute(Element elm, Looper hook, List list) {
         super.execute(elm, hook, list);
-    }
-
-    /**
-     * 要素をコピーする
-     *
-     * @param elm 要素
-     * @return 要素
-     */
-    public Element shadow(Element elm) {
-        return super.shadow(elm);
     }
 
     protected final void setMonoInfo(Element elm) {

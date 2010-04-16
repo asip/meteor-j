@@ -33,7 +33,7 @@ import java.util.List;
 /*
  * XHTMLタグ解析パーサ
  * @author Yasumasa Ashida
- * @version 0.9.3.4
+ * @version 0.9.3.5
  */
 public class ParserImpl extends Kernel implements Parser {
 
@@ -529,17 +529,17 @@ public class ParserImpl extends Kernel implements Parser {
         return attrs;
     }
 
-    /**
-     * 属性マップを取得する
-     *
-     * @return 属性マップ
-     */
-    public AttributeMap attributeMap() {
-        if (this.rootElement().element() != null) {
-            return this.attributeMap(this.rootElement().element());
-        }
-        return null;
-    }
+    ///**
+    // * 属性マップを取得する
+    // *
+    // * @return 属性マップ
+    // */
+    //public AttributeMap attributeMap() {
+    //    if (this.rootElement().element() != null) {
+    //        return this.attributeMap(this.rootElement().element());
+    //    }
+    //    return null;
+    //}
 
     /**
      * @param elm      要素
@@ -670,16 +670,6 @@ public class ParserImpl extends Kernel implements Parser {
      */
     public void execute(Element elm, Looper hook, List list) {
         super.execute(elm, hook, list);
-    }
-
-    /**
-     * 要素をコピーする
-     *
-     * @param elm 要素
-     * @return 要素
-     */
-    public Element shadow(Element elm) {
-        return super.shadow(elm);
     }
 
     protected final void setMonoInfo(Element elm) {

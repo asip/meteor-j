@@ -46,7 +46,7 @@ import java.util.LinkedHashMap;
  * パーサコア
  *
  * @author Yasumasa Ashida
- * @version 0.9.3.4
+ * @version 0.9.3.5
  */
 public abstract class Kernel implements Parser {
 
@@ -1275,6 +1275,25 @@ public abstract class Kernel implements Parser {
     }
 
     /**
+     * 要素の属性マップをセットする
+     * @param elm 要素
+     * @param attrMap 属性マップ
+     * @return 要素
+     */
+    public Element attributeMap(Element elm,AttributeMap attrMap){
+        if(!elm.cx()){
+            for(String name:attrMap.names()){
+                if(attrMap.changed(name)){
+                    editAttributes_(elm,name,attrMap.fetch(name));
+                }else{
+                    removeAttributes_(elm,name);
+                }
+            }
+        }
+        return elm;
+    }
+
+    /**
      * 要素の内容をセットする
      *
      * @param elm       要素
@@ -1369,12 +1388,9 @@ public abstract class Kernel implements Parser {
      */
     public Element removeElement(Element elm) {
 
-        //if (!elm.cx()) {
-        replace(elm, EMPTY);
-        //} else {
-        //    replace(elm, EMPTY);
-        //}
-        elm.usable(false);
+        //replace(elm, EMPTY);
+        //elm.usable(false);
+        elm.removed(true);
         return null;
 
     }
@@ -1442,7 +1458,7 @@ public abstract class Kernel implements Parser {
      * @param elm             要素
      * @param replaceDocument 置換文字列
      */
-    public final void replace(Element elm, String replaceDocument) {
+    private final void replace(Element elm, String replaceDocument) {
 
         //文字コード変換
         //replaceDocument = escapeRegex(replaceDocument);
@@ -1463,22 +1479,24 @@ public abstract class Kernel implements Parser {
             item = elementCache.get(id);
             //System.out.println("id:" + id);
             if (item.usable()) {
-                //System.out.println(item.name());
-                if (item.copy() != null) {
-                    //System.out.println("loop:" + item.name());
-                    //System.out.println("pattern:[" + item.pattern() + "]");
-                    //System.out.println("doc:[" + item.copy().parser().rootElement().hookDocument().toString() +"]");
-                    //item.document = item.copy.parser.root_element.hook_document
-                    pattern = PatternCache.get(item.pattern());
-                    matcher = pattern.matcher(root.document());
-                    root.document(matcher.replaceFirst(
-                            item.copy().parser().rootElement().hookDocument().toString()));
-                    //@root.document.sub!(@pattern,item.document)
-                    //item.copy.parser.element_cache.clear
-                    item.copy(null);
-                } else {
-                    editDocument_(item);
-                    //edit_pattern_(item)
+                if(!item.removed()){
+                    //System.out.println(item.name());
+                    if (item.copy() != null) {
+                        //System.out.println("loop:" + item.name());
+                        //System.out.println("pattern:[" + item.pattern() + "]");
+                        //System.out.println("doc:[" + item.copy().parser().rootElement().hookDocument().toString() +"]");
+                        pattern = PatternCache.get(item.pattern());
+                        matcher = pattern.matcher(root.document());
+                        root.document(matcher.replaceFirst(
+                                item.copy().parser().rootElement().hookDocument().toString()));
+                        //item.copy.parser.element_cache.clear
+                        item.copy(null);
+                    } else {
+                        editDocument_(item);
+                        //edit_pattern_(item)
+                    }
+                }else{
+                    replace(item, EMPTY);
                 }
                 item.usable(false);
             }
@@ -1542,7 +1560,7 @@ public abstract class Kernel implements Parser {
     }
 
     /**
-     * フッククラスに処理を委譲する
+     * Hookerクラスの処理を実行する
      *
      * @param elm  要素
      * @param hook Hookerオブジェクト
@@ -1555,7 +1573,7 @@ public abstract class Kernel implements Parser {
     }
 
     /**
-     * フッククラスに処理を委譲する
+     * Looperクラスの処理を実行する
      *
      * @param elm  要素
      * @param hook Hookerオブジェクト
@@ -1574,7 +1592,7 @@ public abstract class Kernel implements Parser {
      * @param elm 要素
      * @return 要素
      */
-    protected Element shadow(Element elm) {
+    private Element shadow(Element elm) {
         if (elm.empty()) {
             Parser pif2;
 
