@@ -504,11 +504,10 @@ public class Element {
 
     /**
      * 要素をコピーする
-     * @param elm 要素
      * @return 要素
      */
-    public Element child(Element elm){
-        return parser.element(elm);
+    public Element child(){
+        return parser.element(this);
     }
 
     /**

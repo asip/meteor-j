@@ -41,7 +41,7 @@ public abstract class Looper {
     public final void doAction(Element elm,List list) {
         //要素ありタグの場合
         if (elm.empty()) {
-            Element elm2 = elm.child(elm);
+            Element elm2 = elm.child();
 
             init(elm2);
 

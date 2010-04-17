@@ -44,7 +44,7 @@ public abstract class Hooker {
         if (elm.empty()) {
             Element elm2;
 
-            elm2 = elm.child(elm);
+            elm2 = elm.child();
             execute(elm2);
         }
     }

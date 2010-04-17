@@ -6,21 +6,23 @@ public class ConsoleTest {
         try {
 
             ParserFactory pf = ParserFactory.build(Parser.XML, "/Users/asip/project/kuro/meteor/demo/console/src/test.xml", "Shift_JIS");
+
+            long before = System.currentTimeMillis();
             Parser xt = pf.parser();
 
             Element tagX = xt.element("momo");
             xt.content(tagX, "<>");
-            //Tag tag  = xt.searchTag("test","manbo","manbo");
+
+            //Element tag  = xt.element("test","manbo","manbo");
 
             //Element tag = xt.element("manbo", "manbo");
             //Element tag = null;
 
-            //Tag tag2 = xt.searchTag("test","manbo","mango");
+            //Element tag2 = xt.element("test","manbo","mango");
             Element tag2 = xt.element("manbo", "mango");
             //System.out.println(xt.attribute(tag,"manbo"));
             Element tagY = xt.element("kobe", "momo", "mono");
-            //xt.setElementName(tagY, "mop");
-            //xt.setElementName(tagY, "kobeto");
+
             xt.attribute(tagY, "momo", "pono");
             xt.attribute(tagY, "momo", "pino");
 
@@ -52,12 +54,11 @@ public class ConsoleTest {
                 elm2.flush();
             }
 
-            //xt.setElementToQuarkTag("mono","<>\"'&mono");
             Element tag3 = xt.cxTag("mono");
             xt.content(tag3, "<>\"&mono");
             //xt.eraseQuarkTag(tag3);
             //xt.eraseQuarkTag("mono");
-            tag = xt.element("teo", "a", "aa");
+            //tag = xt.element("teo", "a", "aa");
             //xt.removeAttribute(tag,"b");
             //tag = xt.element("mink");
 
@@ -69,8 +70,8 @@ public class ConsoleTest {
 
             //Element tag6 = xt.element("potato", "id", "bb");
 
-            //System.out.println(tag5.getName());
-            //System.out.println(tag5.getAttributes());
+            //System.out.println(tag5.name());
+            //System.out.println(tag5.attributes());
             //System.out.println(tag5.content());
 
             //xt.attributeMap(tag5);
@@ -89,9 +90,10 @@ public class ConsoleTest {
 
             //System.out.println(tag8.attributes());
 
-            //xt.setTagName(tag,"teoo");
             xt.flush();
 
+            long after = System.currentTimeMillis();
+            System.out.println(after-before);
             System.out.println(xt.document());
 
         } catch (Exception e) {
