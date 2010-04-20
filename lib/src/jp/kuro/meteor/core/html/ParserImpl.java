@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 /*
  * HTMLパーサ
  * @author Yasumasa Ashida
- * @version 0.9.3.5
+ * @version 0.9.3.7
  */
 public class ParserImpl extends Kernel implements Parser {
 
@@ -143,7 +143,6 @@ public class ParserImpl extends Kernel implements Parser {
     private static final Pattern pattern_br_2 = Pattern.compile(BR_2);
 
     //private static final Pattern pattern_match_tag = Pattern.compile(MATCH_TAG);
-    private static final Pattern pattern_set_mono1 = Pattern.compile(SET_MONO_1);
     //private static final Pattern pattern_match_tag2 = Pattern.compile(MATCH_TAG2);
 
     private static final String GET_ATTRS_MAP2 = "\\s(disabled|readonly|checked|selected|multiple)";
@@ -880,37 +879,6 @@ public class ParserImpl extends Kernel implements Parser {
      */
     public void execute(Element elm, Looper hook, List list) {
         super.execute(elm, hook, list);
-    }
-
-    protected final void setMonoInfo(Element elm) {
-        boolean res;
-
-        matcher = pattern_set_mono1.matcher(elm.mixedContent());
-        res = matcher.matches();
-
-        if (res) {
-
-            elm.mono(true);
-
-            sbuf.setLength(0);
-            if (elm.cx()) {
-                elm.document(sbuf.append(SET_CX_1).append(elm.name())
-                        .append(SPACE).append(elm.attributes()).append(SET_CX_2)
-                        .append(elm.mixedContent()).append(SET_CX_3).append(elm.name())
-                        .append(SET_CX_4).toString());
-            } else {
-                if (elm.empty()) {
-                    //フック判定がTRUEの場合
-                    elm.document(sbuf.append(TAG_OPEN).append(elm.name())
-                            .append(elm.attributes()).append(TAG_CLOSE)
-                            .append(elm.mixedContent()).append(TAG_OPEN3)
-                            .append(elm.name()).append(TAG_CLOSE).toString());
-                } else {
-                    elm.document(sbuf.append(TAG_OPEN).append(elm.name())
-                            .append(elm.attributes()).append(TAG_CLOSE).toString());
-                }
-            }
-        }
     }
 
     protected final String escape(String element) {

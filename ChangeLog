@@ -9,3 +9,7 @@
 ==0.9.3.5 / 2010-04-16 Yasumasa Ashida <ys.ashida@gmail.com>
 
 * change of jp.kuro.meteor.Element & jp.kuro.meteor.core.Kernel & others & comment
+
+==0.9.3.5 / 2010-04-21 Yasumasa Ashida <ys.ashida@gmail.com>
+
+* change of jp.kuro.meteor.core.Kernel#setMonoInfo & others 

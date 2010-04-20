@@ -46,7 +46,7 @@ import java.util.LinkedHashMap;
  * パーサコア
  *
  * @author Yasumasa Ashida
- * @version 0.9.3.5
+ * @version 0.9.3.7
  */
 public abstract class Kernel implements Parser {
 
@@ -203,6 +203,8 @@ public abstract class Kernel implements Parser {
     //setMonoInfo
     protected static final String SET_MONO_1 = "[^<>]*";
 
+    private static final Pattern pattern_set_mono1 = Pattern.compile(SET_MONO_1);
+
     //clean
     protected static final String CLEAN_1 = "<!--\\s@[^<>]*\\s[^<>]*(\\s)*-->";
     protected static final String CLEAN_2 = "<!--\\s\\/@[^<>]*(\\s)*-->";
@@ -252,13 +254,13 @@ public abstract class Kernel implements Parser {
     private static final Pattern pattern_clean2 = Pattern.compile(CLEAN_2);
 
     private static final int ZERO = 0;
-    private static final int ONE = 1;
-    private static final int TWO = 2;
-    private static final int THREE = 3;
+    //private static final int ONE = 1;
+    //private static final int TWO = 2;
+    //private static final int THREE = 3;
     private static final int FOUR = 4;
-    private static final int FIVE = 5;
+    //private static final int FIVE = 5;
     private static final int SIX = 6;
-    private static final int SEVEN = 7;
+    //private static final int SEVEN = 7;
 
     protected String result = null;
     protected String pattern_cc = null;
@@ -1458,7 +1460,7 @@ public abstract class Kernel implements Parser {
      * @param elm             要素
      * @param replaceDocument 置換文字列
      */
-    private final void replace(Element elm, String replaceDocument) {
+    private void replace(Element elm, String replaceDocument) {
 
         //文字コード変換
         //replaceDocument = escapeRegex(replaceDocument);
@@ -1621,6 +1623,17 @@ public abstract class Kernel implements Parser {
         return null;
     }
 
+    private void setMonoInfo(Element elm) {
+        boolean res;
+
+        matcher = pattern_set_mono1.matcher(elm.mixedContent());
+        res = matcher.matches();
+
+        if (res) {
+            elm.mono(true);
+        }
+    }
+
     protected final void clean() {
 
         //Quark開始タグ置換
@@ -1637,9 +1650,6 @@ public abstract class Kernel implements Parser {
         //初期化
         //matcher.reset();
     }
-
-
-    protected abstract void setMonoInfo(Element elm);
 
     /**
      * 正規表現対象文字を変換する

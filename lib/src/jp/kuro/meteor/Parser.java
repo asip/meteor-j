@@ -29,7 +29,7 @@ import java.util.LinkedHashMap;
  * パーサ共通インタ－フェイス
  *
  * @author Yasumasa Ashida
- * @version 0.9.3.5
+ * @version 0.9.3.7
  * @since 2003/01/25 18:31:27
  */
 public interface Parser {

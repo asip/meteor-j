@@ -29,7 +29,7 @@ import java.util.List;
  * 要素情報保持クラス
  *
  * @author Yasumasa Ashida
- * @version 0.9.3.5
+ * @version 0.9.3.7
  */
 public class Element {
     //要素名
