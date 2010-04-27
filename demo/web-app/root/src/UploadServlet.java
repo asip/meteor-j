@@ -20,10 +20,10 @@ public class UploadServlet extends HttpServlet {
     public void init(ServletConfig sConf) throws ServletException {
         ServletContext sc = sConf.getServletContext();
 
-        String path = sc.getRealPath("/WEB-INF/html/upload.html");
+        String path = sc.getRealPath("/WEB-INF/html/");
         path2 = sc.getRealPath("/WEB-INF/tmp/_");
-
-        pf = ParserFactory.build(Parser.HTML, path, "Shift_JIS");
+        pf = new ParserFactory(path);
+        pf.parser(Parser.HTML, "upload.html", "Shift_JIS");
 
         anl = new Request();
     }
@@ -35,7 +35,7 @@ public class UploadServlet extends HttpServlet {
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-        Parser xt = pf.parser();
+        Parser xt = pf.parser("upload");
 
         anl.setCharacterEncoding("Shift_JIS");
 
@@ -52,13 +52,13 @@ public class UploadServlet extends HttpServlet {
 
             String path = fs.getUploadPath();
             if (path != null) {
-                xt.content(tag1, path);
+                tag1.content(path);
             } else {
-                xt.content(tag1, "　");
+                tag1.content("　");
             }
 
-            xt.content(tag2, fs.getUploadName());
-            xt.content(tag3, fs.getMimeType());
+            tag2.content(fs.getUploadName());
+            tag3.content(fs.getMimeType());
 
             byte[] bytes = fs.getData();
 

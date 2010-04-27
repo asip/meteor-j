@@ -29,7 +29,7 @@ import java.io.IOException;
  * HTTPプリンタ
  *
  * @author Yasumasa Ashida
- * @version 0.9.3.7
+ * @version 0.9.4.0
  * @since 2004/12/05 13:11:58
  */
 public class HttpPrinter {

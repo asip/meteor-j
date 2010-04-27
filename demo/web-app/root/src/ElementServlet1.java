@@ -16,10 +16,11 @@ public class ElementServlet1 extends HttpServlet {
     public void init(ServletConfig sConf) throws ServletException {
         //"element1.html"の絶対パスを取得する
         ServletContext sc = sConf.getServletContext();
-        String path = sc.getRealPath("/WEB-INF/html/element1.html");
+        String path = sc.getRealPath("/WEB-INF/html/");
 
         //パーサファクトリオブジェクトを生成し、"element1.html"を読み込む
-        pf = ParserFactory.build(Parser.HTML, path, "Shift_JIS");
+        pf = new ParserFactory(path);
+        pf.parser(Parser.HTML, "element1.html", "Shift_JIS");
     }
 
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -28,10 +29,10 @@ public class ElementServlet1 extends HttpServlet {
 
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         //Parserオブジェクトを取得する
-        Parser xt = pf.parser();
+        Parser xt = pf.parser("element1");
         //"Hello,World"を"こんにちは、世界！"に変更します。
         Element tag = xt.element("font", "id", "hello");
-        xt.content(tag, "こんにちは、世界");
+        tag.content("こんにちは、世界");
         //反映する
         xt.flush();
         //HTTP出力する

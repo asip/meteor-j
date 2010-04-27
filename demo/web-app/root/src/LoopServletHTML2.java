@@ -20,11 +20,12 @@ public class LoopServletHTML2 extends HttpServlet {
 
         //anl = new Analyzer();
 
-        String path = sc.getRealPath("/WEB-INF/html/loop2.html");
+        String path = sc.getRealPath("/WEB-INF/html/");
         path2 = sc.getRealPath("/WEB-INF/");
 
         //パーサファクトリオブジェクトを生成し、"loop2.html"を読み込む
-        pf = ParserFactory.build(Parser.HTML, path, "Shift_JIS");
+        pf = new ParserFactory(path);
+        pf.parser(Parser.HTML, "loop2.html", "Shift_JIS");
     }
 
     public void doGet(HttpServletRequest req, HttpServletResponse res)
@@ -35,7 +36,7 @@ public class LoopServletHTML2 extends HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
         //Parserオブジェクトを取得する
-        Parser xt = pf.parser();
+        Parser xt = pf.parser("loop2");
 
         //anl.setCharacterEncoding("Shift_JIS");
         //req.setCharacterEncoding("Shift_JIS");
@@ -47,7 +48,7 @@ public class LoopServletHTML2 extends HttpServlet {
 
         Element tag = xt.element("option", "value", "test");
 
-        xt.execute(tag, new LoopML2());
+        tag.execute(new LoopML2());
 
         //反映する
         xt.flush();

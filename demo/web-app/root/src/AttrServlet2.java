@@ -16,10 +16,11 @@ public class AttrServlet2 extends HttpServlet {
     public void init(ServletConfig sConf) throws ServletException {
         //"attr.html"の絶対パスを取得する
         ServletContext sc = sConf.getServletContext();
-        String path = sc.getRealPath("/WEB-INF/html/attr2.html");
+        String path = sc.getRealPath("/WEB-INF/html/");
 
         //パーサファクトリオブジェクトを生成し、"attr.html"を読み込む
-        pf = ParserFactory.build(Parser.HTML, path, "Shift_JIS");
+        pf = new ParserFactory(path);
+        pf.parser(Parser.HTML, "attr2.html", "Shift_JIS");
     }
 
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -28,10 +29,10 @@ public class AttrServlet2 extends HttpServlet {
 
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         //Parserオブジェクトを取得する
-        Parser xt = pf.parser();
+        Parser xt = pf.parser("attr2");
         //fontタグのcolor属性を消します。
         Element tag = xt.element("font", "id", "hello");
-        xt.removeAttribute(tag, "color");
+        tag.removeAttribute("color");
         //反映する
         xt.flush();
         //HTTP出力する

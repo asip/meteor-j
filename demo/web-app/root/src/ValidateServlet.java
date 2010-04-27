@@ -19,9 +19,10 @@ public class ValidateServlet extends HttpServlet {
     public void init(ServletConfig sConf) throws ServletException {
         ServletContext sc = sConf.getServletContext();
 
-        String path = sc.getRealPath("/WEB-INF/html/validate.html");
+        String path = sc.getRealPath("/WEB-INF/html/");
 
-        pf = ParserFactory.build(Parser.HTML, path, "Shift_JIS");
+        pf = new ParserFactory(path);
+        pf.parser(Parser.HTML, "validate.html", "Shift_JIS");
 
         anl = new Request();
     }
@@ -33,7 +34,7 @@ public class ValidateServlet extends HttpServlet {
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-        Parser xt = pf.parser();
+        Parser xt = pf.parser("validate");
 
         anl.setCharacterEncoding("Shift_JIS");
 
@@ -58,13 +59,13 @@ public class ValidateServlet extends HttpServlet {
                     String key = (String) o;
                     ParamResult pr = (ParamResult) detail.get(key);
                     if (!pr.getResult()) {
-                        xt.content(tag3, pr.getMessage());
+                        tag3.content(pr.getMessage());
                     }
                 }
             }
 
-            xt.attribute(tag, "value", (String) query.get("textfield"));
-            xt.content(tag2, (String) query.get("textfield2"));
+            tag.attribute("value", (String) query.get("textfield"));
+            tag2.content((String) query.get("textfield2"));
 
         }
 

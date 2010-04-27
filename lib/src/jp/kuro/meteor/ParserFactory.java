@@ -21,48 +21,153 @@ package jp.kuro.meteor;
 
 import jp.kuro.meteor.core.html.ParserImpl;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.regex.Pattern;
+
 /**
  * パーサファクトリクラス
  *
  * @author Yasumasa Ashida
- * @version 0.9.3.7
+ * @version 0.9.4.0
  * @since 2005/02/24 16:29:25
  */
 public final class ParserFactory {
-    private Parser pif = null;
+
+    //private static final String ABST_EXT_NAME = ".*";
+    private static final String CURRENT_DIR = ".";
+    private static final String COMMA = ".";
+    private static final String SLASH = "/";
+    private static final String ENC_UTF8 = "UTF-8";
+
+    private String baseDir;      // 基準ディレクトリ
+    private String base_encoding; // デフォルトエンコーディング
+
+    private HashMap<String,Parser> cache = new HashMap<String,Parser>();
+
+    private String[] paths;
+    private String relativeUrl;
+    Parser pif;
 
     /**
-     * パーサファクトリを生成する。マークアップタイプがParserIF.HTMLならHTML用パーサファクトリ、<br>
-     * Parser.XHTMLならXHTML用パーサファクトリ、Parser.XMLならXML用パーサファクトリを生成。
+     * コンストラクタ
+     */
+    public ParserFactory(){
+        this.baseDir = CURRENT_DIR;
+        this.base_encoding = ENC_UTF8;
+    }
+
+    /**
+     * コンストラクタ
+     * @param bsDir 基準ディレクトリ
+     */
+    public ParserFactory(String bsDir){
+        this.baseDir = bsDir;
+        this.base_encoding = ENC_UTF8;
+    }
+
+    /**
+     * コンストラクタ
+     * @param bsDir 基準ディレクトリ
+     * @param bsEncoding デフォルトエンコーディング
+     */
+    public ParserFactory(String bsDir,String bsEncoding){
+        this.baseDir = bsDir;
+        this.base_encoding = bsEncoding;
+    }
+
+    /**
+     * パーサを生成する。マークアップタイプがParser.HTMLならHTMLパーサ、<br>
+     * Parser.XHTMLならXHTML用パーサ、Parser.XMLならXML用パーサを生成。
      *
      * @param type     マークアップタイプ
-     * @param path     ファイルパス
+     * @param relativePath     相対ファイルパス
      * @param encoding 文字エンコーディング
      * @return パーサファクトリ
      */
-    public static ParserFactory build(int type, String path, String encoding) {
-        ParserFactory psf = new ParserFactory();
+    public Parser parser(int type, String relativePath, String encoding) {
+
+        paths = relativePath.split(File.pathSeparator);
+
+        if(paths.length == 1){
+            relativeUrl = paths[0].split(Pattern.quote(COMMA))[0];
+            System.out.println(relativeUrl);
+        }else if(paths.length == 2){
+            if (CURRENT_DIR.equals(paths[0])){
+                relativeUrl = paths[1].split(COMMA)[0];
+            }else{
+                relativeUrl = new StringBuilder(paths[0]).append(SLASH)
+                        .append((paths[1].split(File.separator))[0]).toString();
+            }
+        }
 
         switch (type) {
             case Parser.HTML:
                 ParserImpl html = new ParserImpl();
-                html.read(path, encoding);
-                psf.setParser(html);
-                break;
+                html.read(new File(baseDir,relativePath).getAbsolutePath(), encoding);
+                return cache.put(relativeUrl,html);
             case Parser.XHTML:
                 jp.kuro.meteor.core.xhtml.ParserImpl xhtml = new jp.kuro.meteor.core.xhtml.ParserImpl();
-                xhtml.read(path, encoding);
-                psf.setParser(xhtml);
-                break;
+                xhtml.read(new File(baseDir,relativePath).getAbsolutePath(), encoding);
+                return cache.put(relativeUrl,xhtml);
+            case Parser.HTML5:
+                jp.kuro.meteor.core.html5.ParserImpl html5 = new jp.kuro.meteor.core.html5.ParserImpl();
+                html5.read(new File(baseDir,relativePath).getAbsolutePath(), encoding);
+                return cache.put(relativeUrl,html5);
+            case Parser.XHTML5:
+                jp.kuro.meteor.core.xhtml5.ParserImpl xhtml5 = new jp.kuro.meteor.core.xhtml5.ParserImpl();
+                xhtml5.read(new File(baseDir,relativePath).getAbsolutePath(), encoding);
+                return cache.put(relativeUrl,xhtml5);
             case Parser.XML:
                 jp.kuro.meteor.core.xml.ParserImpl xml = new jp.kuro.meteor.core.xml.ParserImpl();
-                xml.read(path, encoding);
-                psf.setParser(xml);
-                break;
+                xml.read(new File(baseDir,relativePath).getAbsolutePath(), encoding);
+                return cache.put(relativeUrl,xml);
+        }
+        return null;
+    }
+
+    /**
+     * パーサを生成する。マークアップタイプがParser.HTMLならHTML用パーサ、<br>
+     * Parser.XHTMLならXHTML用パーサ、Parser.XMLならXML用パーサを生成。
+     *
+     * @param type         マークアップタイプ
+     * @param relativePath 相対ファイルパス
+     * @return パーサ
+     */
+    public Parser parser(int type, String relativePath) {
+
+        paths = relativePath.split(File.pathSeparator);
+
+        if (CURRENT_DIR.equals(paths[0])){
+            relativeUrl = paths[1].split(File.separator)[0];
+        }else{
+            relativeUrl = new StringBuilder(paths[0]).append(SLASH)
+                    .append((paths[1].split(File.separator))[0]).toString();
         }
 
-        return psf;
-
+        switch (type) {
+            case Parser.HTML:
+                ParserImpl html = new ParserImpl();
+                html.read(new File(baseDir,relativePath).getAbsolutePath(), base_encoding);
+                return cache.put(relativeUrl,html);
+            case Parser.XHTML:
+                jp.kuro.meteor.core.xhtml.ParserImpl xhtml = new jp.kuro.meteor.core.xhtml.ParserImpl();
+                xhtml.read(new File(baseDir,relativePath).getAbsolutePath(), base_encoding);
+                return cache.put(relativeUrl,xhtml);
+            case Parser.HTML5:
+                jp.kuro.meteor.core.html5.ParserImpl html5 = new jp.kuro.meteor.core.html5.ParserImpl();
+                html5.read(new File(baseDir,relativePath).getAbsolutePath(), base_encoding);
+                return cache.put(relativeUrl,html5);
+            case Parser.XHTML5:
+                jp.kuro.meteor.core.xhtml5.ParserImpl xhtml5 = new jp.kuro.meteor.core.xhtml5.ParserImpl();
+                xhtml5.read(new File(baseDir,relativePath).getAbsolutePath(), base_encoding);
+                return cache.put(relativeUrl,xhtml5);
+            case Parser.XML:
+                jp.kuro.meteor.core.xml.ParserImpl xml = new jp.kuro.meteor.core.xml.ParserImpl();
+                xml.read(new File(baseDir,relativePath).getAbsolutePath(), base_encoding);
+                return cache.put(relativeUrl,xml);
+        }
+        return null;
     }
 
     /**
@@ -70,62 +175,71 @@ public final class ParserFactory {
      * Parser.XHTMLならXHTML用パーサファクトリ、Parser.XMLならXML用パーサファクトリを生成。
      *
      * @param type     マークアップタイプ
+     * @param relativeUrl 相対URL
      * @param document ドキュメント
-     * @return パーサファクトリ
+     * @return パーサ
      */
-    public static ParserFactory build(int type, String document) {
-        ParserFactory psf = new ParserFactory();
+    public Parser parser_str(int type, String relativeUrl, String document) {
+        //ParserFactory psf = new ParserFactory();
 
         switch (type) {
             case Parser.HTML:
                 ParserImpl html = new ParserImpl();
                 html.parse(document);
-                psf.setParser(html);
-                break;
+                return cache.put(relativeUrl,html);
             case Parser.XHTML:
                 jp.kuro.meteor.core.xhtml.ParserImpl xhtml = new jp.kuro.meteor.core.xhtml.ParserImpl();
                 xhtml.parse(document);
-                psf.setParser(xhtml);
-                break;
+                return cache.put(relativeUrl,xhtml);
+            case Parser.HTML5:
+                jp.kuro.meteor.core.html5.ParserImpl html5 = new jp.kuro.meteor.core.html5.ParserImpl();
+                html5.parse(document);
+                return cache.put(relativeUrl,html5);
+            case Parser.XHTML5:
+                jp.kuro.meteor.core.xhtml5.ParserImpl xhtml5 = new jp.kuro.meteor.core.xhtml5.ParserImpl();
+                xhtml5.parse(document);
+                return cache.put(relativeUrl,xhtml5);
             case Parser.XML:
                 jp.kuro.meteor.core.xml.ParserImpl xml = new jp.kuro.meteor.core.xml.ParserImpl();
                 xml.parse(document);
-                psf.setParser(xml);
-                break;
+                return cache.put(relativeUrl,xml);
         }
 
-        return psf;
+        return null;
+
+    }
+
+    /**
+     * パーサを取得する
+     * @param key キー
+     * @return パーサ
+     */
+    public final Parser parser(String key) {
+        pif = cache.get(key);
+
+        if (pif instanceof jp.kuro.meteor.core.html5.ParserImpl) {
+            return new jp.kuro.meteor.core.html5.ParserImpl(pif);
+        } else if (pif instanceof jp.kuro.meteor.core.xhtml5.ParserImpl) {
+            return new jp.kuro.meteor.core.xhtml5.ParserImpl(pif);
+        } else if (pif instanceof ParserImpl) {
+            return new ParserImpl(pif);
+        } else if (pif instanceof jp.kuro.meteor.core.xhtml.ParserImpl) {
+            return new jp.kuro.meteor.core.xhtml.ParserImpl(pif);
+        } else if (pif instanceof jp.kuro.meteor.core.xml.ParserImpl) {
+            return new jp.kuro.meteor.core.xml.ParserImpl(pif);
+        }
+
+        return null;
 
     }
 
     /**
      * パーサをセットする
-     *
+     * @param key キー
      * @param pif パーサ
      */
-    public final void setParser(Parser pif) {
-        this.pif = pif;
-    }
-
-
-    /**
-     * パーサを取得する
-     *
-     * @return パーサ
-     */
-    public final Parser parser() {
-        Parser pif2 = null;
-
-        if (pif instanceof ParserImpl) {
-            pif2 = new ParserImpl(pif);
-        } else if (pif instanceof jp.kuro.meteor.core.xhtml.ParserImpl) {
-            pif2 = new jp.kuro.meteor.core.xhtml.ParserImpl(pif);
-        } else if (pif instanceof jp.kuro.meteor.core.xml.ParserImpl) {
-            pif2 = new jp.kuro.meteor.core.xml.ParserImpl(pif);
-        }
-
-        return pif2;
-
+    public final void parser(String key,Parser pif) {
+        cache.put(key,pif);
     }
 
 }

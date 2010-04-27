@@ -33,7 +33,7 @@ import java.util.List;
 /*
  * XHTMLタグ解析パーサ
  * @author Yasumasa Ashida
- * @version 0.9.3.7
+ * @version 0.9.4.0
  */
 public class ParserImpl extends Kernel implements Parser {
 
@@ -43,15 +43,16 @@ public class ParserImpl extends Kernel implements Parser {
     private static final String BR_2 = "<br/>";
     private static final String BR_3 = "<br\\/>";
 
-    private static final String META = "META";
-    private static final String META_S = "meta";
+    protected static final String META = "META";
+    protected static final String META_S = "meta";
 
     //private static final String MATCH_TAG2 = "textarea|TEXTAREA|option|OPTION|pre|PRE";
+    //改行を<br/>に変換する必要のない要素
     private static final String[] MATCH_TAG2 = {"textarea", "option", "pre"};
 
-    private static final String HTTP_EQUIV = "http-equiv";
-    private static final String CONTENT_TYPE = "Content-Type";
-    private static final String CONTENT = "content";
+    protected static final String HTTP_EQUIV = "http-equiv";
+    protected static final String CONTENT_TYPE = "Content-Type";
+    protected static final String CONTENT = "content";
 
     //attribute
     //private static final String OPTION = "option|OPTION";
@@ -62,68 +63,76 @@ public class ParserImpl extends Kernel implements Parser {
     //private static final String DISABLE_ELEMENT = "input|INPUT|textarea|TEXTAREA|select|SELECT";
     //private static final String DISABLED = "disabled|DISABLED";
 
+    //論理値で指定する属性
     private static final String[] ATTR_LOGIC = {"disabled", "readonly", "checked", "selected", "multiple"};
-    private static final String OPTION = "option";
-    private static final String SELECTED = "selected";
-    private static final String INPUT = "input";
-    private static final String CHECKED = "checked";
-    private static final String RADIO = "radio";
+
+    protected static final String OPTION = "option";
+    protected static final String SELECTED = "selected";
+    protected static final String INPUT = "input";
+    protected static final String CHECKED = "checked";
+    protected static final String RADIO = "radio";
+
+    //disabled属性のある要素
     private static final String[] DISABLE_ELEMENT = {"input", "textarea", "select", "optgroup"};
-    private static final String DISABLED = "disabled";
-    private static final String[] READONLY_TYPE = {"text", "password"};
-    private static final String TEXTAREA = "textarea";
-    private static final String READONLY = "readonly";
-    private static final String SELECT = "select";
-    private static final String MULTIPLE = "multiple";
+
+    protected static final String DISABLED = "disabled";
+
+    //readonly属性のあるinput要素のタイプ
+    protected static final String[] READONLY_TYPE = {"text", "password"};
+
+    protected static final String TEXTAREA = "textarea";
+    protected static final String READONLY = "readonly";
+    protected static final String SELECT = "select";
+    protected static final String MULTIPLE = "multiple";
 
     private static final String SELECTED_M = "\\sselected=\"[^\"]*\"\\s|\\sselected=\"[^\"]*\"$|"
             + "\\sSELECTED=\"[^\"]*\"\\s|\\sSELECTED=\"[^\"]*\"$";
     private static final String SELECTED_M1 = "\\sselected=\"([^\"]*)\"\\s|\\sselected=\"([^\"]*)\"$|"
             + "\\sSELECTED=\"([^\"]*)\"\\s|\\sSELECTED=\"([^\"]*)\"$";
     private static final String SELECTED_R = "selected=\"[^\"]*\"|SELECTED=\"[^\"]*\"";
-    private static final String SELECTED_U = "selected=\"true\"";
+    protected static final String SELECTED_U = "selected=\"true\"";
     private static final String CHECKED_M = "\\schecked=\"[^\"]*\"\\s|\\schecked=\"[^\"]*\"$|"
             + "\\sCHECKED=\"[^\"]*\"\\s|\\sCHECKED=\"[^\"]*\"$";
     private static final String CHECKED_M1 = "\\schecked=\"([^\"]*)\"\\s|\\schecked=\"([^\"]*)\"$|"
             + "\\sCHECKED=\"([^\"]*)\"\\s|\\sCHECKED=\"([^\"]*)\"$";
     private static final String CHECKED_R = "checked=\"[^\"]*\"|CHECKED=\"[^\"]*\"";
-    private static final String CHECKED_U = "checked=\"true\"";
+    protected static final String CHECKED_U = "checked=\"true\"";
     private static final String DISABLED_M = "\\sdisabled=\"[^\"]*\"\\s|\\sdisabled=\"[^\"]*\"$|"
             + "\\sDISABLED=\"[^\"]*\"\\s|\\sDISABLED=\"[^\"]*\"$";
     private static final String DISABLED_M1 = "\\sdisabled=\"([^\"]*)\"\\s|\\sdisabled=\"([^\"]*)\"$|"
             + "\\sDISABLED=\"([^\"]*)\"\\s|\\sDISABLED=\"([^\"]*)\"$";
     private static final String DISABLED_R = "disabled=\"[^\"]*\"|DISABLED=\"[^\"]*\"";
-    private static final String DISABLED_U = "disabled=\"true\"";
+    protected static final String DISABLED_U = "disabled=\"true\"";
     private static final String READONLY_M = "\\sreadonly=\"[^\"]*\"\\s|\\sreadonly=\"[^\"]*\"$";
     private static final String READONLY_M1 = "\\sreadonly=\"([^\"]*)\"\\s|\\sreadonly=\"([^\"]*)\"$";
     private static final String READONLY_R = "readonly=\"[^\"]*\"";
-    private static final String READONLY_U = "readonly=\"readonly\"";
+    protected static final String READONLY_U = "readonly=\"readonly\"";
     private static final String MULTIPLE_M = "\\smultiple=\"[^\"]*\"\\s|\\smultiple=\"[^\"]*\"$";
     private static final String MULTIPLE_M1 = "\\smultiple=\"([^\"]*)\"\\s|\\smultiple=\"([^\"]*)\"$";
     private static final String MULTIPLE_R = "multiple=\"[^\"]*\"";
-    private static final String MULTIPLE_U = "multiple=\"multiple\"";
+    protected static final String MULTIPLE_U = "multiple=\"multiple\"";
 
-    private static final Pattern pattern_selected_m = Pattern.compile(SELECTED_M);
-    private static final Pattern pattern_selected_m1 = Pattern.compile(SELECTED_M1);
-    private static final Pattern pattern_selected_r = Pattern.compile(SELECTED_R);
-    private static final Pattern pattern_checked_m = Pattern.compile(CHECKED_M);
-    private static final Pattern pattern_checked_m1 = Pattern.compile(CHECKED_M1);
-    private static final Pattern pattern_checked_r = Pattern.compile(CHECKED_R);
-    private static final Pattern pattern_disabled_m = Pattern.compile(DISABLED_M);
-    private static final Pattern pattern_disabled_m1 = Pattern.compile(DISABLED_M1);
-    private static final Pattern pattern_disabled_r = Pattern.compile(DISABLED_R);
-    private static final Pattern pattern_readonly_m = Pattern.compile(READONLY_M);
-    private static final Pattern pattern_readonly_m1 = Pattern.compile(READONLY_M1);
-    private static final Pattern pattern_readonly_r = Pattern.compile(READONLY_R);
-    private static final Pattern pattern_multiple_m = Pattern.compile(MULTIPLE_M);
-    private static final Pattern pattern_multiple_m1 = Pattern.compile(MULTIPLE_M1);
-    private static final Pattern pattern_multiple_r = Pattern.compile(MULTIPLE_R);
+    protected static final Pattern pattern_selected_m = Pattern.compile(SELECTED_M);
+    protected static final Pattern pattern_selected_m1 = Pattern.compile(SELECTED_M1);
+    protected static final Pattern pattern_selected_r = Pattern.compile(SELECTED_R);
+    protected static final Pattern pattern_checked_m = Pattern.compile(CHECKED_M);
+    protected static final Pattern pattern_checked_m1 = Pattern.compile(CHECKED_M1);
+    protected static final Pattern pattern_checked_r = Pattern.compile(CHECKED_R);
+    protected static final Pattern pattern_disabled_m = Pattern.compile(DISABLED_M);
+    protected static final Pattern pattern_disabled_m1 = Pattern.compile(DISABLED_M1);
+    protected static final Pattern pattern_disabled_r = Pattern.compile(DISABLED_R);
+    protected static final Pattern pattern_readonly_m = Pattern.compile(READONLY_M);
+    protected static final Pattern pattern_readonly_m1 = Pattern.compile(READONLY_M1);
+    protected static final Pattern pattern_readonly_r = Pattern.compile(READONLY_R);
+    protected static final Pattern pattern_multiple_m = Pattern.compile(MULTIPLE_M);
+    protected static final Pattern pattern_multiple_m1 = Pattern.compile(MULTIPLE_M1);
+    protected static final Pattern pattern_multiple_r = Pattern.compile(MULTIPLE_R);
 
     private static final String TRUE = "true";
     private static final String FALSE = "false";
 
-    private static final String TYPE_L = "type";
-    private static final String TYPE_U = "TYPE";
+    protected static final String TYPE_L = "type";
+    protected static final String TYPE_U = "TYPE";
 
     private static final Pattern pattern_and_1 = Pattern.compile(AND_1);
     private static final Pattern pattern_lt_1 = Pattern.compile(LT_1);
@@ -227,7 +236,7 @@ public class ParserImpl extends Kernel implements Parser {
         analyzeKaigyoCode();
     }
 
-    protected final void analyzeContentType() {
+    protected void analyzeContentType() {
 
         Element tag = element(META_S, HTTP_EQUIV, CONTENT_TYPE);
 
@@ -431,7 +440,7 @@ public class ParserImpl extends Kernel implements Parser {
         return (super.attribute(elm, attrName));
     }
 
-    private String getType(Element elm) {
+    protected final String getType(Element elm) {
         if (elm.typeValue() != null) {
             elm.typeValue(super.getAttributeValue_(elm, TYPE_L));
             if (elm.typeValue() != null) {

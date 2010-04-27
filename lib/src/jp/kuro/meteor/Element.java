@@ -29,7 +29,7 @@ import java.util.List;
  * 要素情報保持クラス
  *
  * @author Yasumasa Ashida
- * @version 0.9.3.7
+ * @version 0.9.4.0
  */
 public class Element {
     //要素名
@@ -257,6 +257,7 @@ public class Element {
             documentSync = false;
             switch (parser.docType()) {
                 case Parser.HTML:
+                case Parser.HTML5:
                     if (cx) {
                         sbuf.setLength(0);
                         doc = sbuf.append(SET_CX_1).append(name).append(SPACE).append(attributes).append(SET_CX_2)
@@ -274,6 +275,7 @@ public class Element {
                     }
                     break;
                 case Parser.XHTML:
+                case Parser.XHTML5:
                 case Parser.XML:
                     if (cx) {
                         sbuf.setLength(0);

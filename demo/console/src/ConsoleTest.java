@@ -5,13 +5,15 @@ public class ConsoleTest {
 
         try {
 
-            ParserFactory pf = ParserFactory.build(Parser.XML, "/Users/asip/project/kuro/meteor/demo/console/src/test.xml", "Shift_JIS");
+            ParserFactory pf = new ParserFactory("/Users/asip/project/kuro/meteor/demo/console/src");
+
+            pf.parser(Parser.XML, "test.xml", "Shift_JIS");
 
             long before = System.currentTimeMillis();
-            Parser xt = pf.parser();
+            Parser xt = pf.parser("test");
 
             Element tagX = xt.element("momo");
-            xt.content(tagX, "<>");
+            tagX.content("<>");
 
             //Element tag  = xt.element("test","manbo","manbo");
 
@@ -23,12 +25,12 @@ public class ConsoleTest {
             //System.out.println(xt.attribute(tag,"manbo"));
             Element tagY = xt.element("kobe", "momo", "mono");
 
-            xt.attribute(tagY, "momo", "pono");
-            xt.attribute(tagY, "momo", "pino");
+            tagY.attribute("momo", "pono");
+            tagY.attribute("momo", "pino");
 
             //System.out.println(xt.attribute(tagY,"momo"));
             //xt.attribute(tag,"manbo","mango");
-            xt.attribute(tag2, "manbo", "okojo");
+            tag2.attribute("manbo", "okojo");
             Element tag = xt.element("test", "manbo", "mbo");
             //xt.content(tag,"<>\"'&\"");
             //System.out.println(xt.content(tag));
@@ -55,7 +57,7 @@ public class ConsoleTest {
             }
 
             Element tag3 = xt.cxTag("mono");
-            xt.content(tag3, "<>\"&mono");
+            tag3.content("<>\"&mono");
             //xt.eraseQuarkTag(tag3);
             //xt.eraseQuarkTag("mono");
             //tag = xt.element("teo", "a", "aa");
@@ -76,9 +78,9 @@ public class ConsoleTest {
 
             //xt.attributeMap(tag5);
 
-            xt.attribute(tag5, "id", "bb");
+            tag5.attribute("id", "bb");
             //xt.content(tag5,"cc");
-            xt.attribute(tag5, "id", "cc");
+            tag5.attribute("id", "cc");
 
             //Element tag7 = xt.element("potato","id","aa","id2","bb");
 

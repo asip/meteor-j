@@ -23,7 +23,7 @@ package jp.kuro.meteor;
  * ルート要素クラス
  *
  * @author Yasumasa Ashida
- * @version 0.9.3.7
+ * @version 0.9.4.0
  * @since 2005/02/19 20:18:51
  */
 public class RootElement {
@@ -31,7 +31,8 @@ public class RootElement {
 
     //コンテントタイプ
     private String contentType;
-
+    //文字セット
+    private String charset;
     //改行コード
     private String kaigyoCode;
     //エンコーディング
@@ -63,6 +64,22 @@ public class RootElement {
      */
     public final void setContentType(String contentType) {
         this.contentType = contentType;
+    }
+
+    /**
+     * 文字セットを取得する
+     * @return 文字セット
+     */
+    public final String charset(){
+        return charset;
+    }
+
+    /**
+     * 文字セットをセットする
+     * @param charset 文字セット
+     */
+    public final void setCharset(String charset){
+        this.charset = charset;
     }
 
     /**

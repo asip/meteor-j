@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 /*
  * HTMLパーサ
  * @author Yasumasa Ashida
- * @version 0.9.3.7
+ * @version 0.9.4.0
  */
 public class ParserImpl extends Kernel implements Parser {
 
@@ -47,19 +47,23 @@ public class ParserImpl extends Kernel implements Parser {
     private static final String BR_1 = "\r?\n|\r";
     private static final String BR_2 = "<br>";
 
-    private static final String META = "META";
-    private static final String META_S = "meta";
+    protected static final String META = "META";
+    protected static final String META_S = "meta";
 
     //private static final String MATCH_TAG = "br|BR|hr|HR|img|IMG|input|INPUT|meta|META|base|BASE";
+    //内容のない要素
     private static final String[] MATCH_TAG = {"br", "hr", "img", "input", "meta", "base"};
+
     //private static final String MATCH_TAG2 = "textarea|TEXTAREA|option|OPTION|pre|PRE";
+    //改行を<br>に変換する必要のない要素
     private static final String[] MATCH_TAG2 = {"textarea", "option", "pre"};
 
-    private static final String[] MATCH_TAG_SNG = {"texarea", "option", "form"};
+    //入れ子にできない要素
+    private static final String[] MATCH_TAG_SNG = {"texarea", "select","option", "form","fieldset"};
 
-    private static final String HTTP_EQUIV = "http-equiv";
-    private static final String CONTENT_TYPE = "Content-Type";
-    private static final String CONTENT = "content";
+    protected static final String HTTP_EQUIV = "http-equiv";
+    protected static final String CONTENT_TYPE = "Content-Type";
+    protected static final String CONTENT = "content";
 
     //attribute
     //private static final String OPTION = "option|OPTION";
@@ -70,19 +74,27 @@ public class ParserImpl extends Kernel implements Parser {
     //private static final String DISABLE_ELEMENT = "input|INPUT|textarea|TEXTAREA|select|SELECT";
     //private static final String DISABLED = "disabled|DISABLED";
 
+    //論理値で指定する属性
     private static final String[] ATTR_LOGIC = {"disabled", "readonly", "checked", "selected", "multiple"};
-    private static final String OPTION = "option";
-    private static final String SELECTED = "selected";
-    private static final String INPUT = "input";
-    private static final String CHECKED = "checked";
-    private static final String RADIO = "radio";
+
+    protected static final String OPTION = "option";
+    protected static final String SELECTED = "selected";
+    protected static final String INPUT = "input";
+    protected static final String CHECKED = "checked";
+    protected static final String RADIO = "radio";
+
+    //diabled属性のある要素
     private static final String[] DISABLE_ELEMENT = {"input", "textarea", "select", "optgroup"};
-    private static final String DISABLED = "disabled";
-    private static final String[] READONLY_TYPE = {"text", "password"};
-    private static final String TEXTAREA = "textarea";
-    private static final String READONLY = "readonly";
-    private static final String SELECT = "select";
-    private static final String MULTIPLE = "multiple";
+
+    protected static final String DISABLED = "disabled";
+
+    //readonly属性のあるinput要素のタイプ
+    protected static final String[] READONLY_TYPE = {"text", "password"};
+
+    protected static final String TEXTAREA = "textarea";
+    protected static final String READONLY = "readonly";
+    protected static final String SELECT = "select";
+    protected static final String MULTIPLE = "multiple";
 
     //private static final Pattern pattern_option = Pattern.compile(OPTION);
     //private static final Pattern pattern_selected = Pattern.compile(SELECTED);
@@ -103,16 +115,16 @@ public class ParserImpl extends Kernel implements Parser {
     private static final String MULTIPLE_M = "\\smultiple\\s|\\smultiple$|\\sMULTIPLE\\s|\\sMULTIPLE$";
     private static final String MULTIPLE_R = "multiple\\s|multiple$|MULTIPLE\\s|MULTIPLE$";
 
-    private static final Pattern pattern_selected_m = Pattern.compile(SELECTED_M);
-    private static final Pattern pattern_selected_r = Pattern.compile(SELECTED_R);
-    private static final Pattern pattern_checked_m = Pattern.compile(CHECKED_M);
-    private static final Pattern pattern_checked_r = Pattern.compile(CHECKED_R);
-    private static final Pattern pattern_disabled_m = Pattern.compile(DISABLED_M);
-    private static final Pattern pattern_disabled_r = Pattern.compile(DISABLED_R);
-    private static final Pattern pattern_readonly_m = Pattern.compile(READONLY_M);
-    private static final Pattern pattern_readonly_r = Pattern.compile(READONLY_R);
-    private static final Pattern pattern_multiple_m = Pattern.compile(MULTIPLE_M);
-    private static final Pattern pattern_multiple_r = Pattern.compile(MULTIPLE_R);
+    protected static final Pattern pattern_selected_m = Pattern.compile(SELECTED_M);
+    protected static final Pattern pattern_selected_r = Pattern.compile(SELECTED_R);
+    protected static final Pattern pattern_checked_m = Pattern.compile(CHECKED_M);
+    protected static final Pattern pattern_checked_r = Pattern.compile(CHECKED_R);
+    protected static final Pattern pattern_disabled_m = Pattern.compile(DISABLED_M);
+    protected static final Pattern pattern_disabled_r = Pattern.compile(DISABLED_R);
+    protected static final Pattern pattern_readonly_m = Pattern.compile(READONLY_M);
+    protected static final Pattern pattern_readonly_r = Pattern.compile(READONLY_R);
+    protected static final Pattern pattern_multiple_m = Pattern.compile(MULTIPLE_M);
+    protected static final Pattern pattern_multiple_r = Pattern.compile(MULTIPLE_R);
 
 
     //private static final String TRUE = "true|TRUE";
@@ -123,8 +135,8 @@ public class ParserImpl extends Kernel implements Parser {
     //private static final Pattern pattern_true = Pattern.compile(TRUE);
     //private static final Pattern pattern_false = Pattern.compile(FALSE);
 
-    private static final String TYPE_L = "type";
-    private static final String TYPE_U = "TYPE";
+    protected static final String TYPE_L = "type";
+    protected static final String TYPE_U = "TYPE";
 
     //private static final String _TRUE = "true";
     //private static final String _FALSE = "false";
@@ -236,7 +248,7 @@ public class ParserImpl extends Kernel implements Parser {
     }
 
 
-    protected final void analyzeContentType() {
+    protected void analyzeContentType() {
         element(META_S, HTTP_EQUIV, CONTENT_TYPE);
 
         if (elm_ == null) {
@@ -665,7 +677,7 @@ public class ParserImpl extends Kernel implements Parser {
     }
 
 
-    private String getType(Element elm) {
+    protected final String getType(Element elm) {
         if (elm.typeValue() != null) {
             elm.typeValue(super.getAttributeValue_(elm, TYPE_L));
             if (elm.typeValue() != null) {

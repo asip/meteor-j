@@ -29,13 +29,15 @@ import java.util.LinkedHashMap;
  * パーサ共通インタ－フェイス
  *
  * @author Yasumasa Ashida
- * @version 0.9.3.7
+ * @version 0.9.4.0
  * @since 2003/01/25 18:31:27
  */
 public interface Parser {
     public static final int HTML = 0;
     public static final int XHTML = 1;
-    public static final int XML = 2;
+    public static final int HTML5 = 2;
+    public static final int XHTML5 = 3;
+    public static final int XML = 4;
 
     //void parse(String document);
     //void read(String filePath,String encoding);

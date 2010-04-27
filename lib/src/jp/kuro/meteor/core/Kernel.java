@@ -46,7 +46,7 @@ import java.util.LinkedHashMap;
  * パーサコア
  *
  * @author Yasumasa Ashida
- * @version 0.9.3.7
+ * @version 0.9.4.0
  */
 public abstract class Kernel implements Parser {
 
@@ -1761,7 +1761,11 @@ public abstract class Kernel implements Parser {
     }
 
     protected final Parser create(Parser pif) {
-        if (pif instanceof ParserImpl) {
+        if (pif instanceof jp.kuro.meteor.core.html5.ParserImpl){
+            pif = new jp.kuro.meteor.core.html5.ParserImpl();
+        } else if (pif instanceof jp.kuro.meteor.core.xhtml5.ParserImpl) {
+            pif = new jp.kuro.meteor.core.xhtml5.ParserImpl();
+        } else if (pif instanceof ParserImpl) {
             pif = new ParserImpl();
         } else if (pif instanceof jp.kuro.meteor.core.xhtml.ParserImpl) {
             pif = new jp.kuro.meteor.core.xhtml.ParserImpl();

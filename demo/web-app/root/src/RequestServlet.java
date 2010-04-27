@@ -20,10 +20,10 @@ public class RequestServlet extends HttpServlet {
     public void init(ServletConfig sConf) throws ServletException {
         ServletContext sc = sConf.getServletContext();
 
-        String path = sc.getRealPath("/WEB-INF/html/request.html");
+        String path = sc.getRealPath("/WEB-INF/html/");
         path2 = sc.getRealPath("/WEB-INF/");
-
-        pf = ParserFactory.build(Parser.HTML, path, "Shift_JIS");
+        pf = new ParserFactory(path);
+        pf.parser(Parser.HTML, "request.html", "Shift_JIS");
     }
 
     public void doGet(HttpServletRequest req, HttpServletResponse res)
@@ -33,7 +33,7 @@ public class RequestServlet extends HttpServlet {
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-        Parser xt = pf.parser();
+        Parser xt = pf.parser("request");
 
         anl = new Request();
 
@@ -45,8 +45,8 @@ public class RequestServlet extends HttpServlet {
             Element tag = xt.element("name", "textfield");
             Element tag2 = xt.element("name", "textfield2");
 
-            xt.attribute(tag, "value", (String) query.get("textfield"));
-            xt.content(tag2, (String) query.get("textfield2"));
+            tag.attribute("value", (String) query.get("textfield"));
+            tag2.content((String) query.get("textfield2"));
         }
 
         //反映する

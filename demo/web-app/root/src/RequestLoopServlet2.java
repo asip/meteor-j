@@ -17,9 +17,10 @@ public class RequestLoopServlet2 extends HttpServlet {
     public void init(ServletConfig sConf) throws ServletException {
         //"request2.html"の絶対パスを取得する
         ServletContext sc = sConf.getServletContext();
-        String path = sc.getRealPath("/WEB-INF/html/request2.html");
+        String path = sc.getRealPath("/WEB-INF/html/");
         //パーサファクトリオブジェクトを生成し、"request2.html"を読み込む
-        pf = ParserFactory.build(Parser.HTML, path, "Shift_JIS");
+        pf = new ParserFactory(path);
+        pf.parser(Parser.HTML, "request2.html", "Shift_JIS");
         //リクエストパラメータを取得する
         anl = new Request();
     }
@@ -32,7 +33,7 @@ public class RequestLoopServlet2 extends HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
         //Parserオブジェクトのコピーを取得する
-        Parser xt = pf.parser();
+        Parser xt = pf.parser("request2");
 
         //リクエストのエンコーディングを指定する
         anl.setCharacterEncoding("Shift_JIS");
@@ -50,7 +51,7 @@ public class RequestLoopServlet2 extends HttpServlet {
 
         //赤字部分の動的ループのロジックを呼び出す。
         Element tag = xt.element("tr", "name", "loop");
-        xt.execute(tag, (new RequestLoop2(query)));
+        tag.execute(new RequestLoop2(query));
 
         //反映する
         xt.flush();

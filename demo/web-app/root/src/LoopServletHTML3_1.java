@@ -15,9 +15,10 @@ public class LoopServletHTML3_1 extends HttpServlet {
     public void init(ServletConfig sConf) throws ServletException {
         //"loop.html"の絶対パスを取得する
         ServletContext sc = sConf.getServletContext();
-        String path = sc.getRealPath("/WEB-INF/html/loop.html");
+        String path = sc.getRealPath("/WEB-INF/html/");
         //パーサファクトリオブジェクトを生成し、"loop.html"を読み込む
-        pf = ParserFactory.build(Parser.HTML, path, "Shift_JIS");
+        pf = new ParserFactory(path);
+        pf.parser(Parser.HTML, "loop.html", "Shift_JIS");
     }
 
     public void doGet(HttpServletRequest req, HttpServletResponse res)
@@ -28,7 +29,7 @@ public class LoopServletHTML3_1 extends HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
         //Parserオブジェクトのコピーを取得する
-        Parser xt = pf.parser();
+        Parser xt = pf.parser("loop");
 
         //表示用データのセット
         ArrayList<Hashtable<String, String>> rsVec = new ArrayList<Hashtable<String, String>>();
@@ -44,7 +45,7 @@ public class LoopServletHTML3_1 extends HttpServlet {
 
         Element tag = xt.element("tr", "name", "loop");
 
-        Element xt2 = xt.element(tag);
+        Element xt2 = tag.child();
 
         //タグ検索
         Element tag_ = xt2.child("a");
