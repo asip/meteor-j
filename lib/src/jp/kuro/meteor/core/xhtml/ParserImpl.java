@@ -33,7 +33,7 @@ import java.util.List;
 /*
  * XHTMLタグ解析パーサ
  * @author Yasumasa Ashida
- * @version 0.9.4.0
+ * @version 0.9.4.2
  */
 public class ParserImpl extends Kernel implements Parser {
 

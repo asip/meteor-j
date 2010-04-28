@@ -34,7 +34,7 @@ import jp.kuro.meteor.core.Kernel;
  * XML解析パーサ
  *
  * @author Yasumasa Ashida
- * @version 0.9.4.0
+ * @version 0.9.4.2
  */
 public class ParserImpl extends Kernel implements Parser {
 

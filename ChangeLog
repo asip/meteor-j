@@ -16,4 +16,8 @@
 
 ==0.9.4.0/ 2010-04-27 Yasumasa Ashida <ys.ashida@gmail.com>
 
-* addtion of (X)HTML5 support & change of jp.kuro.meteor.ParserFactory & demo 
+* addtion of (X)HTML5 support & change of jp.kuro.meteor.ParserFactory & demo
+
+==0.9.4.2/ 2010-04-28 Yasumasa Ashida <ys.ashida@gmail.com>
+
+* modification of jp.kuro.meteor.Parserfactory#parser

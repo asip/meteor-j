@@ -32,7 +32,7 @@ import java.util.zip.GZIPOutputStream;
  * HTTPプリンタ(GZIP圧縮)
  *
  * @author Yasumasa Ashida
- * @version 0.9.4.0
+ * @version 0.9.4.2
  * @since 2004/12/05 13:11:58
  */
 public class GZipHttpPrinter {

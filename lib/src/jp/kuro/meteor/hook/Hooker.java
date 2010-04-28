@@ -25,7 +25,7 @@ import jp.kuro.meteor.Element;
  * フック処理クラス
  *
  * @author Yasumasa Ashida
- * @version 0.9.4.0
+ * @version 0.9.4.2
  */
 public abstract class Hooker {
     /**
