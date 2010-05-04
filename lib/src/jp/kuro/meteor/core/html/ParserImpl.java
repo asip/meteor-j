@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 /*
  * HTMLパーサ
  * @author Yasumasa Ashida
- * @version 0.9.4.2
+ * @version 0.9.5.0
  */
 public class ParserImpl extends Kernel implements Parser {
 
@@ -274,7 +274,7 @@ public class ParserImpl extends Kernel implements Parser {
     }
 
     /**
-     * 要素名により、要素を検索する
+     * 要素名で要素を検索する
      *
      * @param elmName 要素名
      * @return 要素
@@ -353,7 +353,7 @@ public class ParserImpl extends Kernel implements Parser {
     }
 
     /**
-     * 要素名と属性により、要素を検索する
+     * 要素名と属性で要素を検索する
      *
      * @param elmName   要素名
      * @param attrName  属性名
@@ -432,7 +432,7 @@ public class ParserImpl extends Kernel implements Parser {
 
 
     /**
-     * 属性により、要素を検索する
+     * 属性で要素を検索する
      *
      * @param attrName  属性名
      * @param attrValue 属性値
@@ -464,7 +464,7 @@ public class ParserImpl extends Kernel implements Parser {
     }
 
     /**
-     * 要素名と属性1と属性2により、要素を検索する
+     * 要素名と属性１・属性２で要素を検索する
      *
      * @param elmName    要素名
      * @param attrName1  属性名1

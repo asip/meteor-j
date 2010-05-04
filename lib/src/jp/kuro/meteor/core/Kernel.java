@@ -46,7 +46,7 @@ import java.util.LinkedHashMap;
  * パーサコア
  *
  * @author Yasumasa Ashida
- * @version 0.9.4.2
+ * @version 0.9.5.0
  */
 public abstract class Kernel implements Parser {
 
@@ -176,6 +176,23 @@ public abstract class Kernel implements Parser {
     //protected static final String TAG_SEARCH_NC_4_6 = ".*?<\/"
     //protected static final String TAG_SEARCH_NC_4_7 = "\"(?:[^<>\\/]*>|(?!([^<>]*\\/>))[^<>]*>))("
     //protected static final String TAG_SEARCH_NC_4_7_2 = "\")(?:[^<>\\/]*>|(?!([^<>]*\\/>))[^<>]*>))("
+
+    //#find
+    private static final String PATTERN_FIND_1 = "^([^,\\[\\]#\\.]+)$";
+    private static final String PATTERN_FIND_2_1 = "^#([^\\.,\\[\\]#][^,\\[\\]#]*)$";
+    private static final String PATTERN_FIND_2_2 = "^\\.([^\\.,\\[\\]#][^,\\[\\]#]*)$";
+    private static final String PATTERN_FIND_2_3 = "^\\[([^\\[\\],]+)=([^\\[\\],]+)\\]$";
+    private static final String PATTERN_FIND_3 = "^([^\\.,\\[\\]#][^,\\[\\]#]*)\\[([^,\\[\\]]+)=([^,\\[\\]]+)\\]$";
+    private static final String PATTERN_FIND_4 = "^\\[([^,]+)=([^,]+)\\]\\[([^,]+)=([^,]+)\\]$";
+    private static final String PATTERN_FIND_5 = "^([^\\.,\\[\\]#][^,\\[\\]#]*)\\[([^,]+)=([^,]+)\\]\\[([^,]+)=([^,]+)\\]$";
+
+    private static final Pattern pattern_find_1 = Pattern.compile(PATTERN_FIND_1);
+    private static final Pattern pattern_find_2_1 = Pattern.compile(PATTERN_FIND_2_1);
+    private static final Pattern pattern_find_2_2 = Pattern.compile(PATTERN_FIND_2_2);
+    private static final Pattern pattern_find_2_3 = Pattern.compile(PATTERN_FIND_2_3);
+    private static final Pattern pattern_find_3 = Pattern.compile(PATTERN_FIND_3);
+    private static final Pattern pattern_find_4 = Pattern.compile(PATTERN_FIND_4);
+    private static final Pattern pattern_find_5 = Pattern.compile(PATTERN_FIND_5);
 
     //attribute
     protected static final String SET_ATTR_1 = "=\"[^\"]*\"";
@@ -397,7 +414,7 @@ public abstract class Kernel implements Parser {
 
 
     /**
-     * 要素名により、要素を検索する
+     * 要素名で要素を検索する
      *
      * @param elmName 要素名
      * @return 要素
@@ -494,7 +511,7 @@ public abstract class Kernel implements Parser {
     }
 
     /**
-     * 要素名と属性により、要素を検索する
+     * 要素名と属性で要素を検索する
      *
      * @param elmName   要素の名前
      * @param attrName  属性名
@@ -705,7 +722,7 @@ public abstract class Kernel implements Parser {
     }
 
     /**
-     * 属性(属性名="属性値")により、要素を検索する
+     * 属性(属性名="属性値")で要素を検索する
      *
      * @param attrName  属性名
      * @param attrValue 属性値
@@ -743,7 +760,7 @@ public abstract class Kernel implements Parser {
     }
 
     /**
-     * 要素名と属性1と属性2により、要素を検索する
+     * 要素名と属性1と属性2で要素を検索する
      *
      * @param elmName    要素の名前
      * @param attrName1  属性名1
@@ -975,7 +992,7 @@ public abstract class Kernel implements Parser {
     }
 
     /**
-     * 属性1と属性2(属性名="属性値")により、要素を検索する
+     * 属性1と属性2(属性名="属性値")で要素を検索する
      *
      * @param attrName1  属性名1
      * @param attrValue1 属性値1
@@ -1103,6 +1120,58 @@ public abstract class Kernel implements Parser {
         return cnt;
 
     }
+
+    /**
+     * セレクタで要素を検索する
+     * @param selector セレクタ
+     * @return 要素
+     */
+    public final Element find(String selector){
+
+        if ((matcher = pattern_find_1.matcher(selector)).matches()) {
+          element(matcher.group(1));
+          if (elm_ != null) {
+            elementCache.put(elm_.objectId(),elm_);
+          }
+        } else if ((matcher = pattern_find_2_1.matcher(selector)).matches()) {
+          element("id",matcher.group(1));
+          if (elm_ != null) {
+            elementCache.put(elm_.objectId(),elm_);
+          }
+        } else if ((matcher = pattern_find_3.matcher(selector)).matches()) {
+          element(matcher.group(1),matcher.group(2),matcher.group(3));
+          if (elm_ != null) {
+            elementCache.put(elm_.objectId(),elm_);
+          }
+        } else if ((matcher = pattern_find_5.matcher(selector)).matches()) {
+          element(matcher.group(1),matcher.group(2),matcher.group(3),
+                  matcher.group(4),matcher.group(5));
+          if (elm_ != null) {
+            elementCache.put(elm_.objectId(),elm_);
+          }
+        } else if ((matcher = pattern_find_2_3.matcher(selector)).matches()) {
+          element(matcher.group(1),matcher.group(2));
+          if (elm_ != null) {
+            elementCache.put(elm_.objectId(),elm_);
+          }
+        } else if ((matcher = pattern_find_4.matcher(selector)).matches()) {
+          element(matcher.group(1),matcher.group(2),matcher.group(3),
+            matcher.group(4));
+          if (elm_ != null) {
+            elementCache.put(elm_.objectId(),elm_);
+          }
+        } else if ((matcher = pattern_find_2_2.matcher(selector)).matches()) {
+          element("class",matcher.group(1));
+          if (elm_ != null) {
+            elementCache.put(elm_.objectId(),elm_);
+          }
+        } else {
+          elm_ = null;
+        }
+        return elm_;
+    }
+
+
 
     /**
      * 要素の属性を編集する

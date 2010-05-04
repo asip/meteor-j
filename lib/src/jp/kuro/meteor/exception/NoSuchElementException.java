@@ -25,7 +25,7 @@ import java.util.LinkedHashMap;
  * 要素未捕捉例外クラス
  *
  * @author Yasumasa Ashida
- * @version 0.9.4.2
+ * @version 0.9.5.0
  * @since 2007/07/28 17:33:44
  */
 public class NoSuchElementException extends RuntimeException {

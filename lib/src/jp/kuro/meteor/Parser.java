@@ -29,7 +29,7 @@ import java.util.LinkedHashMap;
  * パーサ共通インタ－フェイス
  *
  * @author Yasumasa Ashida
- * @version 0.9.4.2
+ * @version 0.9.5.0
  * @since 2003/01/25 18:31:27
  */
 public interface Parser {
@@ -103,6 +103,13 @@ public interface Parser {
      * @return 要素
      */
     Element element(String attrName1, String attrValue1, String attrName2, String attrValue2);
+
+    /**
+     * セレクタで要素を検索する
+     * @param selector セレクタ
+     * @return 要素
+     */
+    Element find(String selector);
 
     /**
      * 要素名を変更する

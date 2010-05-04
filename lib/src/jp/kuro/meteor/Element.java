@@ -29,7 +29,7 @@ import java.util.List;
  * 要素情報保持クラス
  *
  * @author Yasumasa Ashida
- * @version 0.9.4.2
+ * @version 0.9.5.0
  */
 public class Element {
     //要素名
@@ -491,7 +491,7 @@ public class Element {
      *
      * @return オブジェクトID
      */
-    public Integer objectId() {
+    public final Integer objectId() {
         return ObjectId;
     }
 
@@ -500,7 +500,7 @@ public class Element {
      *
      * @param objectId オブジェクトID
      */
-    public void objectId(Integer objectId) {
+    public final void objectId(Integer objectId) {
         ObjectId = objectId;
     }
 
@@ -508,7 +508,7 @@ public class Element {
      * 要素をコピーする
      * @return 要素
      */
-    public Element child(){
+    public final Element child(){
         return parser.element(this);
     }
 
@@ -518,7 +518,7 @@ public class Element {
      * @param elmName 要素名
      * @return 要素
      */
-    public Element child(String elmName) {
+    public final Element child(String elmName) {
         return parser.element(elmName);
     }
 
@@ -530,7 +530,7 @@ public class Element {
      * @param attrValue 属性値
      * @return 要素
      */
-    public Element child(String elmName, String attrName, String attrValue) {
+    public final Element child(String elmName, String attrName, String attrValue) {
         return parser.element(elmName, attrName, attrValue);
     }
 
@@ -541,7 +541,7 @@ public class Element {
      * @param attrValue 属性値
      * @return 要素
      */
-    public Element child(String attrName, String attrValue) {
+    public final Element child(String attrName, String attrValue) {
         return parser.element(attrName, attrValue);
     }
 
@@ -555,7 +555,7 @@ public class Element {
      * @param attrValue2 属性値２
      * @return 要素
      */
-    public Element child(String elmName, String attrName1, String attrValue1, String attrName2, String attrValue2) {
+    public final Element child(String elmName, String attrName1, String attrValue1, String attrName2, String attrValue2) {
         return parser.element(elmName, attrName1, attrValue1, attrName2, attrValue2);
     }
 
@@ -568,8 +568,18 @@ public class Element {
      * @param attrValue2 属性値２
      * @return 要素
      */
-    public Element child(String attrName1, String attrValue1, String attrName2, String attrValue2) {
+    public final Element child(String attrName1, String attrValue1, String attrName2, String attrValue2) {
         return parser.element(attrName1, attrValue1, attrName2, attrValue2);
+    }
+
+    /**
+     * セレクタで要素を検索する
+     *
+     * @param selector セレクタ
+     * @return 要素
+     */
+    public final Element find(String selector){
+        return parser.find(selector);
     }
 
     /**
@@ -579,7 +589,7 @@ public class Element {
      * @param id      ID
      * @return 要素
      */
-    public Element cxTag(String elmName, String id) {
+    public final Element cxTag(String elmName, String id) {
         return parser.cxTag(elmName, id);
     }
 
@@ -589,7 +599,7 @@ public class Element {
      * @param id ID
      * @return 要素
      */
-    public Element cxTag(String id) {
+    public final Element cxTag(String id) {
         return parser.cxTag(id);
     }
 
@@ -617,7 +627,7 @@ public class Element {
      * 属性マップを取得する
      * @return 属性マップ
      */
-    public AttributeMap attributeMap() {
+    public final AttributeMap attributeMap() {
         return parser.attributeMap(this);
     }
 
@@ -626,7 +636,7 @@ public class Element {
      * @param attrMap 属性マップ
      * @return 要素
      */
-    public Element AttributeMap(AttributeMap attrMap){
+    public final Element AttributeMap(AttributeMap attrMap){
         return this.parser.attributeMap(this,attrMap);
     }
 
@@ -665,7 +675,7 @@ public class Element {
      * @param attrName 属性名
      * @return 属性
      */
-    public Element removeAttribute(String attrName) {
+    public final Element removeAttribute(String attrName) {
         return parser.removeAttribute(this, attrName);
     }
 
@@ -673,7 +683,7 @@ public class Element {
      * 削除する
      * @return null
      */
-    public Element remove() {
+    public final Element remove() {
         return parser.removeElement(this);
     }
 
@@ -688,7 +698,7 @@ public class Element {
      * Hookerクラスの処理を実行する
      * @param hook Hookerオブジェクト
      */
-    public void execute(Hooker hook) {
+    public final void execute(Hooker hook) {
         parser.execute(this, hook);
     }
 
@@ -697,7 +707,7 @@ public class Element {
      * @param hook Looperオブジェクト
      * @param list Listオブジェクト
      */
-    public void execute( Looper hook, List list) {
+    public final void execute( Looper hook, List list) {
         parser.execute(this, hook, list);
     }
 

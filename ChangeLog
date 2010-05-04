@@ -21,3 +21,7 @@
 ==0.9.4.2/ 2010-04-28 Yasumasa Ashida <ys.ashida@gmail.com>
 
 * modification of jp.kuro.meteor.Parserfactory#parser
+
+==0.9.5.0/ 2010-05-05 Yasumasa Ashida <ys.ashida@gmail.com>
+
+* addition of jp.kuro.meteor.Parser#find & jp.kuro.meteor.Element#find

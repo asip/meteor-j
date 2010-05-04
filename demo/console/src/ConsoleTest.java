@@ -22,8 +22,10 @@ public class ConsoleTest {
 
             //Element tag2 = xt.element("test","manbo","mango");
             Element tag2 = xt.element("manbo", "mango");
+            //Element tag2 = xt.find("[manbo=mango]");
             //System.out.println(xt.attribute(tag,"manbo"));
             Element tagY = xt.element("kobe", "momo", "mono");
+            //Element tagY = xt.find("kobe[momo=mono]");
 
             tagY.attribute("momo", "pono");
             tagY.attribute("momo", "pino");

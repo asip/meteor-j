@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * パーサファクトリクラス
  *
  * @author Yasumasa Ashida
- * @version 0.9.4.2
+ * @version 0.9.5.0
  * @since 2005/02/24 16:29:25
  */
 public final class ParserFactory {
