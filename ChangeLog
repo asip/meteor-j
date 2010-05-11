@@ -14,14 +14,18 @@
 
 * change of jp.kuro.meteor.core.Kernel#setMonoInfo & others 
 
-==0.9.4.0/ 2010-04-27 Yasumasa Ashida <ys.ashida@gmail.com>
+==0.9.4.0 / 2010-04-27 Yasumasa Ashida <ys.ashida@gmail.com>
 
 * addtion of (X)HTML5 support & change of jp.kuro.meteor.ParserFactory & demo
 
-==0.9.4.2/ 2010-04-28 Yasumasa Ashida <ys.ashida@gmail.com>
+==0.9.4.2 / 2010-04-28 Yasumasa Ashida <ys.ashida@gmail.com>
 
 * modification of jp.kuro.meteor.Parserfactory#parser
 
-==0.9.5.0/ 2010-05-05 Yasumasa Ashida <ys.ashida@gmail.com>
+==0.9.5.0 / 2010-05-05 Yasumasa Ashida <ys.ashida@gmail.com>
 
 * addition of jp.kuro.meteor.Parser#find & jp.kuro.meteor.Element#find
+
+==0.9.5.1 / 2010-05-11 Yasumasa Ashida <ys.ashida@gmail.com>
+
+* change of error message for searching element

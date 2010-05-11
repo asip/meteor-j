@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 /*
  * HTMLパーサ
  * @author Yasumasa Ashida
- * @version 0.9.5.0
+ * @version 0.9.5.1
  */
 public class ParserImpl extends Kernel implements Parser {
 

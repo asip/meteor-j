@@ -23,7 +23,7 @@ package jp.kuro.meteor;
  * ルート要素クラス
  *
  * @author Yasumasa Ashida
- * @version 0.9.5.0
+ * @version 0.9.5.1
  * @since 2005/02/19 20:18:51
  */
 public class RootElement {

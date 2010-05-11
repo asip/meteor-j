@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  * XHTML5パーサ
  * @author Yasumasa Ashida
  * @since 2010/04/25 18:18:18
- * @version 0.9.5.0
+ * @version 0.9.5.1
  *
  */
 public class ParserImpl extends jp.kuro.meteor.core.xhtml.ParserImpl implements Parser {

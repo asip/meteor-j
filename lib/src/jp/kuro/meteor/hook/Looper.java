@@ -27,7 +27,7 @@ import java.util.List;
  * ループ専用フック処理クラス
  *
  * @author Yasumasa Ashida
- * @version 0.9.5.0
+ * @version 0.9.5.1
  * @since 2006/04/16 19:37:20
  */
 public abstract class Looper {

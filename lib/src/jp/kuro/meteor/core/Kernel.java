@@ -46,7 +46,7 @@ import java.util.LinkedHashMap;
  * パーサコア
  *
  * @author Yasumasa Ashida
- * @version 0.9.5.0
+ * @version 0.9.5.1
  */
 public abstract class Kernel implements Parser {
 
@@ -457,7 +457,8 @@ public abstract class Kernel implements Parser {
             matcher = matcher1;
             pattern_cc = pattern_cc_1;
             elementWithout(elmName);
-        } else if (!res1 && res2) {
+        //} else if (!res1 && res2) {
+        } else if (res2) {
             matcher = matcher2;
             pattern_cc = pattern_cc_2;
             elementWith(elmName);
@@ -576,11 +577,13 @@ public abstract class Kernel implements Parser {
             matcher = matcher1;
             pattern_cc = pattern_cc_1;
             elementWithout_3(elmName);
-        } else if (!res1 && res2) {
+        //} else if (!res1 && res2) {
+        } else if (res2) {
             matcher = matcher2;
             pattern_cc = pattern_cc_2;
             elementWith_3_1(elmName);
-        } else if (!res1 && !res2) {
+        //} else if (!res1 && !res2) {
+        } else {
             elm_ = null;
             throw new NoSuchElementException(elmName, attrName, attrValue);
         }
@@ -832,11 +835,12 @@ public abstract class Kernel implements Parser {
             matcher = matcher1;
             pattern_cc = pattern_cc_1;
             elementWithout_5(elmName);
-        } else if (!res1 && res2) {
+        //} else if (!res1 && res2) {
+        } else if (res2) {
             matcher = matcher2;
             pattern_cc = pattern_cc_2;
             elementWith_5_1(elmName);
-        } else if (!res1 && !res2) {
+        } else {
             elm_ = null;
             throw new NoSuchElementException(elmName, attrName1, attrValue1, attrName2, attrValue2);
         }
@@ -1705,17 +1709,17 @@ public abstract class Kernel implements Parser {
 
     protected final void clean() {
 
-        //Quark開始タグ置換
+        //CX開始タグ置換
         pattern = pattern_clean1;
         matcher = pattern.matcher(document());
         this.document(matcher.replaceAll(EMPTY));
-        //Quark終了タグ置換
+        //CX終了タグ置換
         pattern = pattern_clean2;
         matcher = pattern.matcher(document());
         this.document(matcher.replaceAll(EMPTY));
 
         //sbuf.setLength(0);
-        this.document(document() + "<!-- Powered by Meteor (C)Yasumasa Ashida -->");
+        //this.document(document() + "<!-- Powered by Meteor (C)Yasumasa Ashida -->");
         //初期化
         //matcher.reset();
     }
@@ -1822,11 +1826,7 @@ public abstract class Kernel implements Parser {
     }
 
     protected final boolean isMatch(String pattern, String str) {
-        if (pattern.equals(str.toLowerCase())) {
-            return true;
-        } else {
-            return false;
-        }
+        return pattern.equals(str.toLowerCase());
     }
 
     protected final Parser create(Parser pif) {

@@ -24,7 +24,7 @@ package jp.kuro.meteor.core.util;
  *
  * @author Yasumasa Ashida
  * @author Yasumasa Ashida
- * @version 0.9.5.0
+ * @version 0.9.5.1
  */
 public final class AsyncStringBuffer {
     private final int INIT_SIZE = 32;

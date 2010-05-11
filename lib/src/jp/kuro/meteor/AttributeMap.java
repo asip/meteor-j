@@ -25,7 +25,7 @@ import java.util.HashMap;
  * 属性マップクラス
  *
  * @author Yasumasa Ashida
- * @version 0.9.5.0
+ * @version 0.9.5.1
  * @since 2006/03/26 18:11:47
  */
 public class AttributeMap {

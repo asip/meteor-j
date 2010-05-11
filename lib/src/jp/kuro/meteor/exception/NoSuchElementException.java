@@ -25,7 +25,7 @@ import java.util.LinkedHashMap;
  * 要素未捕捉例外クラス
  *
  * @author Yasumasa Ashida
- * @version 0.9.5.0
+ * @version 0.9.5.1
  * @since 2007/07/28 17:33:44
  */
 public class NoSuchElementException extends RuntimeException {
@@ -77,17 +77,19 @@ public class NoSuchElementException extends RuntimeException {
 
     public String getMessage() {
         if (type == 1) {
-            this.message = this.elmName + " element not found";
+            this.message = "element not found : " + this.elmName;
         } else if (type == 2) {
-            this.message = this.elmName + " element(" + this.attrName + "='" + this.attrValue + "') not found";
+            this.message = "element not found : " + this.elmName
+                    + "[" + this.attrName + "=" + this.attrValue + "]";
         } else if (type == 3) {
-            this.message = this.elmName + " element(" + this.attrName + "='" + this.attrValue
-                    + "'," + this.attrName2 + "='" + this.attrValue2 + "') not found";
+            this.message = "element not found : " + this.elmName + "["
+                    + this.attrName + "=" + this.attrValue
+                    + "][" + this.attrName2 + "=" + this.attrValue2 + "]";
         } else if (type == 4) {
-            this.message = "element(" + this.attrName + "='" + this.attrValue + "') not found";
+            this.message = "element not found : [" + this.attrName + "=" + this.attrValue + "]";
         } else if (type == 5) {
-            this.message = "element(" + this.attrName + "='" + this.attrValue
-                    + "'," + this.attrName2 + "='" + this.attrValue2 + "') not found";
+            this.message = "element not found : [" + this.attrName + "=" + this.attrValue
+                    + "][" + this.attrName2 + "=" + this.attrValue2 + "]";
         }
 
         return message;

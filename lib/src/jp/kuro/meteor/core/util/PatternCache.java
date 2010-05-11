@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  *
  * @author Yasumasa Ashida
  * @author Yasumasa Ashida
- * @version 0.9.5.0
+ * @version 0.9.5.1
  * @since 2007/09/30 17:49:21
  */
 public class PatternCache {
