@@ -88,14 +88,14 @@ public abstract class Kernel implements Parser {
     protected static final String ATTR_EQ = "=\"";
     //element
     //protected static final String TAG_SEARCH_1_1 = "([^<>]*)>(((?!(<\\/";
-    protected static final String TAG_SEARCH_1_1 = "(\\s?[^<>]*)>(((?!(";
+    protected static final String TAG_SEARCH_1_1 = "(|\\s[^<>]*)>(((?!(";
     //protected static final String TAG_SEARCH_1_2 = "))[\\w\\W])*)<\\/"; 
     protected static final String TAG_SEARCH_1_2 = "[^<>]*>))[\\w\\W])*)<\\/";
     //protected static final String TAG_SEARCH_1_2 = "[^<>]*>)).)*)<\\/";
-    protected static final String TAG_SEARCH_1_3 = "(\\s?[^<>]*)\\/>";
+    protected static final String TAG_SEARCH_1_3 = "(|\\s[^<>]*)\\/>";
     //protected static final String TAG_SEARCH_1_4 = "([^<>\\/]*)>";
     protected static final String TAG_SEARCH_1_4 = "(\\s[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
-    protected static final String TAG_SEARCH_1_4_2 = "(\\s[^<>]*)>";
+    protected static final String TAG_SEARCH_1_4_2 = "(|\\s[^<>]*)>";
     //protected static final String TAG_SEARCH_2_1 = "\\s([^<>]*";
 
     protected static final String TAG_SEARCH_2_1 = "(\\s[^<>]*";
@@ -139,12 +139,12 @@ public abstract class Kernel implements Parser {
     protected static final String TAG_SEARCH_4_7 = "\"([^<>\\/]*>|(?!([^<>]*\\/>))[^<>]*>))(";
     protected static final String TAG_SEARCH_4_7_2 = "\")([^<>\\/]*>|(?!([^<>]*\\/>))[^<>]*>))(";
 
-    protected static final String TAG_SEARCH_NC_1_1 = "\\s?[^<>]*>((?!(";
+    protected static final String TAG_SEARCH_NC_1_1 = "(?:|\\s[^<>]*)>((?!(";
     //protected static final String TAG_SEARCH_NC_1_2 = "[^<>]*>)).)*<\\/";
     protected static final String TAG_SEARCH_NC_1_2 = "[^<>]*>))[\\w\\W])*<\\/";
-    protected static final String TAG_SEARCH_NC_1_3 = "\\s?[^<>]*\\/>";
+    protected static final String TAG_SEARCH_NC_1_3 = "(?:|\\s[^<>]*)\\/>";
     protected static final String TAG_SEARCH_NC_1_4 = "(?:\\s[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
-    protected static final String TAG_SEARCH_NC_1_4_2 = "\\s[^<>]*>";
+    protected static final String TAG_SEARCH_NC_1_4_2 = "(?:|\\s[^<>])*>";
     
     protected static final String TAG_SEARCH_NC_2_1 = "\\s[^<>]*";
     protected static final String TAG_SEARCH_NC_2_1_2 = "\\s[^<>]*(?:";
@@ -304,6 +304,8 @@ public abstract class Kernel implements Parser {
     protected String _attrValue1;
     protected String _attrName2;
     protected String _attrValue2;
+
+    protected String _id;
 
     protected String _attributes;
     protected String _content;
@@ -1472,11 +1474,14 @@ public abstract class Kernel implements Parser {
 
     public Element cxTag(String elmName, String id) {
 
+        _elmName = escapeRegex(id);
+        _id = escapeRegex(id);
+
         //CXタグ検索用パターン
         sbuf.setLength(0);
-        pattern_cc = sbuf.append(SEARCH_CX_1).append(elmName).append(SEARCH_CX_2)
-                .append(id).append(SEARCH_CX_3).append(elmName).append(SEARCH_CX_4)
-                .append(elmName).append(SEARCH_CX_5).toString();
+        pattern_cc = sbuf.append(SEARCH_CX_1).append(_elmName).append(SEARCH_CX_2)
+                .append(_id).append(SEARCH_CX_3).append(_elmName).append(SEARCH_CX_4)
+                .append(_elmName).append(SEARCH_CX_5).toString();
         pattern = PatternCache.get(pattern_cc);
         //CXタグ検索
         matcher = pattern.matcher(this.document());
@@ -1506,9 +1511,10 @@ public abstract class Kernel implements Parser {
      */
     public Element cxTag(String id) {
 
+        _id = escapeRegex(id);
 
         sbuf.setLength(0);
-        pattern_cc = sbuf.append(SEARCH_CX_6).append(id)
+        pattern_cc = sbuf.append(SEARCH_CX_6).append(_id)
                 .append(DOUBLE_QUATATION).toString();
         pattern = PatternCache.get(pattern_cc);
         matcher = pattern.matcher(this.document());
