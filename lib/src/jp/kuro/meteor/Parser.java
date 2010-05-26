@@ -127,6 +127,7 @@ public interface Parser {
      * @param elm       要素
      * @param attrName  属性名
      * @param attrValue 属性値
+     * @return 要素
      */
     Element attribute(Element elm, String attrName, String attrValue);
 
@@ -138,14 +139,6 @@ public interface Parser {
      * @return 属性値
      */
     String attribute(Element elm, String attrName);
-
-    /**
-     * 要素から属性名で属性値を取得する
-     *
-     * @param attrName 属性名
-     * @return 属性値
-     */
-    String attribute(String attrName);
 
     /**
      * 属性マップを取得する
@@ -168,15 +161,9 @@ public interface Parser {
      *
      * @param elm      要素
      * @param attrName 属性名
+     * @return 要素
      */
     Element removeAttribute(Element elm, String attrName);
-
-    /**
-     * 属性を削除する
-     *
-     * @param attrName 属性名
-     */
-    void removeAttribute(String attrName);
 
     /**
      * 要素の内容をセットする
@@ -184,31 +171,18 @@ public interface Parser {
      * @param elm       要素
      * @param content   要素の内容
      * @param entityRef エンティティ参照フラグ
+     * @return 要素
      */
     Element content(Element elm, String content, boolean entityRef);
 
     /**
      * 要素の内容をセットする
      *
-     * @param content   要素の内容
-     * @param entityRef エンティティ参照フラグ
-     */
-    Element content(String content, boolean entityRef);
-
-    /**
-     * 要素の内容をセットする
-     *
      * @param elm     要素
      * @param content 要素の内容
+     * @return 要素
      */
     Element content(Element elm, String content);
-
-    /**
-     * 要素の内容をセットする
-     *
-     * @param content 要素の内容
-     */
-    Element content(String content);
 
     /**
      * 要素の内容を取得する
@@ -222,6 +196,7 @@ public interface Parser {
      * 要素を削除する
      *
      * @param elm 要素
+     * @return 要素
      */
     Element removeElement(Element elm);
 

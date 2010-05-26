@@ -191,20 +191,6 @@ public class ParserImpl extends Kernel implements Parser {
         return super.attribute(elm, attrName, attrValue);
     }
 
-    ///**
-    // * 要素の属性を編集する
-    // *
-    // * @param attrName  属性名
-    // * @param attrValue 属性値
-    // */
-    //public Element attribute(String attrName, String attrValue) {
-    //    if (this.rootElement().element() != null) {
-    //        return this.attribute(this.rootElement().element(), attrName, attrValue);
-    //    }
-    //
-    //    return null;
-    //}
-
     /**
      * 要素を属性名で検索し、属性値を得る
      *
@@ -214,20 +200,6 @@ public class ParserImpl extends Kernel implements Parser {
      */
     public final String attribute(Element elm, String attrName) {
         return (super.attribute(elm, attrName));
-    }
-
-    /**
-     * 要素の内容を属性名で検索し、属性値を得る
-     *
-     * @param attrName 属性名
-     * @return 属性値
-     */
-    public String attribute(String attrName) {
-        if (this.rootElement().element() != null) {
-            return this.attribute(this.rootElement().element(), attrName);
-        }
-
-        return null;
     }
 
     //todo
@@ -242,18 +214,6 @@ public class ParserImpl extends Kernel implements Parser {
     }
 
     /**
-     * 属性マップを取得する
-     *
-     * @return 属性マップ
-     */
-    public AttributeMap attributeMap() {
-        if (this.rootElement().element() != null) {
-            return this.attributeMap(this.rootElement().element());
-        }
-        return null;
-    }
-
-    /**
      * 要素の属性を消す
      *
      * @param elm      要素
@@ -261,17 +221,6 @@ public class ParserImpl extends Kernel implements Parser {
      */
     public final Element removeAttribute(Element elm, String attrName) {
         return super.removeAttribute(elm, attrName);
-    }
-
-    /**
-     * 要素の属性を消す
-     *
-     * @param attrName 属性名
-     */
-    public void removeAttribute(String attrName) {
-        if (this.rootElement().element() != null) {
-            this.removeAttribute(this.rootElement().element(), attrName);
-        }
     }
 
     /**
@@ -293,31 +242,6 @@ public class ParserImpl extends Kernel implements Parser {
      */
     public final Element content(Element elm, String content, boolean entityRef) {
         return super.content(elm, content, entityRef);
-    }
-
-    /**
-     * 要素の内容をセットする
-     *
-     * @param content 要素の内容
-     */
-    public Element content(String content) {
-        if (this.rootElement().element() != null) {
-            return this.content(this.rootElement().element(), content);
-        }
-        return null;
-    }
-
-    /**
-     * 要素の内容をセットする
-     *
-     * @param content   要素の内容
-     * @param entityRef エンティティ参照フラグ
-     */
-    public Element content(String content, boolean entityRef) {
-        if (this.rootElement().element() != null) {
-            return this.content(this.rootElement().element(), content, entityRef);
-        }
-        return null;
     }
 
     /**

@@ -19,8 +19,6 @@
 
 package jp.kuro.meteor.core;
 
-//JAVA標準
-
 import jp.kuro.meteor.AttributeMap;
 import jp.kuro.meteor.Element;
 import jp.kuro.meteor.Parser;
@@ -32,6 +30,7 @@ import jp.kuro.meteor.core.util.PatternCache;
 import jp.kuro.meteor.core.html.ParserImpl;
 import jp.kuro.meteor.exception.NoSuchElementException;
 
+//JAVA標準
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.ByteBuffer;
@@ -87,28 +86,20 @@ public abstract class Kernel implements Parser {
     protected static final String TAG_CLOSE3 = "/>";
     protected static final String ATTR_EQ = "=\"";
     //element
-    //protected static final String TAG_SEARCH_1_1 = "([^<>]*)>(((?!(<\\/";
     protected static final String TAG_SEARCH_1_1 = "(|\\s[^<>]*)>(((?!(";
-    //protected static final String TAG_SEARCH_1_2 = "))[\\w\\W])*)<\\/"; 
     protected static final String TAG_SEARCH_1_2 = "[^<>]*>))[\\w\\W])*)<\\/";
-    //protected static final String TAG_SEARCH_1_2 = "[^<>]*>)).)*)<\\/";
     protected static final String TAG_SEARCH_1_3 = "(|\\s[^<>]*)\\/>";
-    //protected static final String TAG_SEARCH_1_4 = "([^<>\\/]*)>";
     protected static final String TAG_SEARCH_1_4 = "(\\s[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
     protected static final String TAG_SEARCH_1_4_2 = "(|\\s[^<>]*)>";
-    //protected static final String TAG_SEARCH_2_1 = "\\s([^<>]*";
 
     protected static final String TAG_SEARCH_2_1 = "(\\s[^<>]*";
     protected static final String TAG_SEARCH_2_1_2 = "(\\s[^<>]*(";
-    //protected static final String TAG_SEARCH_2_2 = "\"[^<>]*)>(((?!(<\\/";
     protected static final String TAG_SEARCH_2_2 = "\"[^<>]*)>(((?!(";
     protected static final String TAG_SEARCH_2_2_2 = "\")[^<>]*)>(((?!(";
     protected static final String TAG_SEARCH_2_3 = "\"[^<>]*)";
     protected static final String TAG_SEARCH_2_3_2 = "\"[^<>]*)\\/>";
     protected static final String TAG_SEARCH_2_3_2_2 = "\")[^<>]*)\\/>";
-    //protected static final String TAG_SEARCH_2_4 = "\"[^<>\\/]*>";
     protected static final String TAG_SEARCH_2_4 = "([^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
-    //protected static final String TAG_SEARCH_2_4_2 = "\"[^<>\\/]*)>";
     protected static final String TAG_SEARCH_2_4_2 = "([^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>)))";
     protected static final String TAG_SEARCH_2_4_2_2 = "\")([^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>)))";
     protected static final String TAG_SEARCH_2_4_2_3 = "\"";
@@ -129,18 +120,14 @@ public abstract class Kernel implements Parser {
 
     protected static final String TAG_SEARCH_4_1 = "([^<>\\/]*)>(";
     protected static final String TAG_SEARCH_4_2 = "[\\w\\W]*?<";
-    //protected static final String TAG_SEARCH_4_2 = ".*?<";
-    //protected static final String TAG_SEARCH_4_3 = "[^<>\\/]*>";
     protected static final String TAG_SEARCH_4_3 = "(\\s[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
     protected static final String TAG_SEARCH_4_4 = "<\\/";
     protected static final String TAG_SEARCH_4_5 = "[\\w\\W]*?<\\/";
     protected static final String TAG_SEARCH_4_6 = "[\\w\\W]*?)<\\/";
-    //protected static final String TAG_SEARCH_4_7 = "\"[^<>\\/]*)>(";
     protected static final String TAG_SEARCH_4_7 = "\"([^<>\\/]*>|(?!([^<>]*\\/>))[^<>]*>))(";
     protected static final String TAG_SEARCH_4_7_2 = "\")([^<>\\/]*>|(?!([^<>]*\\/>))[^<>]*>))(";
 
     protected static final String TAG_SEARCH_NC_1_1 = "(?:|\\s[^<>]*)>((?!(";
-    //protected static final String TAG_SEARCH_NC_1_2 = "[^<>]*>)).)*<\\/";
     protected static final String TAG_SEARCH_NC_1_2 = "[^<>]*>))[\\w\\W])*<\\/";
     protected static final String TAG_SEARCH_NC_1_3 = "(?:|\\s[^<>]*)\\/>";
     protected static final String TAG_SEARCH_NC_1_4 = "(?:\\s[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
@@ -1379,17 +1366,11 @@ public abstract class Kernel implements Parser {
      */
     public Element content(Element elm, String content, boolean entityRef) {
 
-        //if (!elm.cx()) {
-
         //要素ありタグの場合
         if (elm.empty()) {
 
-
             if (entityRef) {
                 content = escapeContent(content, elm.name());
-                //content = escapeRegex(content);
-            } else {
-                //content = escapeRegex(content);
             }
 
             elm.mixedContent(content);
@@ -1464,12 +1445,8 @@ public abstract class Kernel implements Parser {
      * @param elm 要素
      */
     public Element removeElement(Element elm) {
-
-        //replace(elm, EMPTY);
-        //elm.usable(false);
         elm.removed(true);
         return null;
-
     }
 
     public Element cxTag(String elmName, String id) {
@@ -1593,12 +1570,6 @@ public abstract class Kernel implements Parser {
             if (root.element().origin().mono()) {
                 //フック判定がTRUEの場合
                 if (root.element().cx()) {
-                    //hookdocument().append(SET_QUARK_3).append(tag.attributes())
-                    // .append(SET_QUARK_4).append(document()).append(SET_QUARK_5);
-                    //this.root.setHookDocument(this.root.hookDocument().append(SET_CX_1).append(element().name())
-                    //        .append(SPACE).append(element().attributes()).append(SET_CX_2)
-                    //        .append(document()).append(SET_CX_3).append(element().name())
-                    //        .append(SET_CX_4));
                     this.root.setHookDocument(this.root.hookDocument().append(SET_CX_1)
                             .append(this.root.element().name())
                             .append(SPACE).append(this.root.element().attributes()).append(SET_CX_2)
@@ -1606,9 +1577,6 @@ public abstract class Kernel implements Parser {
                             .append(this.root.element().name())
                             .append(SET_CX_4));
                 } else {
-                    //this.root.setHookDocument(this.root.hookDocument().append(TAG_OPEN).append(element().name())
-                    //        .append(element().attributes()).append(TAG_CLOSE).append(document())
-                    //        .append(TAG_OPEN3).append(element().name()).append(TAG_CLOSE));
                     this.root.setHookDocument(this.root.hookDocument().append(TAG_OPEN)
                             .append(this.root.element().name())
                             .append(root.element().attributes()).append(TAG_CLOSE)
@@ -1783,9 +1751,7 @@ public abstract class Kernel implements Parser {
         //2005.10.17 ADD END
         */
 
-        str = Pattern.quote(str);
-
-        return str;
+        return Pattern.quote(str);
     }
 
     /**

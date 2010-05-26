@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
  * 正規表現パターンキャッシュ
  *
  * @author Yasumasa Ashida
- * @author Yasumasa Ashida
  * @version 0.9.5.1
  * @since 2007/09/30 17:49:21
  */
