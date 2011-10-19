@@ -28,8 +28,8 @@ public class LoopServletHTML3_1 extends HttpServlet {
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-        //Parserオブジェクトのコピーを取得する
-        Parser xt = pf.parser("loop");
+        //ルート要素オブジェクトを取得する
+        Element root = pf.element("loop");
 
         //表示用データのセット
         ArrayList<Hashtable<String, String>> rsVec = new ArrayList<Hashtable<String, String>>();
@@ -43,12 +43,12 @@ public class LoopServletHTML3_1 extends HttpServlet {
 
         //赤字部分の動的ループのロジックを呼び出す。
 
-        Element tag = xt.element("tr", "name", "loop");
+        Element tag = root.element("tr", "name", "loop");
 
-        Element xt2 = tag.child();
+        Element xt2 = tag.element();
 
         //タグ検索
-        Element tag_ = xt2.child("a");
+        Element tag_ = xt2.element("a");
         Element tag2_ = xt2.cxTag("name");
         Element tag3_ = xt2.cxTag("set");
 
@@ -69,10 +69,10 @@ public class LoopServletHTML3_1 extends HttpServlet {
         }
 
         //反映する
-        xt.flush();
+        root.flush();
 
         //HTTP出力する。
         HttpPrinter prt = new HttpPrinter(res);
-        prt.print(xt);
+        prt.print(root);
     }
 }

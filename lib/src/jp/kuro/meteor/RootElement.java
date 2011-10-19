@@ -1,6 +1,6 @@
 //
-//Meteor -  A lightweight (X)HTML & XML parser
-// Copyright (C) 2002-2010 Yasumasa Ashida.
+//Meteor -  A lightweight (X)HTML(5) & XML parser
+// Copyright (C) 2002-2011 Yasumasa Ashida.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -16,6 +16,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
+
 package jp.kuro.meteor;
 
 
@@ -23,10 +24,10 @@ package jp.kuro.meteor;
  * ルート要素クラス
  *
  * @author Yasumasa Ashida
- * @version 0.9.5.1
+ * @version 0.9.7.0
  * @since 2005/02/19 20:18:51
  */
-public class RootElement {
+public class RootElement extends Element {
     private final static String EMPTY = "";
 
     //コンテントタイプ
@@ -39,14 +40,20 @@ public class RootElement {
     private String characterEncoding;
 
     //フック用文字列
-    protected StringBuilder hookDocument = new StringBuilder();
+    //protected StringBuilder hookDocument = new StringBuilder();
 
     //ドキュメント
     private String document;
 
     //変更可能要素
-    private Element element = null;
+    //private Element element = null;
 
+    /**
+     * デフォルトコンストラクタ
+     */
+    public RootElement(){
+        super();
+    }
 
     /**
      * コンテントタイプを取得する
@@ -123,43 +130,43 @@ public class RootElement {
      *
      * @return フック文字列
      */
-    public final StringBuilder hookDocument() {
+    /* public final StringBuilder hookDocument() {
         return hookDocument;
-    }
+    }*/
 
     /**
      * フック文字列をセットする
      *
      * @param hookDocument フック文字列
      */
-    public final void setHookDocument(StringBuilder hookDocument) {
+    /* public final void setHookDocument(StringBuilder hookDocument) {
         this.hookDocument = hookDocument;
-    }
+    }*/
 
-    public String document() {
-        return document;
-    }
+    /* public String setDocument() {
+        return setDocument;
+    } */
 
-    public void document(String document) {
-        this.document = document;
-    }
+    /* public void setDocument(String setDocument) {
+        this.setDocument = setDocument;
+    } */
 
     /**
      * 要素を取得する
      *
      * @return 要素
      */
-    public final Element element() {
+    /* public final Element element() {
         return element;
-    }
+    } */
 
     /**
      * 要素をセットする
      *
      * @param elm 要素
      */
-    public final void setElement(Element elm) {
+    /* public final void setElement(Element elm) {
         this.element = elm;
-    }
+    } */
 
 }

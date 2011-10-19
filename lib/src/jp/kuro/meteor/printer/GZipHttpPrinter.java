@@ -1,6 +1,6 @@
 //
-//Meteor -  A lightweight (X)HTML & XML parser
-// Copyright (C) 2002-2010 Yasumasa Ashida.
+//Meteor -  A lightweight (X)HTML(5) & XML parser
+// Copyright (C) 2002-2011 Yasumasa Ashida.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -19,6 +19,7 @@
 
 package jp.kuro.meteor.printer;
 
+import jp.kuro.meteor.Element;
 import jp.kuro.meteor.Parser;
 
 import javax.servlet.http.HttpServletResponse;
@@ -32,7 +33,7 @@ import java.util.zip.GZIPOutputStream;
  * HTTPプリンタ(GZIP圧縮)
  *
  * @author Yasumasa Ashida
- * @version 0.9.5.1
+ * @version 0.9.7.0
  * @since 2004/12/05 13:11:58
  */
 public class GZipHttpPrinter {
@@ -95,5 +96,9 @@ public class GZipHttpPrinter {
             pw.close();
 
         }
+    }
+
+    public final void print(Element elm) throws IOException {
+        print(elm.parser());
     }
 }

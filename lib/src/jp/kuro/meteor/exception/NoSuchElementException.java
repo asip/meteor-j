@@ -1,6 +1,6 @@
 //
-//Meteor -  A lightweight (X)HTML & XML parser
-// Copyright (C) 2002-2010 Yasumasa Ashida.
+//Meteor -  A lightweight (X)HTML(5) & XML parser
+// Copyright (C) 2002-2011 Yasumasa Ashida.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -25,7 +25,7 @@ import java.util.LinkedHashMap;
  * 要素未捕捉例外クラス
  *
  * @author Yasumasa Ashida
- * @version 0.9.5.1
+ * @version 0.9.7.0
  * @since 2007/07/28 17:33:44
  */
 public class NoSuchElementException extends RuntimeException {

@@ -35,8 +35,8 @@ public class LoopServletHTML3_2 extends HttpServlet {
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-        //Parserオブジェクトを取得する
-        Parser xt = pf.parser("loop2");
+        //ルート要素オブジェクトを取得する
+        Element root = pf.element("loop2");
 
         //anl.setCharacterEncoding("Shift_JIS");
         //req.setCharacterEncoding("Shift_JIS");
@@ -46,9 +46,9 @@ public class LoopServletHTML3_2 extends HttpServlet {
         //System.out.println(req.getParameter("textfield2"));
         //System.out.println(req.getParameter("submit"));
 
-        Element tag = xt.element("option", "value", "test");
+        Element tag = root.element("option", "value", "test");
 
-        Element xt2 = tag.child();
+        Element xt2 = tag.element();
 
         for (int j = 0; j < 3; j++) {
             xt2.attribute("value", Integer.toString(j));
@@ -57,10 +57,10 @@ public class LoopServletHTML3_2 extends HttpServlet {
         }
 
         //反映する
-        xt.flush();
+        root.flush();
 
         HttpPrinter prt = new HttpPrinter(res);
-        prt.print(xt);
+        prt.print(root);
 
     }
 }

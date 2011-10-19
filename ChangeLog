@@ -29,3 +29,7 @@
 ==0.9.5.1 / 2010-05-11 Yasumasa Ashida <ys.ashida@gmail.com>
 
 * change of error message for searching element
+
+==0.9.7.0 / 2011-10-19 Yasumasa Ashida <ys.ashida@gmail.com>
+
+*  synchronization to ruby version

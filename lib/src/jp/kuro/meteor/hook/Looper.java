@@ -1,6 +1,6 @@
 //
-//Meteor -  A lightweight (X)HTML & XML parser
-// Copyright (C) 2002-2010 Yasumasa Ashida.
+//Meteor -  A lightweight (X)HTML(5) & XML parser
+// Copyright (C) 2002-2011 Yasumasa Ashida.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -27,7 +27,7 @@ import java.util.List;
  * ループ専用フック処理クラス
  *
  * @author Yasumasa Ashida
- * @version 0.9.5.1
+ * @version 0.9.7.0
  * @since 2006/04/16 19:37:20
  */
 public abstract class Looper {
@@ -41,7 +41,7 @@ public abstract class Looper {
     public final void doAction(Element elm,List list) {
         //要素ありタグの場合
         if (elm.empty()) {
-            Element elm2 = elm.child();
+            Element elm2 = elm.element();
 
             init(elm2);
 
@@ -51,7 +51,7 @@ public abstract class Looper {
                     elm2.parser().rootElement().document(elm.mixedContent());
                 }
                 //else if (elm2.monoHook()) {
-                //pif2.rootElement().document(elm.document());
+                //pif2.rootElement().setDocument(elm.setDocument());
                 //}
                 execute(elm2, item);
                 elm2.flush();

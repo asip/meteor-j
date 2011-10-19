@@ -35,7 +35,7 @@ public class UploadServlet extends HttpServlet {
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-        Parser xt = pf.parser("upload");
+        Element root = pf.element("upload");
 
         anl.setCharacterEncoding("Shift_JIS");
 
@@ -45,9 +45,9 @@ public class UploadServlet extends HttpServlet {
 
             FileStorage fs = (FileStorage) query.get("file");
 
-            Element tag1 = xt.cxTag("file_path");
-            Element tag2 = xt.cxTag("file_name");
-            Element tag3 = xt.cxTag("mime_type");
+            Element tag1 = root.cxTag("file_path");
+            Element tag2 = root.cxTag("file_name");
+            Element tag3 = root.cxTag("mime_type");
 
 
             String path = fs.getUploadPath();
@@ -77,10 +77,10 @@ public class UploadServlet extends HttpServlet {
         }
 
         //反映する
-        xt.flush();
+        root.flush();
 
         HttpPrinter prt = new HttpPrinter(res);
-        prt.print(xt);
+        prt.print(root);
 
     }
 }

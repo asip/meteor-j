@@ -1,6 +1,6 @@
 //
-//Meteor -  A lightweight (X)HTML & XML parser
-// Copyright (C) 2002-2010 Yasumasa Ashida.
+//Meteor -  A lightweight (X)HTML(5) & XML parser
+// Copyright (C) 2002-2011 Yasumasa Ashida.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 /*
  * HTMLパーサ
  * @author Yasumasa Ashida
- * @version 0.9.5.1
+ * @version 0.9.7.0
  */
 public class ParserImpl extends Kernel implements Parser {
 
@@ -52,14 +52,14 @@ public class ParserImpl extends Kernel implements Parser {
 
     //private static final String MATCH_TAG = "br|BR|hr|HR|img|IMG|input|INPUT|meta|META|base|BASE";
     //内容のない要素
-    private static final String[] MATCH_TAG = {"br", "hr", "img", "input", "meta", "base"};
+    private static String[] MATCH_TAG = {"br", "hr", "img", "input", "meta", "base"};
 
     //private static final String MATCH_TAG2 = "textarea|TEXTAREA|option|OPTION|pre|PRE";
     //改行を<br>に変換する必要のない要素
     private static final String[] MATCH_TAG2 = {"textarea", "option", "pre"};
 
     //入れ子にできない要素
-    private static final String[] MATCH_TAG_SNG = {"texarea", "select","option", "form","fieldset"};
+    private static String[] MATCH_TAG_SNG = {"texarea", "select","option", "form","fieldset"};
 
     protected static final String HTTP_EQUIV = "http-equiv";
     protected static final String CONTENT_TYPE = "Content-Type";
@@ -75,7 +75,7 @@ public class ParserImpl extends Kernel implements Parser {
     //private static final String DISABLED = "disabled|DISABLED";
 
     //論理値で指定する属性
-    private static final String[] ATTR_LOGIC = {"disabled", "readonly", "checked", "selected", "multiple"};
+    private static String[] ATTR_LOGIC = {"disabled", "readonly", "checked", "selected", "multiple"};
 
     protected static final String OPTION = "option";
     protected static final String SELECTED = "selected";
@@ -174,8 +174,8 @@ public class ParserImpl extends Kernel implements Parser {
      * @param ps HTMLParserオブジェクト
      */
     public ParserImpl(Parser ps) {
-        document(ps.document());
-        root.setHookDocument(ps.rootElement().hookDocument());
+        setDocument(ps.document());
+        document_hook = ps.documentHook();
         root.setContentType(ps.rootElement().contentType());
         root.setKaigyoCode(ps.rootElement().kaigyoCode());
     }
@@ -186,7 +186,7 @@ public class ParserImpl extends Kernel implements Parser {
      * @param document HTMLドキュメント
      */
     public void parse(String document) {
-        super.document(document);
+        super.setDocument(document);
 
         analyzeML();
     }
@@ -196,7 +196,7 @@ public class ParserImpl extends Kernel implements Parser {
      *
      * @return HTMLドキュメント
      */
-    public final String document() {
+    public final String setDocument() {
         return super.document();
     }
 

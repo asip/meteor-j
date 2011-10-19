@@ -30,17 +30,17 @@ public class AttrServlet1 extends HttpServlet {
     }
 
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        //Parserオブジェクトを取得する
-        Parser xt = pf.parser("attr1");
+        //ルート要素オブジェクトを取得する
+        Element root = pf.element("attr1");
         //"Hello,World"を赤くします。
-        Element tag = xt.element("font", "id", "hello");
+        Element tag = root.element("font", "id", "hello");
         tag.attribute("color", "#FF0000");
         //文字列のサイズを変更します
         tag.attribute("size", "4");
         //反映する
-        xt.flush();
+        root.flush();
         //HTTP出力する
         HttpPrinter prt = new HttpPrinter(res);
-        prt.print(xt);
+        prt.print(root);
     }
 }

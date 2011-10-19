@@ -28,15 +28,15 @@ public class ElementServlet2 extends HttpServlet {
     }
 
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        //Parserオブジェクトを取得する
-        Parser xt = pf.parser("element2");
+        //ルート要素オブジェクトを取得する
+        Element root = pf.element("element2");
         //fontタグのcolor属性を消します。
-        Element tag = xt.cxTag("hello");
+        Element tag = root.cxTag("hello");
         tag.content("こんにちは、世界！");
         //反映する
-        xt.flush();
+        root.flush();
         //HTTP出力する
         HttpPrinter prt = new HttpPrinter(res);
-        prt.print(xt);
+        prt.print(root);
     }
 }

@@ -33,7 +33,7 @@ public class RequestServlet extends HttpServlet {
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-        Parser xt = pf.parser("request");
+        Element root = pf.element("request");
 
         anl = new Request();
 
@@ -42,18 +42,18 @@ public class RequestServlet extends HttpServlet {
         HashMap query = anl.analyze(req).getQuery();
 
         if (query.get("submit") != null && !query.get("submit").equals("")) {
-            Element tag = xt.element("name", "textfield");
-            Element tag2 = xt.element("name", "textfield2");
+            Element tag = root.element("name", "textfield");
+            Element tag2 = root.element("name", "textfield2");
 
             tag.attribute("value", (String) query.get("textfield"));
             tag2.content((String) query.get("textfield2"));
         }
 
         //反映する
-        xt.flush();
+        root.flush();
 
         HttpPrinter prt = new HttpPrinter(res);
-        prt.print(xt);
+        prt.print(root);
 
     }
 }

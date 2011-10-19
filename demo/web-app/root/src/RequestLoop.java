@@ -17,8 +17,8 @@ public class RequestLoop extends Hooker {
         HashMap query = hmap;
 
         //タグ検索
-        Element tag = xt.child("name", "param1");
-        Element tag2 = xt.child("name", "param2");
+        Element tag = xt.element("name", "param1");
+        Element tag2 = xt.element("name", "param2");
 
         String param1;
         String param2;

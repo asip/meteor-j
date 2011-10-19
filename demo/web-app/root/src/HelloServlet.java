@@ -28,15 +28,15 @@ public class HelloServlet extends HttpServlet {
     }
 
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        //Parserオブジェクトを取得する
-        Parser xt = pf.parser("hello");
+        //ルート要素オブジェクトを取得する
+        Element root = pf.element("hello");
         //"Hello,World"を"こんにちは、世界！"に変更する
-        Element tag = xt.cxTag("hello");
+        Element tag = root.cxTag("hello");
         tag.content("こんにちは、世界！");
         //反映する
-        xt.flush();
+        root.flush();
         //HTTP出力する
         HttpPrinter prt = new HttpPrinter(res);
-        prt.print(xt);
+        prt.print(root);
     }
 }

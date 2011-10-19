@@ -14,7 +14,7 @@ public class LoopML extends Looper {
 
     public void init(Element xt) {
         //タグ検索
-        tag = xt.child("a");
+        tag = xt.element("a");
         tag2 = xt.cxTag("name");
         tag3 = xt.cxTag("set");
     }

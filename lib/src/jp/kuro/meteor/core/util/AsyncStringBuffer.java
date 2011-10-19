@@ -1,6 +1,6 @@
 //
-//Meteor -  A lightweight (X)HTML & XML parser
-// Copyright (C) 2002-2010 Yasumasa Ashida.
+//Meteor -  A lightweight (X)HTML(5) & XML parser
+// Copyright (C) 2002-2011 Yasumasa Ashida.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -24,7 +24,7 @@ package jp.kuro.meteor.core.util;
  *
  * @author Yasumasa Ashida
  * @author Yasumasa Ashida
- * @version 0.9.5.1
+ * @version 0.9.7.0
  */
 public final class AsyncStringBuffer {
     private final int INIT_SIZE = 32;

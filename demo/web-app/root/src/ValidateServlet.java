@@ -34,7 +34,7 @@ public class ValidateServlet extends HttpServlet {
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-        Parser xt = pf.parser("validate");
+        Element root = pf.element("validate");
 
         anl.setCharacterEncoding("Shift_JIS");
 
@@ -46,9 +46,9 @@ public class ValidateServlet extends HttpServlet {
         tr.add("textfield2", new Validator3());
 
         if (query.get("submit") != null && !query.get("submit").equals("")) {
-            Element tag = xt.element("name", "textfield");
-            Element tag2 = xt.element("name", "textfield2");
-            Element tag3 = xt.cxTag("warning");
+            Element tag = root.element("name", "textfield");
+            Element tag2 = root.element("name", "textfield2");
+            Element tag3 = root.cxTag("warning");
 
             Result re = tr.validate(anl);
 
@@ -70,10 +70,10 @@ public class ValidateServlet extends HttpServlet {
         }
 
         //反映する
-        xt.flush();
+        root.flush();
 
         HttpPrinter prt = new HttpPrinter(res);
-        prt.print(xt);
+        prt.print(root);
 
     }
 }

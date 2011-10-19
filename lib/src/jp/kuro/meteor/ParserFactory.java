@@ -1,6 +1,6 @@
 //
-//Meteor -  A lightweight (X)HTML & XML parser
-// Copyright (C) 2002-2010 Yasumasa Ashida.
+//Meteor -  A lightweight (X)HTML(5) & XML parser
+// Copyright (C) 2002-2011 Yasumasa Ashida.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * パーサファクトリクラス
  *
  * @author Yasumasa Ashida
- * @version 0.9.5.1
+ * @version 0.9.7.0
  * @since 2005/02/24 16:29:25
  */
 public final class ParserFactory {
@@ -269,6 +269,15 @@ public final class ParserFactory {
 
         return null;
 
+    }
+
+    /**
+     * ルート要素を取得する
+     * @param key キー
+     * @return ルート要素
+     */
+    public final Element element(String key){
+        return parser(key).rootElement();
     }
 
     /**

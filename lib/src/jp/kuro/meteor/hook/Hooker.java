@@ -1,6 +1,6 @@
 //
-//Meteor -  A lightweight (X)HTML & XML parser
-// Copyright (C) 2002-2010 Yasumasa Ashida.
+//Meteor -  A lightweight (X)HTML(5) & XML parser
+// Copyright (C) 2002-2011 Yasumasa Ashida.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -25,7 +25,7 @@ import jp.kuro.meteor.Element;
  * フック処理クラス
  *
  * @author Yasumasa Ashida
- * @version 0.9.5.1
+ * @version 0.9.7.0
  */
 public abstract class Hooker {
     /**
@@ -44,7 +44,7 @@ public abstract class Hooker {
         if (elm.empty()) {
             Element elm2;
 
-            elm2 = elm.child();
+            elm2 = elm.element();
             execute(elm2);
         }
     }

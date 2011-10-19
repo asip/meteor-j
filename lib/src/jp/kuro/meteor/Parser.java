@@ -1,6 +1,6 @@
 //
-//Meteor -  A lightweight (X)HTML & XML parser
-// Copyright (C) 2002-2010 Yasumasa Ashida.
+//Meteor -  A lightweight (X)HTML(5) & XML parser
+// Copyright (C) 2002-2011 Yasumasa Ashida.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -29,7 +29,7 @@ import java.util.LinkedHashMap;
  * パーサ共通インタ－フェイス
  *
  * @author Yasumasa Ashida
- * @version 0.9.5.1
+ * @version 0.9.7.0
  * @since 2003/01/25 18:31:27
  */
 public interface Parser {
@@ -39,7 +39,7 @@ public interface Parser {
     public static final int XHTML5 = 3;
     public static final int XML = 4;
 
-    //void parse(String document);
+    //void parse(String setDocument);
     //void read(String filePath,String encoding);
 
     /**
@@ -253,6 +253,23 @@ public interface Parser {
      */
     String document();
 
+    /**
+     * フック要素を取得する
+     * @return フック要素
+     */
+    Element elementHook();
+
+    /**
+     * フック要素をセットする
+     * @param elm フック要素
+     */
+    void setElementHook(Element elm);
+
+    /**
+     * フックドキュメントを取得する
+     * @return フックドキュメント
+     */
+    StringBuilder documentHook();
 
     int docType();
 

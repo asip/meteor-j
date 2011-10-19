@@ -1,6 +1,6 @@
 //
-//Meteor -  A lightweight (X)HTML & XML parser
-// Copyright (C) 2002-2010 Yasumasa Ashida.
+//Meteor -  A lightweight (X)HTML(5) & XML parser
+// Copyright (C) 2002-2011 Yasumasa Ashida.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -25,12 +25,12 @@ import jp.kuro.meteor.Parser;
 import jp.kuro.meteor.RootElement;
 import jp.kuro.meteor.hook.Hooker;
 import jp.kuro.meteor.hook.Looper;
-import jp.kuro.meteor.core.util.AsyncStringBuffer;
 import jp.kuro.meteor.core.util.PatternCache;
 import jp.kuro.meteor.core.html.ParserImpl;
 import jp.kuro.meteor.exception.NoSuchElementException;
 
 //JAVA標準
+//import java.awt.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.ByteBuffer;
@@ -45,7 +45,7 @@ import java.util.LinkedHashMap;
  * パーサコア
  *
  * @author Yasumasa Ashida
- * @version 0.9.5.1
+ * @version 0.9.7.0
  */
 public abstract class Kernel implements Parser {
 
@@ -56,7 +56,10 @@ public abstract class Kernel implements Parser {
     protected LinkedHashMap<Integer, Element> elementCache = new LinkedHashMap<Integer, Element>();
     //ドキュメントタイプ
     protected int docType;
-
+    //フック ドキュメント
+    protected StringBuilder document_hook = new StringBuilder();
+    //フック要素
+    protected Element element_hook;
 
     //カウンタ
     protected int counter;
@@ -73,16 +76,17 @@ public abstract class Kernel implements Parser {
 
 
     //文字列バッファ
-    protected AsyncStringBuffer sbuf = new AsyncStringBuffer();
+    //protected AsyncStringBuffer sbuf = new AsyncStringBuffer();
+    protected StringBuilder sbuf = new StringBuilder();
 
     protected static final String EMPTY = "";
     protected static final String SPACE = " ";
     protected static final String DOUBLE_QUATATION = "\"";
     protected static final String TAG_OPEN = "<";
     protected static final String TAG_OPEN3 = "</";
-    protected static final String TAG_OPEN4 = "<\\\\/";
+    //protected static final String TAG_OPEN4 = "<\\\\/";
     protected static final String TAG_CLOSE = ">";
-    protected static final String TAG_CLOSE2 = "\\/>";
+    //protected static final String TAG_CLOSE2 = "\\/>";
     protected static final String TAG_CLOSE3 = "/>";
     protected static final String ATTR_EQ = "=\"";
     //element
@@ -96,10 +100,10 @@ public abstract class Kernel implements Parser {
     protected static final String TAG_SEARCH_2_1_2 = "(\\s[^<>]*(";
     protected static final String TAG_SEARCH_2_2 = "\"[^<>]*)>(((?!(";
     protected static final String TAG_SEARCH_2_2_2 = "\")[^<>]*)>(((?!(";
-    protected static final String TAG_SEARCH_2_3 = "\"[^<>]*)";
+    //protected static final String TAG_SEARCH_2_3 = "\"[^<>]*)";
     protected static final String TAG_SEARCH_2_3_2 = "\"[^<>]*)\\/>";
     protected static final String TAG_SEARCH_2_3_2_2 = "\")[^<>]*)\\/>";
-    protected static final String TAG_SEARCH_2_4 = "([^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
+    //protected static final String TAG_SEARCH_2_4 = "([^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
     protected static final String TAG_SEARCH_2_4_2 = "([^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>)))";
     protected static final String TAG_SEARCH_2_4_2_2 = "\")([^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>)))";
     protected static final String TAG_SEARCH_2_4_2_3 = "\"";
@@ -111,14 +115,14 @@ public abstract class Kernel implements Parser {
     protected static final String TAG_SEARCH_2_7 = "\"|";
 
     protected static final String TAG_SEARCH_3_1 = "<([^<>\"]*)\\s[^<>]*";
-    protected static final String TAG_SEARCH_3_1_2 = "<([^<>\"]*)\\s([^<>]*";
+    //protected static final String TAG_SEARCH_3_1_2 = "<([^<>\"]*)\\s([^<>]*";
     protected static final String TAG_SEARCH_3_1_2_2 = "<([^<>\"]*)\\s([^<>]*(";
 
-    protected static final String TAG_SEARCH_3_2 = "\"[^<>]*\\/>";
-    protected static final String TAG_SEARCH_3_2_2 = "\"[^<>]*)\\/>";
-    protected static final String TAG_SEARCH_3_2_2_2 = "\")[^<>]*)\\/>";
+    //protected static final String TAG_SEARCH_3_2 = "\"[^<>]*\\/>";
+    //protected static final String TAG_SEARCH_3_2_2 = "\"[^<>]*)\\/>";
+    //protected static final String TAG_SEARCH_3_2_2_2 = "\")[^<>]*)\\/>";
 
-    protected static final String TAG_SEARCH_4_1 = "([^<>\\/]*)>(";
+    //protected static final String TAG_SEARCH_4_1 = "([^<>\\/]*)>(";
     protected static final String TAG_SEARCH_4_2 = "[\\w\\W]*?<";
     protected static final String TAG_SEARCH_4_3 = "(\\s[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
     protected static final String TAG_SEARCH_4_4 = "<\\/";
@@ -127,34 +131,34 @@ public abstract class Kernel implements Parser {
     protected static final String TAG_SEARCH_4_7 = "\"([^<>\\/]*>|(?!([^<>]*\\/>))[^<>]*>))(";
     protected static final String TAG_SEARCH_4_7_2 = "\")([^<>\\/]*>|(?!([^<>]*\\/>))[^<>]*>))(";
 
-    protected static final String TAG_SEARCH_NC_1_1 = "(?:|\\s[^<>]*)>((?!(";
+    //protected static final String TAG_SEARCH_NC_1_1 = "(?:|\\s[^<>]*)>((?!(";
     protected static final String TAG_SEARCH_NC_1_2 = "[^<>]*>))[\\w\\W])*<\\/";
-    protected static final String TAG_SEARCH_NC_1_3 = "(?:|\\s[^<>]*)\\/>";
-    protected static final String TAG_SEARCH_NC_1_4 = "(?:\\s[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
-    protected static final String TAG_SEARCH_NC_1_4_2 = "(?:|\\s[^<>])*>";
+    //protected static final String TAG_SEARCH_NC_1_3 = "(?:|\\s[^<>]*)\\/>";
+    //protected static final String TAG_SEARCH_NC_1_4 = "(?:\\s[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
+    //protected static final String TAG_SEARCH_NC_1_4_2 = "(?:|\\s[^<>])*>";
     
     protected static final String TAG_SEARCH_NC_2_1 = "\\s[^<>]*";
     protected static final String TAG_SEARCH_NC_2_1_2 = "\\s[^<>]*(?:";
-    protected static final String TAG_SEARCH_NC_2_2 = "\"[^<>]*>((?!(";
+    //protected static final String TAG_SEARCH_NC_2_2 = "\"[^<>]*>((?!(";
     protected static final String TAG_SEARCH_NC_2_2_2 = "\")[^<>]*>((?!(";
-    protected static final String TAG_SEARCH_NC_2_3 = "\"[^<>]*)";
+    //protected static final String TAG_SEARCH_NC_2_3 = "\"[^<>]*)";
     protected static final String TAG_SEARCH_NC_2_3_2 = "\"[^<>]*\\/>";
-    protected static final String TAG_SEARCH_NC_2_3_2_2 = "\")[^<>]*\\/>";
-    protected static final String TAG_SEARCH_NC_2_4 = "(?:[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
-    protected static final String TAG_SEARCH_NC_2_4_2 = "(?:[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
-    protected static final String TAG_SEARCH_NC_2_4_2_2 = "\")(?:[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
-    protected static final String TAG_SEARCH_NC_2_4_2_3 = "\"";
+    //protected static final String TAG_SEARCH_NC_2_3_2_2 = "\")[^<>]*\\/>";
+    //protected static final String TAG_SEARCH_NC_2_4 = "(?:[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
+    //protected static final String TAG_SEARCH_NC_2_4_2 = "(?:[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
+    //protected static final String TAG_SEARCH_NC_2_4_2_2 = "\")(?:[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))";
+    //protected static final String TAG_SEARCH_NC_2_4_2_3 = "\"";
     protected static final String TAG_SEARCH_NC_2_4_3 = "\"[^<>]*>";
-    protected static final String TAG_SEARCH_NC_2_4_3_2 = "\")[^<>]*>";
-    protected static final String TAG_SEARCH_NC_2_4_4 = "\"[^<>]*>";
+    //protected static final String TAG_SEARCH_NC_2_4_3_2 = "\")[^<>]*>";
+    //protected static final String TAG_SEARCH_NC_2_4_4 = "\"[^<>]*>";
     protected static final String TAG_SEARCH_NC_2_6 = "\"[^<>]*";
     protected static final String TAG_SEARCH_NC_2_7 = "\"|";
-    protected static final String TAG_SEARCH_NC_3_1 = "<[^<>\"]*\\s[^<>]*";
-    protected static final String TAG_SEARCH_NC_3_1_2 = "<([^<>\"]*)\\s(?:[^<>]*";
-    protected static final String TAG_SEARCH_NC_3_1_2_2 = "<([^<>\"]*)\\s(?:[^<>]*(";
-    protected static final String TAG_SEARCH_NC_3_2 = "\"[^<>]*\\/>";
-    protected static final String TAG_SEARCH_NC_3_2_2 = "\"[^<>]*)\\/>";
-    protected static final String TAG_SEARCH_NC_3_2_2_2 = "\")[^<>]*)\\/>";
+    //protected static final String TAG_SEARCH_NC_3_1 = "<[^<>\"]*\\s[^<>]*";
+    //protected static final String TAG_SEARCH_NC_3_1_2 = "<([^<>\"]*)\\s(?:[^<>]*";
+    //protected static final String TAG_SEARCH_NC_3_1_2_2 = "<([^<>\"]*)\\s(?:[^<>]*(";
+    //protected static final String TAG_SEARCH_NC_3_2 = "\"[^<>]*\\/>";
+    //protected static final String TAG_SEARCH_NC_3_2_2 = "\"[^<>]*)\\/>";
+    //protected static final String TAG_SEARCH_NC_3_2_2_2 = "\")[^<>]*)\\/>";
     //protected static final String TAG_SEARCH_NC_4_1 = "(?:\\s[^<>\\/]*)>("
     //protected static final String TAG_SEARCH_NC_4_2 = ".*?<"
     //protected static final String TAG_SEARCH_NC_4_3 = "(?:\\s[^<>\\/]*>|((?!([^<>]*\\/>))[^<>]*>))"
@@ -224,35 +228,35 @@ public abstract class Kernel implements Parser {
     protected static final String AP_2 = "&apos;";
     protected static final String EN_1 = "\\\\";
     protected static final String EN_2 = "\\\\\\\\";
-    protected static final String DOL_1 = "\\$";
-    protected static final String DOL_2 = "\\\\\\$";
-    protected static final String PLUS_1 = "\\+";
-    protected static final String PLUS_2 = "\\\\\\+";
+    //protected static final String DOL_1 = "\\$";
+    //protected static final String DOL_2 = "\\\\\\$";
+    //protected static final String PLUS_1 = "\\+";
+    //protected static final String PLUS_2 = "\\\\\\+";
 
 
     protected static final Pattern pattern_get_attrs_map = Pattern.compile(GET_ATTRS_MAP);
 
     //todo
-    protected static final String BRAC_OPEN_1 = "\\(";
-    protected static final String BRAC_OPEN_2 = "\\\\\\(";
-    protected static final String BRAC_CLOSE_1 = "\\)";
-    protected static final String BRAC_CLOSE_2 = "\\\\\\)";
-    protected static final String SBRAC_OPEN_1 = "\\[";
-    protected static final String SBRAC_OPEN_2 = "\\\\\\[";
-    protected static final String SBRAC_CLOSE_1 = "\\]";
-    protected static final String SBRAC_CLOSE_2 = "\\\\\\]";
-    protected static final String CBRAC_OPEN_1 = "\\{";
-    protected static final String CBRAC_OPEN_2 = "\\\\\\{";
-    protected static final String CBRAC_CLOSE_1 = "\\}";
-    protected static final String CBRAC_CLOSE_2 = "\\\\\\}";
-    protected static final String COMMA_1 = "\\.";
-    protected static final String COMMA_2 = "\\\\\\.";
-    protected static final String VLINE_1 = "\\|";
-    protected static final String VLINE_2 = "\\\\\\|";
-    protected static final String QMARK_1 = "\\?";
-    protected static final String QMARK_2 = "\\\\\\?";
-    protected static final String ASTERISK_1 = "\\*";
-    protected static final String ASTERISK_2 = "\\\\\\*";
+    //protected static final String BRAC_OPEN_1 = "\\(";
+    //protected static final String BRAC_OPEN_2 = "\\\\\\(";
+    //protected static final String BRAC_CLOSE_1 = "\\)";
+    //protected static final String BRAC_CLOSE_2 = "\\\\\\)";
+    //protected static final String SBRAC_OPEN_1 = "\\[";
+    //protected static final String SBRAC_OPEN_2 = "\\\\\\[";
+    //protected static final String SBRAC_CLOSE_1 = "\\]";
+    //protected static final String SBRAC_CLOSE_2 = "\\\\\\]";
+    //protected static final String CBRAC_OPEN_1 = "\\{";
+    //protected static final String CBRAC_OPEN_2 = "\\\\\\{";
+    //protected static final String CBRAC_CLOSE_1 = "\\}";
+    //protected static final String CBRAC_CLOSE_2 = "\\\\\\}";
+    //protected static final String COMMA_1 = "\\.";
+    //protected static final String COMMA_2 = "\\\\\\.";
+    //protected static final String VLINE_1 = "\\|";
+    //protected static final String VLINE_2 = "\\\\\\|";
+    //protected static final String QMARK_1 = "\\?";
+    //protected static final String QMARK_2 = "\\\\\\?";
+    //protected static final String ASTERISK_1 = "\\*";
+    //protected static final String ASTERISK_2 = "\\\\\\*";
 
     private static final Pattern pattern_clean1 = Pattern.compile(CLEAN_1);
     private static final Pattern pattern_clean2 = Pattern.compile(CLEAN_2);
@@ -264,7 +268,8 @@ public abstract class Kernel implements Parser {
     private static final int FOUR = 4;
     //private static final int FIVE = 5;
     private static final int SIX = 6;
-    //private static final int SEVEN = 7;
+    private static final int SEVEN = 7;
+    private static final int EIGHT = 8;
 
     protected String result = null;
     protected String pattern_cc = null;
@@ -301,19 +306,20 @@ public abstract class Kernel implements Parser {
 
     public Kernel() {
         root = new RootElement();
+        root.parser(this);
     }
 
-    protected final void document(String document) {
+    protected final void setDocument(String document) {
         root.document(document);
     }
 
-    public String document() {
+    public final String document() {
         return root.document();
     }
 
 
     protected void size(int size) {
-        root.hookDocument().setLength(size);
+        document_hook.setLength(size);
     }
 
     protected void setCharacterEncoding(String enc) {
@@ -336,6 +342,22 @@ public abstract class Kernel implements Parser {
      */
     public RootElement rootElement() {
         return root;
+    }
+
+    /**
+     * フックドキュメントを取得する
+     * @return フックドキュメント
+     */
+    public StringBuilder documentHook(){
+        return this.document_hook;
+    }
+
+    public Element elementHook(){
+        return this.element_hook;
+    }
+
+    public void setElementHook(Element elm){
+        this.element_hook = elm;
     }
 
     /**
@@ -376,20 +398,20 @@ public abstract class Kernel implements Parser {
             //ファイルのクローズ
             fis.close();
 
-            this.document(new String(bytes, encoding));
+            this.setDocument(new String(bytes, encoding));
 
         } catch (FileNotFoundException e) {
             //FileNotFoundException時の処理
             e.printStackTrace();
-            this.document(EMPTY);
+            this.setDocument(EMPTY);
         } catch (Exception e) {
             //上記以外の例外時の処理
             e.printStackTrace();
-            this.document(EMPTY);
+            this.setDocument(EMPTY);
         }
-        //this.document(sb.toString());
+        //this.setDocument(sb.toString());
 
-        //System.out.println(this.document());
+        //System.out.println(this.setDocument());
     }
 
     /**
@@ -541,7 +563,7 @@ public abstract class Kernel implements Parser {
         matcher2 = pattern.matcher(this.document());
         res2 = matcher2.find();
 
-        //System.out.println(elmName + ":" + attrName + ":" + attrValue);
+        //System.out.println(_elmName + ":" + _attrName + ":" + _attrValue);
         //System.out.println(res2);
 
         if (!res2) {
@@ -570,6 +592,7 @@ public abstract class Kernel implements Parser {
         } else if (res2) {
             matcher = matcher2;
             pattern_cc = pattern_cc_2;
+            //System.out.println("GGG");
             elementWith_3_1(elmName);
         //} else if (!res1 && !res2) {
         } else {
@@ -586,6 +609,9 @@ public abstract class Kernel implements Parser {
     }
 
     protected Element elementWith_3_1(String elmName) {
+
+        //System.out.println(matcher.groupCount());
+
         if (matcher.groupCount() == FOUR) {
             //要素
             elm_ = new Element(elmName);
@@ -596,11 +622,11 @@ public abstract class Kernel implements Parser {
             //全体
             elm_.document(matcher.group(0));
             //内容あり要素検索用パターン
-            sbuf.setLength(0);
-            pattern_cc = sbuf.append(TAG_OPEN).append(_elmName).append(TAG_SEARCH_NC_2_1)
-                    .append(_attrName).append(ATTR_EQ).append(_attrValue)
-                    .append(TAG_SEARCH_NC_2_2).append(_elmName).append(TAG_SEARCH_NC_1_2)
-                    .append(_elmName).append(TAG_CLOSE).toString();
+            //sbuf.setLength(0);
+            //pattern_cc = sbuf.append(TAG_OPEN).append(_elmName).append(TAG_SEARCH_NC_2_1)
+            //        .append(_attrName).append(ATTR_EQ).append(_attrValue)
+            //        .append(TAG_SEARCH_NC_2_2).append(_elmName).append(TAG_SEARCH_NC_1_2)
+            //        .append(_elmName).append(TAG_CLOSE).toString();
 
             elm_.pattern(pattern_cc);
 
@@ -610,9 +636,22 @@ public abstract class Kernel implements Parser {
             //要素
             elm_ = new Element(elmName);
             //属性
-            elm_.attributes(matcher.group(1)); //.chop
+            elm_.attributes(matcher.group(1).substring(0,matcher.group(1).length() -1)); //.chop
             //内容
             elm_.mixedContent(matcher.group(3));
+            //全体
+            elm_.document(matcher.group(0));
+            //内容あり要素検索用パターン
+            elm_.pattern(pattern_cc);
+
+            elm_.parser(this);
+        } else if (matcher.groupCount() == SEVEN) {
+            //要素
+            elm_ = new Element(elmName);
+            //属性
+            elm_.attributes(matcher.group(1).substring(0,matcher.group(1).length() -1)); //.chop
+            //内容
+            elm_.mixedContent(matcher.group(4));
             //全体
             elm_.document(matcher.group(0));
             //内容あり要素検索用パターン
@@ -843,6 +882,8 @@ public abstract class Kernel implements Parser {
     }
 
     protected Element elementWith_5_1(String elmName) {
+        //System.out.println(matcher.groupCount());
+
         if (matcher.groupCount() == FOUR) {
             //要素
             elm_ = new Element(elmName);
@@ -869,9 +910,22 @@ public abstract class Kernel implements Parser {
             //要素
             elm_ = new Element(elmName);
             //属性
-            elm_.attributes(matcher.group(1)); //.chop
+            elm_.attributes(matcher.group(1).substring(0,matcher.group(1).length() -1)); //.chop
             //内容
             elm_.mixedContent(matcher.group(3));
+            //全体
+            elm_.document(matcher.group(0));
+            //内容あり要素検索用パターン
+            elm_.pattern(pattern_cc);
+
+            elm_.parser(this);
+        } else if (matcher.groupCount() == EIGHT) {
+            //要素
+            elm_ = new Element(elmName);
+            //属性
+            elm_.attributes(matcher.group(1).substring(0,matcher.group(1).length() -1)); //.chop
+            //内容
+            elm_.mixedContent(matcher.group(5));
             //全体
             elm_.document(matcher.group(0));
             //内容あり要素検索用パターン
@@ -1525,7 +1579,7 @@ public abstract class Kernel implements Parser {
         pattern = PatternCache.get(elm.pattern());
         //タグ置換
         matcher = pattern.matcher(this.document());
-        this.document(matcher.replaceFirst(replaceDocument));
+        this.setDocument(matcher.replaceFirst(replaceDocument));
 
         //初期化
         //matcher.reset();
@@ -1546,7 +1600,7 @@ public abstract class Kernel implements Parser {
                         pattern = PatternCache.get(item.pattern());
                         matcher = pattern.matcher(root.document());
                         root.document(matcher.replaceFirst(
-                                item.copy().parser().rootElement().hookDocument().toString()));
+                                item.copy().parser().documentHook().toString()));
                         //item.copy.parser.element_cache.clear
                         item.copy(null);
                     } else {
@@ -1566,38 +1620,38 @@ public abstract class Kernel implements Parser {
      * XMLをコンソールに出力する
      */
     public void flush() {
-        if (root.element() != null) {
-            if (root.element().origin().mono()) {
+        if (element_hook != null) {
+            if (element_hook.origin().mono()) {
                 //フック判定がTRUEの場合
-                if (root.element().cx()) {
-                    this.root.setHookDocument(this.root.hookDocument().append(SET_CX_1)
-                            .append(this.root.element().name())
-                            .append(SPACE).append(this.root.element().attributes()).append(SET_CX_2)
-                            .append(root.element().mixedContent()).append(SET_CX_3)
-                            .append(this.root.element().name())
-                            .append(SET_CX_4));
+                if (element_hook.cx()) {
+                    document_hook = document_hook.append(SET_CX_1)
+                            .append(element_hook.name())
+                            .append(SPACE).append(element_hook.attributes()).append(SET_CX_2)
+                            .append(element_hook.mixedContent()).append(SET_CX_3)
+                            .append(element_hook.name())
+                            .append(SET_CX_4);
                 } else {
-                    this.root.setHookDocument(this.root.hookDocument().append(TAG_OPEN)
-                            .append(this.root.element().name())
-                            .append(root.element().attributes()).append(TAG_CLOSE)
-                            .append(root.element().mixedContent()).append(TAG_OPEN3).append(root.element().name()).append(TAG_CLOSE));
+                    document_hook = document_hook.append(TAG_OPEN)
+                            .append(element_hook.name())
+                            .append(element_hook.attributes()).append(TAG_CLOSE)
+                            .append(element_hook.mixedContent()).append(TAG_OPEN3).append(element_hook.name()).append(TAG_CLOSE);
                 }
-                this.root.setElement(Element.new_(this.root.element().origin(), this));
+                element_hook = Element.new_(element_hook.origin(), this);
             } else {
                 reflect();
 
-                if (root.element().origin().cx()) {
-                    root.setHookDocument(this.root.hookDocument().append(SET_CX_1)
-                            .append(root.element().name()).append(SPACE).append(this.root.element().attributes())
+                if (element_hook.origin().cx()) {
+                    document_hook = document_hook.append(SET_CX_1)
+                            .append(element_hook.name()).append(SPACE).append(element_hook.attributes())
                             .append(SET_CX_2).append(root.document()).append(SET_CX_3)
-                            .append(root.element().name()).append(SET_CX_4));
+                            .append(element_hook.name()).append(SET_CX_4);
                 } else {
-                    root.setHookDocument(this.root.hookDocument().append(TAG_OPEN)
-                            .append(root.element().name()).append(this.root.element().attributes()).append(TAG_CLOSE)
-                            .append(root.document()).append(TAG_OPEN3).append(root.element().name())
-                            .append(TAG_CLOSE));
+                    document_hook = document_hook.append(TAG_OPEN)
+                            .append(element_hook.name()).append(this.element_hook.attributes()).append(TAG_CLOSE)
+                            .append(root.document()).append(TAG_OPEN3).append(element_hook.name())
+                            .append(TAG_CLOSE);
                 }
-                root.setElement(Element.new_(root.element().origin(), this));
+                element_hook = Element.new_(element_hook.origin(), this);
 
             }
         } else {
@@ -1686,14 +1740,14 @@ public abstract class Kernel implements Parser {
         //CX開始タグ置換
         pattern = pattern_clean1;
         matcher = pattern.matcher(document());
-        this.document(matcher.replaceAll(EMPTY));
+        this.setDocument(matcher.replaceAll(EMPTY));
         //CX終了タグ置換
         pattern = pattern_clean2;
         matcher = pattern.matcher(document());
-        this.document(matcher.replaceAll(EMPTY));
+        this.setDocument(matcher.replaceAll(EMPTY));
 
         //sbuf.setLength(0);
-        //this.document(document() + "<!-- Powered by Meteor (C)Yasumasa Ashida -->");
+        //this.setDocument(setDocument() + "<!-- Powered by Meteor (C)Yasumasa Ashida -->");
         //初期化
         //matcher.reset();
     }
@@ -1705,52 +1759,6 @@ public abstract class Kernel implements Parser {
      * @return 出力文字列
      */
     protected final String escapeRegex(String str) {
-        //「\」->[\\]
-        //matcher＿ = pattern_en.matcher(str);
-        //str = matcher＿.replaceAll(EN_2);
-        //「$」->「\$」
-        //matcher＿ = pattern_dol.matcher(str);
-        //str = matcher＿.replaceAll(DOL_2);
-        //「+」->「\+」
-        //matcher＿ = pattern_plus.matcher(str);
-        //str = matcher＿.replaceAll(PLUS_2);
-
-        //todo
-        /* 2009/02/07
-        //2005.10.17 ADD START
-        //「(」->「\(」
-        matcher＿ = pattern_brac_open.matcher(str);
-        str = matcher＿.replaceAll(BRAC_OPEN_2);
-        //「)」->「\)」
-        matcher＿ = pattern_brac_close.matcher(str);
-        str = matcher＿.replaceAll(BRAC_CLOSE_2);
-        //「[」->「\[」
-        matcher＿ = pattern_sbrac_open.matcher(str);
-        str = matcher＿.replaceAll(SBRAC_OPEN_2);
-        //「]」->「\]」
-        matcher＿ = pattern_sbrac_close.matcher(str);
-        str = matcher＿.replaceAll(SBRAC_CLOSE_2);
-        //「{」->「\{」
-        matcher＿ = pattern_cbrac_open.matcher(str);
-        str = matcher＿.replaceAll(CBRAC_OPEN_2);
-        //「}」->「\}」
-        matcher＿ = pattern_cbrac_close.matcher(str);
-        str = matcher＿.replaceAll(CBRAC_CLOSE_2);
-        //「.」->「\.」
-        matcher＿ = pattern_comma.matcher(str);
-        str = matcher＿.replaceAll(COMMA_2);
-        //「|」->「\|」
-        matcher＿ = pattern_vline.matcher(str);
-        str = matcher＿.replaceAll(VLINE_2);
-        //「?」->「\?」
-        matcher＿ = pattern_qmark.matcher(str);
-        str = matcher＿.replaceAll(QMARK_2);
-        //「*」->「\*」
-        matcher＿ = pattern_asterisk.matcher(str);
-        str = matcher＿.replaceAll(ASTERISK_2);
-        //2005.10.17 ADD END
-        */
-
         return Pattern.quote(str);
     }
 

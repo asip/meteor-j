@@ -1,6 +1,6 @@
 //
-//Meteor -  A lightweight (X)HTML & XML parser
-// Copyright (C) 2002-2010 Yasumasa Ashida.
+//Meteor -  A lightweight (X)HTML(5) & XML parser
+// Copyright (C) 2002-2011 Yasumasa Ashida.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -29,7 +29,7 @@ import java.util.List;
  * 要素情報保持クラス
  *
  * @author Yasumasa Ashida
- * @version 0.9.5.1
+ * @version 0.9.7.0
  */
 public class Element {
     //要素名
@@ -81,6 +81,12 @@ public class Element {
     protected static final String SET_CX_3 = "<!-- /@";
     protected static final String SET_CX_4 = " -->";
 
+    /**
+     * デフォルトコンストラクタ
+     */
+    public Element(){
+        this.usable = true;
+    }
 
     /**
      * タグ名を引数とするコンストラクタ
@@ -144,7 +150,7 @@ public class Element {
      * @return 要素
      */
     public static Element new_(Element elm, Parser ps) {
-        Element _obj = ps.rootElement().element();
+        Element _obj = ps.elementHook();
         if (_obj != null) {
             _obj.attributes(elm.attributes());
             _obj.mixedContent(elm.mixedContent());
@@ -154,7 +160,7 @@ public class Element {
             return _obj;
         } else {
             _obj = new Element(elm, ps);
-            ps.rootElement().setElement(_obj);
+            ps.setElementHook(_obj);
             return _obj;
         }
     }
@@ -508,7 +514,7 @@ public class Element {
      * 要素をコピーする
      * @return 要素
      */
-    public final Element child(){
+    public final Element element(){
         return parser.element(this);
     }
 
@@ -518,7 +524,7 @@ public class Element {
      * @param elmName 要素名
      * @return 要素
      */
-    public final Element child(String elmName) {
+    public final Element element(String elmName) {
         return parser.element(elmName);
     }
 
@@ -530,7 +536,7 @@ public class Element {
      * @param attrValue 属性値
      * @return 要素
      */
-    public final Element child(String elmName, String attrName, String attrValue) {
+    public final Element element(String elmName, String attrName, String attrValue) {
         return parser.element(elmName, attrName, attrValue);
     }
 
@@ -541,7 +547,7 @@ public class Element {
      * @param attrValue 属性値
      * @return 要素
      */
-    public final Element child(String attrName, String attrValue) {
+    public final Element element(String attrName, String attrValue) {
         return parser.element(attrName, attrValue);
     }
 
@@ -555,7 +561,7 @@ public class Element {
      * @param attrValue2 属性値２
      * @return 要素
      */
-    public final Element child(String elmName, String attrName1, String attrValue1, String attrName2, String attrValue2) {
+    public final Element element(String elmName, String attrName1, String attrValue1, String attrName2, String attrValue2) {
         return parser.element(elmName, attrName1, attrValue1, attrName2, attrValue2);
     }
 
@@ -568,7 +574,7 @@ public class Element {
      * @param attrValue2 属性値２
      * @return 要素
      */
-    public final Element child(String attrName1, String attrValue1, String attrName2, String attrValue2) {
+    public final Element element(String attrName1, String attrValue1, String attrName2, String attrValue2) {
         return parser.element(attrName1, attrValue1, attrName2, attrValue2);
     }
 
@@ -636,7 +642,7 @@ public class Element {
      * @param attrMap 属性マップ
      * @return 要素
      */
-    public final Element AttributeMap(AttributeMap attrMap){
+    public final Element attributeMap(AttributeMap attrMap){
         return this.parser.attributeMap(this,attrMap);
     }
 

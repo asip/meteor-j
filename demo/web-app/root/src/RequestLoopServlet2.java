@@ -32,8 +32,8 @@ public class RequestLoopServlet2 extends HttpServlet {
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-        //Parserオブジェクトのコピーを取得する
-        Parser xt = pf.parser("request2");
+        //ルート要素オブジェクトを取得する
+        Element root = pf.element("request2");
 
         //リクエストのエンコーディングを指定する
         anl.setCharacterEncoding("Shift_JIS");
@@ -50,14 +50,14 @@ public class RequestLoopServlet2 extends HttpServlet {
         HashMap query = anl.getQuery();
 
         //赤字部分の動的ループのロジックを呼び出す。
-        Element tag = xt.element("tr", "name", "loop");
+        Element tag = root.element("tr", "name", "loop");
         tag.execute(new RequestLoop2(query));
 
         //反映する
-        xt.flush();
+        root.flush();
 
         //HTTP出力する。
         HttpPrinter prt = new HttpPrinter(res);
-        prt.print(xt);
+        prt.print(root);
     }
 }
